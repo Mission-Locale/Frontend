@@ -11,4 +11,64 @@
     --color-brandOrange: #FE9107;
     --color-lightBorder: #C4CFE2;
     --color-lightBg: #E5EBF5;
+
+    /* Font Families */
+
+    --font-sans: "Marianne";
+}
+
+/* Fonts */
+
+/* Marianne Light */
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/Marianne/Marianne-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Marianne Regular */
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/Marianne/Marianne-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Marianne Medium */
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/Marianne/Marianne-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Marianne SemiBold */
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/Marianne/Marianne-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Marianne Bold */
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/Marianne/Marianne-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Marianne ExtraBold */
+@font-face {
+  font-family: "Marianne";
+  src: url("/fonts/Marianne/Marianne-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
 }
