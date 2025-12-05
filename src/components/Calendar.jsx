@@ -2,8 +2,30 @@ import FullCalendar from "@fullcalendar/react";
 import DayGridPlugin from "@fullcalendar/daygrid";
 import TimeGridPlugin from "@fullcalendar/timegrid";
 import ListPlugin from "@fullcalendar/list";
+import { useEffect, useRef } from "react";
 
-export default function Calendar({ mobileMode = false, events }) {
+// TODO: Custom button example for calendar integration
+//   {
+//     text: "Programmez un rendez-vous",
+//     click: function () {
+//       alert("This is a test!");
+//     },
+//   }
+
+export default function Calendar({
+  mobileMode = false,
+  events,
+  noNavigation = false,
+  customButton = undefined,
+}) {
+  const calendarRef = useRef(null);
+
+  useEffect(() => {
+    calendarRef.current
+      .getApi()
+      .changeView(mobileMode ? "listMonth" : "timeGridWeek");
+  }, [mobileMode]);
+
   const startDateDisplay = new Date();
   startDateDisplay.setDate(1);
   const endDateDisplay = new Date();
@@ -16,10 +38,9 @@ export default function Calendar({ mobileMode = false, events }) {
     );
   } else endDateDisplay.setMonth(endMonth, 1);
 
-  // update/reset current view on mobileMode change
-
   return (
     <FullCalendar
+      ref={calendarRef}
       viewClassNames="capitalize"
       plugins={[DayGridPlugin, TimeGridPlugin, ListPlugin]}
       height={mobileMode ? "auto" : "100%"}
@@ -32,29 +53,30 @@ export default function Calendar({ mobileMode = false, events }) {
         start: startDateDisplay.toISOString().split("T")[0],
         end: endDateDisplay.toISOString().split("T")[0],
       }}
-      // customButtons={{
-      //   createAppointment: {
-      //     text: "Programmez un rendez-vous",
-      //     click: function () {
-      //       alert("This is a test!");
-      //     },
-      //   },
-      // }}
-      // headerToolbar= false
+      customButton={{ customButton: customButton }}
       headerToolbar={
-        mobileMode
+        noNavigation
+          ? false
+          : mobileMode
           ? { left: "title", center: "", right: "listMonth,timeGridDay" }
           : {
               left: "prev,next today",
               center: "title",
-              right: "timeGridWeek,dayGridMonth",
+              right:
+                (customButton ? "customButton " : "") +
+                "timeGridWeek,dayGridMonth",
             }
       }
-      footerToolbar={mobileMode ? { center: "prev,today,next" } : false}
-      // footerToolbar: {
-      //   left: "prev,today,next",
-      //   right: "createAppointment",
-      // },
+      footerToolbar={
+        !noNavigation && mobileMode
+          ? customButton
+            ? {
+                left: "prev,today,next",
+                right: "customButton",
+              }
+            : { center: "prev,today,next" }
+          : false
+      }
       buttonHints={{
         today: "Aujourd'hui",
         next: "Suivant",
