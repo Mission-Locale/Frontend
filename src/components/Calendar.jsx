@@ -26,6 +26,7 @@ export default function Calendar({
       .changeView(mobileMode ? "listMonth" : "timeGridWeek");
   }, [mobileMode]);
 
+  // Affiche uniquement le mois courant et le mois suivant
   const startDateDisplay = new Date();
   startDateDisplay.setDate(1);
   const endDateDisplay = new Date();
