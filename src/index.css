@@ -1,72 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors Branding */
 
-  --color-brandBlue: #0098d9;
-  --color-brandPink: #ec2b78;
-  --color-brandPurple: #ae0066;
-  --color-brandGreen: #7bc50f;
-  --color-brandOrange: #fe9107;
-  --color-lightBorder: #c4cfe2;
-  --color-lightBg: #e5ebf5;
-}
+    /* Colors Branding */
 
-:root {
-  --fc-button-bg-color: var(--color-brandBlue);
-  --fc-button-border-color: var(--color-brandBlue);
-  --fc-button-hover-bg-color: #007baf;
-  --fc-button-hover-border-color: var(--color-brandBlue);
-  --fc-button-active-bg-color: #007baf;
-  --fc-button-active-border-color: #007baf;
-}
-html,
-body {
-  margin: 0;
-  font-family: Marianne, system-ui, sans-serif;
-  background-color: white;
-}
-
-.fc {
-  .fc-v-event {
-    font-weight: 500;
-  }
-  
-  .fc-button {
-    border-radius: 0.75em;
-  }
-
-  .fc-h-event {
-    .fc-event-time {
-      overflow: initial;
-    }
-    .fc-event-main-frame {
-      flex-direction: column;
-      font-size: smaller;
-    }
-  }
-
-  .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
-    min-height: 3em;
-  }
-
-  .fc-footer-toolbar {
-    gap: 5px;
-    align-items: flex-end;
-  }
-
-  .fc-createAppointment-button {
-    background-color: var(--color-brandGreen);
-    border-color: var(--color-brandGreen);
-
-    &:hover {
-      background-color: #5b9207;
-      border-color: var(--color-brandGreen);
-    }
-
-    &:not(:disabled):active {
-      background-color: #5b9207;
-      border-color: #5b9207;
-    }
-  }
+    --color-brandBlue: #0098D9;
+    --color-brandPink: #EC2B78;
+    --color-brandPurple: #AE0066;
+    --color-brandGreen: #7BC50F;
+    --color-brandOrange: #FE9107;
+    --color-lightBorder: #C4CFE2;
+    --color-lightBg: #E5EBF5;
 }
