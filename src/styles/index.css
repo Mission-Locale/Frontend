@@ -11,4 +11,105 @@
     --color-brandOrange: #FE9107;
     --color-lightBorder: #C4CFE2;
     --color-lightBg: #E5EBF5;
+
+    /* Font Families */
+
+    --font-sans: "Marianne";
 }
+
+/* 300 – Light */
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-LightItalic.woff2") format("woff2");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* 400 – Regular */
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-RegularItalic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* 500 – Medium */
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-MediumItalic.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* 600 – SemiBold */
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-SemiBoldItalic.woff2") format("woff2");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* 700 – Bold */
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* 800 – ExtraBold */
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Marianne";
+  src: url("assets/fonts/Marianne/Marianne-ExtraBoldItalic.woff2") format("woff2");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
