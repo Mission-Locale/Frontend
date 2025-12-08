@@ -1,3 +1,4 @@
+import Footer from "../../components/ui/Footer";
 import { Outlet } from "react-router-dom";
 import { ToastContainer, Slide } from "react-toastify";
 
@@ -18,7 +19,7 @@ export default function DefaultLayout() {
       <main>
         <Outlet />
       </main>
-      {/* TODO: <Footer /> */}
+      <Footer />
     </>
   );
 }
