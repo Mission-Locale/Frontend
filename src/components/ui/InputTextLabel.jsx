@@ -1,4 +1,4 @@
-import { ring } from "../../styles/tokensTailwind.js";
+import { ring } from "../../styles/tokensTailwind";
 
 export default function InputTextLabel({
   label,
