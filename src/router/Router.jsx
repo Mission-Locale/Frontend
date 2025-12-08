@@ -9,17 +9,18 @@ export default function Router() {
     <BrowserRouter>
       <Routes>
         <Route element={<DefaultLayout />}>
+          {/* Vitrine */}
           {/* TODO: <Route path="/" index element={<HomePage />} /> */}
-        </Route>
-        <Route element={<PrivateRoutes />}>
-          <Route element={<DashboardRoutes role={USER} redirect="/" />}>
-            {/* Routes des Demandeurs d'emploi */}
-          </Route>
-          <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
-            {/* Routes des Conseillers */}
-          </Route>
-          <Route element={<DashboardRoutes role={ADMIN} redirect="/" />}>
-            {/* Routes des Administrateur */}
+          <Route element={<PrivateRoutes />}>
+            <Route element={<DashboardRoutes role={USER} redirect="/" />}>
+              {/* Routes des Demandeurs d'emploi */}
+            </Route>
+            <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
+              {/* Routes des Conseillers */}
+            </Route>
+            <Route element={<DashboardRoutes role={ADMIN} redirect="/" />}>
+              {/* Routes des Administrateurs */}
+            </Route>
           </Route>
         </Route>
       </Routes>
