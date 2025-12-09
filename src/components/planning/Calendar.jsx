@@ -3,22 +3,16 @@ import DayGridPlugin from "@fullcalendar/daygrid";
 import TimeGridPlugin from "@fullcalendar/timegrid";
 import ListPlugin from "@fullcalendar/list";
 import { useEffect, useRef } from "react";
-
-// TODO: Custom button example for calendar integration
-//   {
-//     text: "Programmez un rendez-vous",
-//     click: function () {
-//       alert("This is a test!");
-//     },
-//   }
+import useMobileToggle from "../../hooks/useMobileToggle";
 
 export default function Calendar({
-  mobileMode = false,
   events,
   noNavigation = false,
+  onEventClick = undefined,
   customButton = undefined,
 }) {
   const calendarRef = useRef(null);
+  const mobileMode = useMobileToggle(900, () => calendarRef.current.width);
 
   useEffect(() => {
     calendarRef.current
@@ -121,6 +115,7 @@ export default function Calendar({
         minute: "2-digit",
       }}
       events={events}
+      eventClick={onEventClick}
     />
   );
 }

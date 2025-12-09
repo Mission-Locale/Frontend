@@ -16,9 +16,7 @@ export default function DefaultLayout() {
         theme="light"
         transition={Slide}
       />
-      <main>
-        <Outlet />
-      </main>
+      <Outlet />
       <Footer />
     </>
   );
