@@ -7,7 +7,7 @@ export default function ContentStep({ currentStep, handleBack, handleNext }) {
   const steps = [ContentStep1, ContentStep2, ContentStep3, ContentStep4];
 
   return (
-    <div>
+    <div className="flex-1 py-12 px-8">
       {steps.map((StepComponent, index) => {
         if (index + 1 === currentStep) {
           return (

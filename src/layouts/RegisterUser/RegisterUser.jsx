@@ -27,7 +27,7 @@ export default function RegisterUser() {
 
   return (
 
-      <div className="flex">
+      <div className="min-h-screen bg-gray-50 flex">
         <SideBar currentStep={currentStep} steps={steps} />
         
         <ContentStep currentStep={currentStep} handleBack={handleBack} handleNext={handleNext} />
