@@ -94,3 +94,43 @@ export const radius = {
   md: "rounded-lg",
   lg: "rounded-3xl",
 };
+
+// SELECT THEMES
+
+export const selectThemes = {
+  brandBlue: {
+    trigger: "border-gray-300 focus:border-brandBlue focus:ring-brandBlue",
+    dropdown: "border-brandBlue",
+    option: "hover:bg-brandBlue/10 focus:bg-brandBlue/20",
+    optionSelected: "bg-brandBlue/20 text-brandBlue font-bold",
+    check: " text-blue-600",
+  },
+  brandOrange: {
+    trigger: "border-gray-300 focus:border-brandOrange focus:ring-brandOrange",
+    dropdown: "border-brandOrange",
+    option: "hover:bg-brandOrange/10 focus:bg-brandOrange/20",
+    optionSelected: "bg-brandOrange/20 text-brandOrange font-bold",
+    check: " text-orange-600",
+  },
+  brandGreen: {
+    trigger: "border-gray-300 focus:border-brandGreen focus:ring-brandGreen",
+    dropdown: "border-brandGreen",
+    option: "hover:bg-brandGreen/10 focus:bg-brandGreen/20",
+    optionSelected: "bg-brandGreen/20 text-brandGreen font-bold",
+    check: " text-green-600",
+  },
+  brandPink: {
+    trigger: "border-gray-300 focus:border-brandPink focus:ring-brandPink",
+    dropdown: "border-brandPink",
+    option: "hover:bg-brandPink/10 focus:bg-brandPink/20",
+    optionSelected: "bg-brandPink/20 text-brandPink font-bold",
+    check: " text-brandPink",
+  },
+  brandPurple: {
+    trigger: "border-gray-300 focus:border-brandPurple focus:ring-brandPurple",
+    dropdown: "border-brandPurple",
+    option: "hover:bg-brandPurple/10 focus:bg-brandPurple/20",
+    optionSelected: "bg-brandPurple/20 text-brandPurple font-bold",
+    check: " text-brandPurple",
+  }
+};
