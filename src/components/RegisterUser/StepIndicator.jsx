@@ -1,4 +1,5 @@
-export default function StepIndicator({ step, currentStep, isLast }) {
+export default function StepIndicator({ step, isLast, currentStep }) {
+
   const isActive = step.id === currentStep;
   const isCompleted = step.id < currentStep;
 
