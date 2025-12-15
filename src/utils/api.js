@@ -71,3 +71,14 @@ export async function refreshUser() {
   setToken(data.token);
   return data;
 }
+
+//TODO: Implement backend route (and data model)
+export async function getAdvisorPlanning(advisorId) {
+  const response = await callAuthorizedEndpoint(
+    "/planning/advisor/" + advisorId,
+    "GET"
+  );
+  //handleEndpointError(400, response);
+
+  return await response.json();
+}

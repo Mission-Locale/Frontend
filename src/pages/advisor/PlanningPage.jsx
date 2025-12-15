@@ -1,21 +1,23 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Calendar from "../../components/planning/Calendar";
 import { useQuery } from "@tanstack/react-query";
+import { getAdvisorPlanning } from "../../utils/api";
 
 export default function PlanningPage() {
+  const user = useContext("user");
   const { status, data, error } = useQuery({
-    queryKey: ["advisorPlanning"],
-    queryFn: getAdvisorPlanning,
+    queryKey: ["advisorPlanning", user.id],
+    queryFn: () => getAdvisorPlanning(user.id),
   });
   const [editState, setEditState] = useState(null);
   const [editingEvent, setEditingEvent] = useState(null);
 
   switch (status) {
     case "pending":
-      return <LoadingScreen />;
+      return <LoadingFrame />;
 
     case "error":
-      return <ErrorScreen error={error} />;
+      return <ErrorFrame error={error} />;
 
     case "success":
       return (

@@ -5,11 +5,29 @@ import ListPlugin from "@fullcalendar/list";
 import { useEffect, useRef } from "react";
 import useMobileToggle from "../../hooks/useMobileToggle";
 
+function getDefaultStartDate() {
+  const startDate = new Date();
+  startDate.setDate(1);
+  return startDate;
+}
+
+function getDefaultEndDate() {
+  const endDate = new Date();
+  const endMonth = endDate.getMonth() + 2;
+  if (endMonth > 12) {
+    endDate.setUTCFullYear(endDate.getUTCFullYear() + 1, endMonth - 12, 1);
+  } else endDate.setMonth(endMonth, 1);
+  return endDate;
+}
+
+// Affiche le mois courant et le mois suivant par défaut
 export default function Calendar({
   events,
   noNavigation = false,
   onEventClick = undefined,
   customButton = undefined,
+  startDateDisplay = getDefaultStartDate(),
+  endDateDisplay = getDefaultEndDate(),
 }) {
   const calendarRef = useRef(null);
   const mobileMode = useMobileToggle(900, () => calendarRef.current.width);
@@ -19,19 +37,6 @@ export default function Calendar({
       .getApi()
       .changeView(mobileMode ? "listMonth" : "timeGridWeek");
   }, [mobileMode]);
-
-  // Affiche uniquement le mois courant et le mois suivant
-  const startDateDisplay = new Date();
-  startDateDisplay.setDate(1);
-  const endDateDisplay = new Date();
-  const endMonth = endDateDisplay.getMonth() + 2;
-  if (endMonth > 12) {
-    endDateDisplay.setUTCFullYear(
-      endDateDisplay.getUTCFullYear() + 1,
-      endMonth - 12,
-      1
-    );
-  } else endDateDisplay.setMonth(endMonth, 1);
 
   return (
     <FullCalendar
