@@ -1,6 +1,6 @@
 import { ring } from "../../../styles/tokensTailwind";
 
-export default function InputTextLabel({
+export default function InputText({
   label,
   placeholder,
   ringColor,
