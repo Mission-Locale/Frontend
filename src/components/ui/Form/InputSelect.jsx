@@ -22,7 +22,7 @@
 //   disabled={false}
 //  />
 
-import { selectThemes, sizes } from "../../styles/tokensTailwind";
+import { selectThemes, sizes } from "../../../styles/tokensTailwind";
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check } from "lucide-react";
 
@@ -33,8 +33,8 @@ export default function InputSelect({
   onChange,
   placeholder,
   selectTheme,
-  variant,
-  size,
+  variant="default",
+  size="md",
   disabled,
 }) {
   const [isOpen, setIsOpen] = useState(false);
