@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { CalendarDays } from "lucide-react";
-import { Calendar } from "@/components/ui/utils/calendar";
+import { Calendar } from "@/lib/calendar";
 import { fr } from "react-day-picker/locale";
 import {
   textColor,
@@ -8,6 +8,12 @@ import {
   sizes,
   border,
 } from "@/styles/tokensTailwind";
+
+const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
 
 export default function InputDate({
   label,
@@ -37,11 +43,7 @@ export default function InputDate({
 
   const formatDate = (date) => {
     if (!date) return null;
-    return new Intl.DateTimeFormat("fr-FR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format(date);
+    return dateFormatter.format(date);
   };
 
   return (
