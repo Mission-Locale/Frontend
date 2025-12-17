@@ -9,12 +9,12 @@ import {
   border,
 } from "@/styles/tokensTailwind";
 
-export default function DatePicker({
+export default function InputDate({
   label,
-  value,
-  onChange,
   placeholder = "Sélectionner une date",
   selectTheme,
+  value,
+  onChange,
   size = "md",
   disabled = false,
   required = false,
