@@ -14,6 +14,19 @@
   --color-lightBorder: #c4cfe2;
   --color-lightBg: #e5ebf5;
 
+  /* Colors Validation */
+
+  --color-success: #16a34a;
+  --color-bgSuccess: #f0fdf4;
+  --color-bgSuccessIcon: #DCFCE7;
+
+  /* --color-warning: #FFC107;
+    --color-bgWarning: #FFFBEB;
+    --color-error: #DC3545;
+    --color-bgError: #FEF2F2;
+    --color-info: #17A2B8;
+    --color-bgInfo: #F0F9FF; */
+
   /* Font Families */
 
   --font-sans: "Marianne";

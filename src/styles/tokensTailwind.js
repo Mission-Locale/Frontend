@@ -1,4 +1,3 @@
-
 // COLOR TOKENS
 
 export const colors = {
@@ -14,7 +13,6 @@ export const colors = {
   gray: "gray-500",
 };
 
-
 // BACKGROUND CLASSES
 
 export const bg = {
@@ -23,12 +21,17 @@ export const bg = {
   brandGreen: "bg-brandGreen",
   brandPink: "bg-brandPink",
   brandPurple: "bg-brandPurple",
+
   lightBg: "bg-lightBg",
-
-  success: "bg-success",
-
 };
 
+export const lightBg = {
+  brandBlue: "bg-brandBlue/10",
+  brandOrange: "bg-brandOrange/10",
+  brandGreen: "bg-brandGreen/10",
+  brandPink: "bg-brandPink/10",
+  brandPurple: "bg-brandPurple/10",
+}
 
 // TEXT COLORS
 
@@ -36,6 +39,7 @@ export const textColor = {
   white: "text-white",
   black: "text-slate-900",
   gray: "text-gray-600",
+  success: "text-green-600",
 
   brandBlue: "text-brandBlue",
   brandOrange: "text-brandOrange",
@@ -43,7 +47,6 @@ export const textColor = {
   brandPink: "text-brandPink",
   brandPurple: "text-brandPurple",
 };
-
 
 // BORDER COLORS
 
@@ -55,7 +58,6 @@ export const border = {
   brandOrange: "border-brandOrange",
   light: "border-lightBorder",
 };
-
 
 //HOVER BACKGROUND COLORS
 
@@ -77,7 +79,6 @@ export const ring = {
   brandPurple: "focus:ring-brandPurple",
 };
 
-
 // SIZES
 
 export const sizes = {
@@ -85,7 +86,6 @@ export const sizes = {
   md: "px-4 py-2 text-md",
   lg: "px-6 py-3 text-lg",
 };
-
 
 // BORDER RADIUS
 
@@ -132,5 +132,5 @@ export const selectThemes = {
     option: "hover:bg-brandPurple/10 focus:bg-brandPurple/20",
     optionSelected: "bg-brandPurple/20 text-brandPurple font-bold",
     check: " text-brandPurple",
-  }
+  },
 };
