@@ -3,7 +3,7 @@ import { ring } from "../../../styles/tokensTailwind";
 export default function InputText({
   label,
   placeholder,
-  ringColor,
+  selectTheme,
   onChange,
   value,
   required,
@@ -30,7 +30,7 @@ export default function InputText({
         id={inputId}
         type={type}
         className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 
-          ${ring[ringColor]}          
+          ${ring[selectTheme]}          
           ${
             error
               ? "outline-solid outline-red-500 border-none mb-2"
