@@ -1,42 +1,88 @@
 import { useState, useRef } from "react";
 import { textColor, lightBg } from "@/styles/tokensTailwind";
-import { IdCard, X, RotateCw } from "lucide-react";
+import { X, RotateCw, CircleAlert } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-export default function FileInputCard({ id, title, description, selectTheme }) {
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5Mo
+
+export default function FileInputCard({
+  id,
+  title,
+  description,
+  selectTheme,
+  icon: Icon,
+}) {
   const [file, setFile] = useState(null);
+  const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
 
-  const isCharged = file !== null;
+  const isCharged = file !== null
 
   function handleFileChange(e) {
-    const selectedFile = e.target.files[0];
+    const selectedFile = e.target.files[0]
+    
+    setError(null)
+    
     if (selectedFile) {
-      setFile(selectedFile);
+
+      // Vérifier le type de fichier
+      if (selectedFile.type !== 'application/pdf') {
+        setError(`Format invalide. Seul le PDF est accepté`);
+        setFile(null);
+        fileInputRef.current.value = null;
+        return;
+      }
+      
+      // Vérifier la taille du fichier
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        setError(`Fichier trop volumineux`);
+        setFile(null);
+        fileInputRef.current.value = null;
+        return;
+      }
+      
+      setFile(selectedFile)
     }
   }
 
-    function deleteFile() {
-      setFile(null);
-      fileInputRef.current.value = null;
-    }
+  function deleteFile() {
+    setFile(null)
+    setError(null)
+    fileInputRef.current.value = null
+  }
 
   return (
     <div
       className={`${
         isCharged
           ? " bg-bgSuccess border-success border-2"
+          : error
+          ? " bg-bgError border-error border-2"
           : " border-lightBorder bg-zinc-50 border"
       } flex items-center p-4 gap-4 rounded-lg w-100`}
     >
       <div
         className={`size-10 flex items-center justify-center rounded-md ${
-          isCharged ? "bg-bgSuccessIcon" : lightBg[selectTheme]
+          isCharged 
+            ? "bg-bgSuccessIcon" 
+            : error 
+            ? "bg-bgErrorIcon" 
+            : lightBg[selectTheme]
         }`}
       >
-        <IdCard
-          className={isCharged ? "text-success" : textColor[selectTheme]}
-        />
+        {error 
+        ? <CircleAlert className="text-red-500" />
+        : Icon && (
+          <Icon
+          className={
+            isCharged 
+            ? "text-success" 
+            : error 
+            ? "text-red-500" 
+            : textColor[selectTheme]
+          }
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-1 w-50">
@@ -44,17 +90,33 @@ export default function FileInputCard({ id, title, description, selectTheme }) {
 
         <span
           className={`${
-            isCharged ? "text-success" : "text-slate-500"
+            isCharged 
+              ? "text-success" 
+              : error 
+              ? "text-error"
+              : "text-slate-500"
           } truncate font-bold text-sm`}
         >
-          {isCharged ? file.name : description}
+          {isCharged 
+            ? file.name 
+            : error 
+            ? "Erreur de téléchargement" 
+            : description}
         </span>
         <span
           className={`${
-            isCharged ? "text-success" : "text-slate-400"
+            isCharged 
+              ? "text-success" 
+              : error 
+              ? "text-error" 
+              : "text-slate-400"
           } font-normal text-xs`}
         >
-          {isCharged ? "Téléchargé avec succès" : "Format: PDF • Max 5 Mo"}
+          {isCharged 
+            ? "Téléchargé avec succès" 
+            : error 
+            ? error 
+            : "Format: PDF • Max 5 Mo"}
         </span>
       </div>
 
@@ -68,20 +130,24 @@ export default function FileInputCard({ id, title, description, selectTheme }) {
         />
         {isCharged ? (
           <div className="flex gap-2">
-
-            <label htmlFor={id} className="cursor-pointer bg-gray-200 p-2 rounded">
-              <RotateCw className="text-gray-500"/>
+            <label
+              htmlFor={id}
+              className="cursor-pointer bg-gray-200 p-2 rounded"
+            >
+              <RotateCw className="text-gray-500" />
             </label>
 
-            <div className="cursor-pointer bg-red-200 p-2 rounded" onClick={deleteFile}>
-              <X className="text-red-500"/>
+            <div
+              className="cursor-pointer bg-red-200 p-2 rounded"
+              onClick={deleteFile}
+            >
+              <X className="text-red-500" />
             </div>
-
           </div>
         ) : (
           <Button
-            text="Parcourir"
-            color={selectTheme}
+            text={error ? "Réessayer" : "Parcourir"}
+            color={error ? "error" : selectTheme}
             size="md"
             variant="full"
             radiusSize="md"

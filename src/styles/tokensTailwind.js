@@ -21,6 +21,7 @@ export const bg = {
   brandGreen: "bg-brandGreen",
   brandPink: "bg-brandPink",
   brandPurple: "bg-brandPurple",
+  error: "bg-error",
 
   lightBg: "bg-lightBg",
 };
