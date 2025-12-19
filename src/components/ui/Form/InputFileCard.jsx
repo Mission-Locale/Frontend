@@ -1,54 +1,72 @@
+/**
+ * title : titre du champ (exemple : "Carte d'identité")
+ * icon : composant d'icône de lucide-react à importer dans le parent
+ * selectTheme : 'brandBlue' | 'brandPink' | 'brandGreen' | 'brandOrange' | 'brandPurple'
+ */
+
+// Exemple of usage of InputFileCard component :
+//
+// {inputs.map((input) => (
+//   <InputFileCard
+//     key={input.id}
+//     id={input.id}
+//     title={input.title}
+//     selectTheme={input.selectTheme}
+//     icon={input.icon}
+//     file={files[input.id]}
+//     onFileChange={(file) =>
+//       setFiles((prev) => ({ ...prev, [input.id]: file }))
+//     }
+//   />
+// ))}
+
 import { useState, useRef } from "react";
 import { textColor, lightBg } from "@/styles/tokensTailwind";
 import { X, RotateCw, CircleAlert } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5Mo
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5Mo
 
 export default function FileInputCard({
   id,
   title,
-  description,
   selectTheme,
   icon: Icon,
+  file,
+  onFileChange,
 }) {
-  const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
 
-  const isCharged = file !== null
+  const isCharged = file !== null;
 
   function handleFileChange(e) {
-    const selectedFile = e.target.files[0]
-    
-    setError(null)
-    
-    if (selectedFile) {
+    const selectedFile = e.target.files[0];
+    setError(null);
 
+    if (selectedFile) {
       // Vérifier le type de fichier
-      if (selectedFile.type !== 'application/pdf') {
+      if (selectedFile.type !== "application/pdf") {
         setError(`Format invalide. Seul le PDF est accepté`);
-        setFile(null);
         fileInputRef.current.value = null;
         return;
       }
-      
+
       // Vérifier la taille du fichier
       if (selectedFile.size > MAX_FILE_SIZE) {
         setError(`Fichier trop volumineux`);
-        setFile(null);
         fileInputRef.current.value = null;
         return;
       }
-      
-      setFile(selectedFile)
+
+      onFileChange(selectedFile);
     }
   }
 
   function deleteFile() {
-    setFile(null)
-    setError(null)
-    fileInputRef.current.value = null
+    onFileChange(null);
+    setError(null);
+    fileInputRef.current.value = null;
   }
 
   return (
@@ -63,25 +81,27 @@ export default function FileInputCard({
     >
       <div
         className={`size-10 flex items-center justify-center rounded-md ${
-          isCharged 
-            ? "bg-bgSuccessIcon" 
-            : error 
-            ? "bg-bgErrorIcon" 
+          isCharged
+            ? "bg-bgSuccessIcon"
+            : error
+            ? "bg-bgErrorIcon"
             : lightBg[selectTheme]
         }`}
       >
-        {error 
-        ? <CircleAlert className="text-red-500" />
-        : Icon && (
-          <Icon
-          className={
-            isCharged 
-            ? "text-success" 
-            : error 
-            ? "text-red-500" 
-            : textColor[selectTheme]
-          }
-          />
+        {error ? (
+          <CircleAlert className="text-red-500" />
+        ) : (
+          Icon && (
+            <Icon
+              className={
+                isCharged
+                  ? "text-success"
+                  : error
+                  ? "text-red-500"
+                  : textColor[selectTheme]
+              }
+            />
+          )
         )}
       </div>
 
@@ -90,32 +110,24 @@ export default function FileInputCard({
 
         <span
           className={`${
-            isCharged 
-              ? "text-success" 
-              : error 
-              ? "text-error"
-              : "text-slate-500"
+            isCharged ? "text-success" : error ? "text-error" : "text-slate-500"
           } truncate font-bold text-sm`}
         >
-          {isCharged 
-            ? file.name 
-            : error 
-            ? "Erreur de téléchargement" 
-            : description}
+          {isCharged
+            ? file.name
+            : error
+            ? "Erreur de téléchargement"
+            : "Aucun fichier sélectionné"}
         </span>
         <span
           className={`${
-            isCharged 
-              ? "text-success" 
-              : error 
-              ? "text-error" 
-              : "text-slate-400"
+            isCharged ? "text-success" : error ? "text-error" : "text-slate-400"
           } font-normal text-xs`}
         >
-          {isCharged 
-            ? "Téléchargé avec succès" 
-            : error 
-            ? error 
+          {isCharged
+            ? "Téléchargé avec succès"
+            : error
+            ? error
             : "Format: PDF • Max 5 Mo"}
         </span>
       </div>
