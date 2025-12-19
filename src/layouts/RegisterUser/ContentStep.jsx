@@ -14,31 +14,44 @@ export default function ContentStep() {
 
   const steps = [ContentStep1, ContentStep2, ContentStep3, ContentStep4];
 
-  const ActiveStep = steps[currentStep - 1] || null;
-  const { mainTitle, subTitle } = STEPS[currentStep - 1] || {};
+  const { mainTitle, subTitle, branding } = STEPS[currentStep - 1] || {};
 
   return (
     <div className="flex-1 py-12 px-8">
       <div className="h-full flex flex-col justify-between gap-4">
         <div className="w-46">
-          <img src={logo} alt="" />
+          <img src={logo} alt="logo mission locale" />
         </div>
 
         <div className="mb-6 text-center">
-          {mainTitle && <h2 className="text-3xl font-medium mb-2">{mainTitle}</h2>}
+          {mainTitle && (
+            <h2 className="text-3xl font-medium mb-2">{mainTitle}</h2>
+          )}
           {subTitle && (
-            <p className="text-xl font-light text-gray-600 mx-auto whitespace-pre-line">{subTitle}</p>
+            <p className="text-xl font-light text-gray-600 mx-auto whitespace-pre-line">
+              {subTitle}
+            </p>
           )}
         </div>
 
         <div className="flex-1 flex flex-col min-w-4/5 mx-auto justify-center">
-          {ActiveStep && <ActiveStep key={currentStep} />}
+          {steps.map((StepComponent, index) => {
+            if (index + 1 === currentStep) {
+              return (
+                <StepComponent
+                  key={index}
+                  currentStep={currentStep}
+                  branding={branding}
+                />
+              );
+            }
+          })}
         </div>
 
         <div className="flex justify-between px-7">
           <Button
             text={`${currentStep === 1 ? "Annuler" : "Retour"}`}
-            color="brandBlue"
+            color={branding}
             size="md"
             variant="outline"
             radiusSize="sm"
@@ -50,7 +63,7 @@ export default function ContentStep() {
             {currentStep === 3 && (
               <Button
                 text="Passer cette étape"
-                color="brandBlue"
+                color={branding}
                 size="md"
                 variant="ghost"
                 radiusSize="sm"
@@ -61,7 +74,7 @@ export default function ContentStep() {
 
             <Button
               text="Étape suivante"
-              color="brandBlue"
+              color={branding}
               size="md"
               variant="full"
               radiusSize="sm"

@@ -1,7 +1,7 @@
+import { textColor } from "@/styles/tokensTailwind";
 
 
-
-export default function StepIndicator({ step, isLast, currentStep }) {
+export default function StepIndicator({ step, isLast, currentStep, branding }) {
 
   const isActive = step.id === currentStep;
   const isCompleted = step.id < currentStep;
@@ -12,9 +12,9 @@ export default function StepIndicator({ step, isLast, currentStep }) {
         <div
           className={`w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold border-2 transition-all ${
             isActive
-              ? "bg-white text-brandBlue border-white"
+              ? "bg-white " + textColor[branding] + " border-white"
               : isCompleted
-              ? "bg-white text-brandBlue border-white"
+              ? "bg-white " + textColor[branding] + " border-white"
               : "bg-transparent border-white/30 text-white/70"
           }`}
         >

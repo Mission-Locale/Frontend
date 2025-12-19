@@ -1,12 +1,12 @@
 import { useState } from "react";
-import InputRadio from "../ui/form/InputRadio";
+import InputRadio from "@/components/ui/form/InputRadio";
 
 const civiliteOptions = [
   { label: "Monsieur", value: "monsieur" },
   { label: "Madame", value: "madame" },
 ];
 
-export default function ContentStep1() {
+export default function ContentStep1({ branding, currentStep }) {
 
   const [civilite, setCivilite] = useState(null);
 
@@ -20,7 +20,7 @@ export default function ContentStep1() {
           value={option.value}
           isSelected={civilite === option.value}
           onChange={setCivilite}
-          selectTheme="brandBlue"
+          selectTheme={branding}
         />
       ))}
     </div>
