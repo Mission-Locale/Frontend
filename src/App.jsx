@@ -1,4 +1,4 @@
-import RegisterUser from "./layouts/RegisterUser/RegisterUser.jsx";
+import RegisterUser from "./layouts/registerUser/RegisterUser.jsx";
 import Footer from "./components/Footer.jsx";
 
 function App() {

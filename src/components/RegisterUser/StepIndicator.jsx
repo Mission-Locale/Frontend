@@ -1,3 +1,6 @@
+
+
+
 export default function StepIndicator({ step, isLast, currentStep }) {
 
   const isActive = step.id === currentStep;
