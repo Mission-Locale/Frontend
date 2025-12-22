@@ -34,18 +34,18 @@ export default function ContentStep() {
           )}
         </div>
 
-        <div className="flex-1 flex flex-col min-w-4/5 mx-auto justify-center">
+        <div className="flex-1 flex flex-col mx-auto justify-center">
           {steps.map((StepComponent, index) => {
             if (index + 1 === currentStep) {
               return (
                 <StepComponent
-                  key={index}
-                  currentStep={currentStep}
+                key={index}
+                currentStep={currentStep}
                   branding={branding}
-                />
-              );
-            }
-          })}
+                  />
+                );
+              }
+            })}
         </div>
 
         <div className="flex justify-between px-7">

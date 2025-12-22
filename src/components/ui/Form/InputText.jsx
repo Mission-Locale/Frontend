@@ -10,8 +10,10 @@ export default function InputText({
   error,
   disabled,
   type,
+  ...props
 }) {
-  const inputId = label.toLowerCase().replace(/\s+/g, "-");
+
+  const inputId = label ? label.toLowerCase().replace(/\s+/g, "-") : undefined;
 
   return (
     <div className="w-full mb-4">
@@ -34,7 +36,7 @@ export default function InputText({
           ${
             error
               ? "outline-solid outline-red-500 border-none mb-2"
-              : "border-gray-300 mb-6"
+              : "border-gray-300"
           }
           ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
         placeholder={placeholder}
@@ -42,6 +44,7 @@ export default function InputText({
         value={value}
         disabled={disabled}
         required={required}
+        {...props}
       />
 
       {error && (
