@@ -7,6 +7,8 @@ import { validatePassword } from "@/utils/validations";
 
 export default function ContentStep1({ branding }) {
 
+  //TODO: Finir les validations des champs
+
   // modifie le FormStore et le met a jour avec les valeurs des champs
   const personalInfo = useFormStore((state) => state.personalInfo);
   const updatePersonalInfo = useFormStore((state) => state.updatePersonalInfo);
