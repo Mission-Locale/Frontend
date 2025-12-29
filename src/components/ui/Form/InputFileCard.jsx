@@ -34,6 +34,7 @@ export default function FileInputCard({
   icon: Icon,
   file,
   onFileChange,
+  subtitle
 }) {
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
@@ -114,10 +115,11 @@ export default function FileInputCard({
           } truncate font-bold text-sm`}
         >
           {isCharged
-            ? file.name
+            ? file?.name
             : error
             ? "Erreur de téléchargement"
-            : "Aucun fichier sélectionné"}
+            : subtitle
+            }
         </span>
         <span
           className={`${

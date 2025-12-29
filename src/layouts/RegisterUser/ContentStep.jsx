@@ -7,6 +7,8 @@ import ContentStep3 from "@/components/registerUser/ContentStep3";
 import ContentStep4 from "@/components/registerUser/ContentStep4";
 import Button from "@/components/ui/Button";
 
+// TODO : Ajouter la gestion des boutons "Retour" et "Étape suivante" pour la validitation des étapes
+
 export default function ContentStep() {
   const currentStep = useFormStore((state) => state.currentStep);
   const handleBack = useFormStore((state) => state.prevStep);
@@ -17,13 +19,13 @@ export default function ContentStep() {
   const { mainTitle, subTitle, branding } = STEPS[currentStep - 1] || {};
 
   return (
-    <div className="flex-1 py-12 px-8">
+    <div className="flex-1 py-10 px-8">
       <div className="h-full flex flex-col justify-between gap-4">
         <div className="w-46">
           <img src={logo} alt="logo mission locale" />
         </div>
 
-        <div className="mb-6 text-center">
+        <div className="mb-4 text-center">
           {mainTitle && (
             <h2 className="text-3xl font-medium mb-2">{mainTitle}</h2>
           )}
@@ -39,13 +41,13 @@ export default function ContentStep() {
             if (index + 1 === currentStep) {
               return (
                 <StepComponent
-                key={index}
-                currentStep={currentStep}
+                  key={index}
+                  currentStep={currentStep}
                   branding={branding}
-                  />
-                );
-              }
-            })}
+                />
+              );
+            }
+          })}
         </div>
 
         <div className="flex justify-between px-7">
