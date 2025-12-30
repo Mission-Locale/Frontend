@@ -1,22 +1,40 @@
 import FileInputCard from "../ui/form/InputFileCard";
 import { STEPS } from "@/utils/userForm";
 import { textColor } from "@/styles/tokensTailwind";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, RotateCw } from "lucide-react";
+import { useFormStore } from "@/stores/useFormStore";
 
 export default function ContentStep3(currentStep) {
   const { inputs } = STEPS[currentStep.currentStep - 1] || {};
+  const { addDocument, removeDocument, uploadedDocs } = useFormStore();
 
   const [files, setFiles] = useState({
     idCard: null,
     passeport: null,
     transport: null,
     domicile: null,
-    other: [], // Tableau pour gérer plusieurs fichiers
+    other: [],
   });
 
-  console.log(files);
-  
+  // Synchroniser avec le store dès qu'il y a un changement de fichiers
+  useEffect(() => {
+    Object.entries(files).forEach(([key, value]) => {
+      if (key === "other" && Array.isArray(value)) {
+        value.forEach((item) => {
+          if (item.file) {
+            addDocument(`other_${item.id}`, item.file);
+          }
+        });
+      } else if (value) {
+        addDocument(key, value);
+      }
+    });
+  }, [files, addDocument])
+
+  console.log("local:", files);
+  console.log("store:", uploadedDocs);
+
   const handleOtherFileChange = (newFile) => {
     if (newFile) {
       setFiles((prev) => ({
@@ -31,6 +49,8 @@ export default function ContentStep3(currentStep) {
       ...prev,
       other: prev.other.filter((item) => item.id !== fileId),
     }));
+    // supprime du store aussi
+    removeDocument(`other_${fileId}`);
   };
 
   return (
@@ -65,6 +85,10 @@ export default function ContentStep3(currentStep) {
                 if (input.id === "other") {
                   handleOtherFileChange(file);
                 } else {
+                  // remove dans store si null
+                  if (file === null && files[input.id]) {
+                    removeDocument(input.id);
+                  }
                   setFiles((prev) => ({ ...prev, [input.id]: file }));
                 }
               }}

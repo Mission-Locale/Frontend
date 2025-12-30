@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 // Store Zustand pour gérer l'état global du formulaire
 export const useFormStore = create((set, get) => ({
+  
   // État des étapes
   currentStep: 1,
   setCurrentStep: (step) => set({ currentStep: step }),
@@ -28,17 +29,6 @@ export const useFormStore = create((set, get) => ({
   // État des documents uploadés (étape 3)
   uploadedDocs: {},
   addDocument: (docId, file) => {
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      alert("Le fichier est trop volumineux. Taille maximale : 5Mo");
-      return false;
-    }
-
-    if (file.type !== "application/pdf") {
-      alert("Seuls les fichiers PDF sont acceptés");
-      return false;
-    }
-
     set((state) => ({
       uploadedDocs: {
         ...state.uploadedDocs,
@@ -74,16 +64,6 @@ export const useFormStore = create((set, get) => ({
     return true; // exemple : personalInfo.firstName && personalInfo.lastName && personalInfo.email && personalInfo.phone;
   },
 
-  canProceedFromStep2: () => {
-    // const { additionalInfo } = get();
-    return true; // exemple : additionalInfo.address && additionalInfo.city && additionalInfo.postalCode;
-  },
-
-  canProceedFromStep3: () => {
-    const { uploadedDocs } = get();
-    return Object.keys(uploadedDocs).length > 0; // Au moins un document uploadé
-  },
-
   // Reset
   resetForm: () =>
     set({
@@ -97,7 +77,6 @@ export const useFormStore = create((set, get) => ({
         password: "",
         confirmPassword: "",
       },
-      additionalInfo: {}, // TODO: définir les champs initiaux
       uploadedDocs: {},
       appointment: {}, // TODO: définir les champs initiaux
     }),
