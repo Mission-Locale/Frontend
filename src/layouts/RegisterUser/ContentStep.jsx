@@ -19,7 +19,7 @@ export default function ContentStep() {
   const { mainTitle, subTitle, branding } = STEPS[currentStep - 1] || {};
 
   return (
-    <div className="flex-1 py-10 px-8">
+    <div className="flex-1 py-8 px-8">
       <div className="h-full flex flex-col justify-between gap-4">
         <div className="w-46">
           <img src={logo} alt="logo mission locale" />

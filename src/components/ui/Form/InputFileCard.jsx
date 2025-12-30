@@ -34,7 +34,8 @@ export default function FileInputCard({
   icon: Icon,
   file,
   onFileChange,
-  subtitle
+  subtitle,
+  multipleFiles = false,
 }) {
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
@@ -42,7 +43,7 @@ export default function FileInputCard({
   const isCharged = file !== null;
 
   function handleFileChange(e) {
-    const selectedFile = e.target.files[0];
+    const selectedFile = e.target.files[0]
     setError(null);
 
     if (selectedFile) {
@@ -61,6 +62,7 @@ export default function FileInputCard({
       }
 
       onFileChange(selectedFile);
+      fileInputRef.current.value = null;
     }
   }
 
@@ -73,7 +75,7 @@ export default function FileInputCard({
   return (
     <div
       className={`${
-        isCharged
+        isCharged && !multipleFiles
           ? " bg-bgSuccess border-success border-2"
           : error
           ? " bg-bgError border-error border-2"
@@ -82,9 +84,9 @@ export default function FileInputCard({
     >
       <div
         className={`size-10 flex items-center justify-center rounded-md ${
-          isCharged
+          isCharged && !multipleFiles
             ? "bg-bgSuccessIcon"
-            : error
+            : error && !multipleFiles
             ? "bg-bgErrorIcon"
             : lightBg[selectTheme]
         }`}
@@ -95,9 +97,9 @@ export default function FileInputCard({
           Icon && (
             <Icon
               className={
-                isCharged
+                isCharged && !multipleFiles
                   ? "text-success"
-                  : error
+                  : error && !multipleFiles
                   ? "text-red-500"
                   : textColor[selectTheme]
               }
@@ -109,27 +111,33 @@ export default function FileInputCard({
       <div className="flex flex-col gap-1 w-50">
         <h4 className="font-medium text-black text-base">{title}</h4>
 
+          <span
+            className={`${
+              isCharged && !multipleFiles
+                ? "text-success"
+                : error && !multipleFiles
+                ? "text-error"
+                : "text-slate-500"
+            } truncate font-bold text-sm`}
+          >
+            {isCharged && !multipleFiles
+              ? file?.name
+              : error && !multipleFiles
+              ? "Erreur de téléchargement"
+              : subtitle}
+          </span>
+
         <span
           className={`${
-            isCharged ? "text-success" : error ? "text-error" : "text-slate-500"
-          } truncate font-bold text-sm`}
-        >
-          {isCharged
-            ? file?.name
-            : error
-            ? "Erreur de téléchargement"
-            : subtitle
-            }
-        </span>
-        <span
-          className={`${
-            isCharged ? "text-success" : error ? "text-error" : "text-slate-400"
+            isCharged && !multipleFiles ? "text-success" : error ? "text-error" : "text-slate-400"
           } font-normal text-xs`}
         >
-          {isCharged
-            ? "Téléchargé avec succès"
-            : error
+          {error 
             ? error
+            : isCharged
+            ? multipleFiles 
+              ? "Format: PDF • Max 5 Mo"
+              : "Téléchargé avec succès"
             : "Format: PDF • Max 5 Mo"}
         </span>
       </div>
@@ -142,7 +150,7 @@ export default function FileInputCard({
           onChange={handleFileChange}
           ref={fileInputRef}
         />
-        {isCharged ? (
+        {isCharged && !multipleFiles ? (
           <div className="flex gap-2">
             <label
               htmlFor={id}
