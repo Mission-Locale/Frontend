@@ -7,7 +7,8 @@ export default function Button({
   variant,
   radiusSize,
   width,
-  onClick
+  onClick,
+  disabled = false
 }) {
 
     const variants = {
@@ -18,9 +19,14 @@ export default function Button({
 
   return (
     <button
-      className={`${variants[variant]} ${sizes[size]} ${radius[radiusSize]} font-bold cursor-pointer`}
+      className={`${variants[variant]} ${sizes[size]} ${radius[radiusSize]} font-bold ${
+        disabled 
+          ? 'opacity-50 cursor-not-allowed' 
+          : 'cursor-pointer'
+      }`}
       style={{ width }}
       onClick={onClick}
+      disabled={disabled}
     >
       {text}
     </button>

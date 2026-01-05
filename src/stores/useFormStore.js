@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { isStep1Valid } from "@/utils/validations";
 
 // Store Zustand pour gérer l'état global du formulaire
 export const useFormStore = create((set, get) => ({
@@ -23,7 +24,12 @@ export const useFormStore = create((set, get) => ({
   },
   updatePersonalInfo: (data) =>
     set((state) => ({
-      personalInfo: { ...state.personalInfo, ...data },
+      personalInfo: { 
+        ...state.personalInfo, 
+        ...data,
+        ...(data.firstName !== undefined && { firstName: (data.firstName).toLowerCase() }),
+        ...(data.lastName !== undefined && { lastName: (data.lastName).toLowerCase() }),
+      },
     })),
 
   // État des documents uploadés (étape 3)
@@ -60,8 +66,8 @@ export const useFormStore = create((set, get) => ({
 
   // Validations
   canProceedFromStep1: () => {
-    // const { personalInfo } = get();
-    return true; // exemple : personalInfo.firstName && personalInfo.lastName && personalInfo.email && personalInfo.phone;
+    const { personalInfo } = get();
+    return isStep1Valid(personalInfo);
   },
 
   // Reset

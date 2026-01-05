@@ -3,16 +3,17 @@ import { useState, useMemo } from "react";
 import InputText from "../ui/form/InputText";
 import InputDate from "../ui/form/InputDate";
 import PasswordRequirements from "../RegisterUser/PasswordRequirements";
-import { validatePassword } from "@/utils/validations";
+import { 
+  validatePassword,
+  validateStep1
+} from "@/utils/validations";
 
-export default function ContentStep1({ branding }) {
-
-  //TODO: Finir les validations des champs
+export default function ContentStep1({ branding, showErrors }) {
 
   // modifie le FormStore et le met a jour avec les valeurs des champs
   const personalInfo = useFormStore((state) => state.personalInfo);
   const updatePersonalInfo = useFormStore((state) => state.updatePersonalInfo);
-
+  
   // state pour afficher/masquer les règles de mot de passe
   const [showRules, setShowRules] = useState(false);
 
@@ -24,6 +25,11 @@ export default function ContentStep1({ branding }) {
   const handleDateChange = (date) => {
     updatePersonalInfo({ birthDate: date });
   }
+
+  // Calcul des erreurs de validation
+  const errors = useMemo(() => {
+    return showErrors ? validateStep1(personalInfo) : {};
+  }, [personalInfo, showErrors]);
 
   const currentChecks = useMemo(
     () => validatePassword(personalInfo.password || ""),
@@ -40,6 +46,7 @@ export default function ContentStep1({ branding }) {
           name="lastName"
           value={personalInfo.lastName}
           onChange={handleFieldChange("lastName")}
+          error={errors.lastName}
         />
         <InputText
           placeholder="Prénom"
@@ -47,6 +54,7 @@ export default function ContentStep1({ branding }) {
           name="firstName"
           value={personalInfo.firstName}
           onChange={handleFieldChange("firstName")}
+          error={errors.firstName}
         />
       </div>
       <InputText
@@ -56,6 +64,7 @@ export default function ContentStep1({ branding }) {
         name="email"
         value={personalInfo.email}
         onChange={handleFieldChange("email")}
+        error={errors.email}
       />
       <div className="flex gap-4">
         <InputDate
@@ -64,6 +73,7 @@ export default function ContentStep1({ branding }) {
           name="birthDate"
           value={personalInfo.birthDate}
           onChange={handleDateChange}
+          error={errors.birthDate}
         />
         <InputText
           label="Téléphone"
@@ -72,6 +82,7 @@ export default function ContentStep1({ branding }) {
           name="phone"
           value={personalInfo.phone}
           onChange={handleFieldChange("phone")}
+          error={errors.phone}
         />
       </div>
 
@@ -86,6 +97,7 @@ export default function ContentStep1({ branding }) {
           onChange={handleFieldChange("password")}
           onFocus={() => setShowRules(true)}
           onBlur={() => setShowRules(false)}
+          error={errors.password}
         />
         <div className="absolute left-full -top-40 ml-5 z-50 whitespace-nowrap">
           {showRules && <PasswordRequirements checks={currentChecks} />}
@@ -100,6 +112,7 @@ export default function ContentStep1({ branding }) {
         name="confirmPassword"
         value={personalInfo.confirmPassword}
         onChange={handleFieldChange("confirmPassword")}
+        error={errors.confirmPassword}
       />
     </div>
   );

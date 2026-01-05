@@ -7,7 +7,7 @@ import { useFormStore } from "@/stores/useFormStore";
 
 export default function ContentStep3(currentStep) {
   const { inputs } = STEPS[currentStep.currentStep - 1] || {};
-  const { addDocument, removeDocument, uploadedDocs } = useFormStore();
+  const { addDocument, removeDocument } = useFormStore();
 
   const [files, setFiles] = useState({
     idCard: null,
@@ -32,9 +32,6 @@ export default function ContentStep3(currentStep) {
     });
   }, [files, addDocument])
 
-  console.log("local:", files);
-  console.log("store:", uploadedDocs);
-
   const handleOtherFileChange = (newFile) => {
     if (newFile) {
       setFiles((prev) => ({
@@ -54,7 +51,7 @@ export default function ContentStep3(currentStep) {
   };
 
   return (
-    <div className="h-full grid grid-cols-2 gap-4 items-center justify-center">
+    <div className="grid grid-cols-2 gap-3 items-center justify-center">
       {inputs.map((input, index) => {
         const isFirstOfGroup =
           index === 0 || inputs[index - 1].group !== input.group;

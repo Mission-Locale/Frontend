@@ -24,6 +24,7 @@ export default function InputDate({
   size = "md",
   disabled = false,
   required = false,
+  error,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [date, setDate] = useState(value || undefined);
@@ -62,7 +63,7 @@ export default function InputDate({
           disabled={disabled}
           className={`
             w-full flex items-center justify-between rounded-md
-            bg-white border ${sizes[size]} ${selectThemes[selectTheme].trigger}
+            border ${sizes[size]} ${error ? `outline-red-500 outline-solid ${selectThemes[selectTheme].trigger}` : selectThemes[selectTheme].trigger}
             focus:outline-none focus:ring-2 focus:ring-offset-2
             transition-all duration-200
             ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
@@ -104,6 +105,12 @@ export default function InputDate({
           </div>
         )}
       </div>
+      
+      {error && (
+        <p className="text-red-500 text-sm mt-1 text-start block w-full">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

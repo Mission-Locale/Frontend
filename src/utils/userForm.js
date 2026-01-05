@@ -4,7 +4,7 @@ export const STEPS = [
   {
     id: 1,
     label: "Informations personnelles",
-    description: "Renseignez vos informations personnelles.",
+    description: "Renseignez vos informations personnelles pour votre inscription.",
     mainTitle: "Vos informations personnelles",
     subTitle: "Entrez vos informations dans les champs requis",
     branding: "brandPurple",

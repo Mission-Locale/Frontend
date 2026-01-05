@@ -4,7 +4,7 @@ import ContentStep from "./ContentStep";
 export default function RegisterUser() {
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="max-h-screen bg-gray-50 flex">
       <SideBar />
       <ContentStep />
     </div>

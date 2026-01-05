@@ -50,7 +50,7 @@ export default function InputText({
       {error && (
         <p
           id={`${inputId}-error`}
-          className="text-red-500 text-sm mb-4 text-start block w-full ml-4"
+          className="text-red-500 text-sm text-start block w-full"
         >
           {error}
         </p>
