@@ -75,8 +75,16 @@ export async function refreshUser() {
 
 export async function registerUser(body) {
   const response = await callEndpoint(`:${PORT}/auth/register`, "POST", body);
-  handleEndpointError(400, response);
-
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw {
+      status: response.status,
+      error: errorData.error,
+      code: errorData.error?.code
+    };
+  }
+  
   const data = await response.json();
   return data;
 }

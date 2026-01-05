@@ -9,29 +9,36 @@ import ContentStep3 from "@/components/registerUser/ContentStep3";
 import ContentStep4 from "@/components/registerUser/ContentStep4";
 import Button from "@/components/ui/Button";
 
+const steps = [ContentStep1, ContentStep2, ContentStep3, ContentStep4];
+
 export default function ContentStep() {
   // Récupération de l'état du formulaire depuis le store
   const currentStep = useFormStore((state) => state.currentStep);
+  const setCurrentStep = useFormStore((state) => state.setCurrentStep);
   const handleBack = useFormStore((state) => state.prevStep);
   const handleNext = useFormStore((state) => state.nextStep);
-  const canProceedFromStep1 = useFormStore(
-    (state) => state.canProceedFromStep1
-  );
-
   const personalInfo = useFormStore((state) => state.personalInfo);
+  const canProceedFromStep1 = useFormStore((state) => state.canProceedFromStep1);
+
+  const { mainTitle, subTitle, branding } = STEPS[currentStep - 1] || {};
+
   // const uploadedDocs = useFormStore((state) => state.uploadedDocs); TODO: A DECOMMENTER LORSQUE LE STEP 1 SERA BIEN IMPLEMENTE
   // const appointment = useFormStore((state) => state.appointment); TODO: A DECOMMENTER LORS DE L'IMPLEMENTATION DU STEP 4
 
+  // state pour déclencher l'affichage des erreurs
+  const [showErrors, setShowErrors] = useState(false);
+  const [emailError, setEmailError] = useState(null);
+
   // state pour l'envoi du formulaire
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [submitError, setSubmitError] = useState(false); // TODO: A DECOMMENTER LORS DE L'IMPLEMENTATION DE LA GESTION D'ERREUR D'ENVOI (bool)
 
+  // Fonction pour envoyer les données du formulaire à l'API
   async function sendFormData() {
     setIsSubmitting(true);
-    // setSubmitError(null); TODO: A DECOMMENTER LORS DE L'IMPLEMENTATION DE LA GESTION D'ERREUR D'ENVOI
+    setEmailError(null);
 
     try {
-      //TODO Preparer le body
+      //TODO IMPLENETER L'ENVOI DES DOCUMENTS ET DE LA DATE DE RDV AVEC uploadedDocs et appointment
       const formData = {
         first_name: personalInfo.firstName,
         last_name: personalInfo.lastName,
@@ -40,30 +47,21 @@ export default function ContentStep() {
         birth_date: personalInfo.birthDate,
         password: personalInfo.password,
         confirm_password: personalInfo.confirmPassword,
-        roleType: 'JOB_SEEKER',
-        // file: uploadedDocs? TODO: A DECOMMENTER LORSQUE LE STEP 1 SERA BIEN IMPLEMENTE
-        // appointment, TODO: A DECOMMENTER LORS DE L'IMPLEMENTATION DU STEP 4
+        roleType: "JOB_SEEKER",
       };
 
-      console.log("Données du formulaire à envoyer :", formData);
-
-      const response = await registerUser(formData);
-
-      console.log("Réponse de l'inscription :", response);
-
+      await registerUser(formData);
       // TODO rediriger l'utilisateur sur le step orange
     } catch (error) {
-      console.error("Erreur lors de l'inscription:", error);
-      // setSubmitError(true); TODO: A DECOMMENTER LORS DE L'IMPLEMENTATION DE LA GESTION D'ERREUR D'ENVOI
+      if (error.code === "P2002") {
+        setCurrentStep(1);
+        setEmailError("Cet email est déjà utilisé");
+        setShowErrors(true);
+      }
     } finally {
       setIsSubmitting(false);
     }
   }
-
-  // state pour déclencher l'affichage des erreurs
-  const [showErrors, setShowErrors] = useState(false);
-
-  const steps = [ContentStep1, ContentStep2, ContentStep3, ContentStep4];
 
   // Fonction pour gérer la soumission du formulaire
   const handleSubmit = (e) => {
@@ -74,8 +72,6 @@ export default function ContentStep() {
       handleNextStep();
     }
   };
-
-  const { mainTitle, subTitle, branding } = STEPS[currentStep - 1] || {};
 
   // Fonction pour gérer le passage à l'étape suivante
   const handleNextStep = () => {
@@ -123,6 +119,7 @@ export default function ContentStep() {
                     currentStep={currentStep}
                     branding={branding}
                     showErrors={currentStep === 1 ? showErrors : false}
+                    emailError={currentStep === 1 ? emailError : null}
                   />
                 );
               }

@@ -8,7 +8,7 @@ import {
   validateStep1
 } from "@/utils/validations";
 
-export default function ContentStep1({ branding, showErrors }) {
+export default function ContentStep1({ branding, showErrors, emailError }) {
 
   // modifie le FormStore et le met a jour avec les valeurs des champs
   const personalInfo = useFormStore((state) => state.personalInfo);
@@ -28,8 +28,13 @@ export default function ContentStep1({ branding, showErrors }) {
 
   // Calcul des erreurs de validation
   const errors = useMemo(() => {
-    return showErrors ? validateStep1(personalInfo) : {};
-  }, [personalInfo, showErrors]);
+    const validationErrors = showErrors ? validateStep1(personalInfo) : {};
+
+    if (emailError) {
+      validationErrors.email = emailError;
+    }
+    return validationErrors;
+  }, [personalInfo, showErrors, emailError]);
 
   const currentChecks = useMemo(
     () => validatePassword(personalInfo.password || ""),
