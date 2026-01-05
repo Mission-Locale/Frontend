@@ -1,9 +1,9 @@
-import { ring } from "../../styles/tokensTailwind";
+import { ring } from "../../../styles/tokensTailwind";
 
-export default function InputTextLabel({
+export default function InputText({
   label,
   placeholder,
-  ringColor,
+  selectTheme,
   onChange,
   value,
   required,
@@ -14,20 +14,23 @@ export default function InputTextLabel({
   const inputId = label.toLowerCase().replace(/\s+/g, "-");
 
   return (
-    <>
-      <label
-        htmlFor={inputId}
-        className="text-start block w-full mb-2 font-bold text-slate-900"
-      >
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </label>
+    <div className="w-full mb-4">
+
+      {label && (
+        <label
+          htmlFor={inputId}
+          className="text-start block w-full mb-2 font-bold text-slate-900"
+        >
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
 
       <input
         id={inputId}
         type={type}
         className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 
-          ${ring[ringColor]}          
+          ${ring[selectTheme]}          
           ${
             error
               ? "outline-solid outline-red-500 border-none mb-2"
@@ -42,10 +45,13 @@ export default function InputTextLabel({
       />
 
       {error && (
-        <p id={`${inputId}-error`} className="text-red-500 text-sm mb-4 text-start block w-full ml-4">
+        <p
+          id={`${inputId}-error`}
+          className="text-red-500 text-sm mb-4 text-start block w-full ml-4"
+        >
           {error}
         </p>
       )}
-    </>
+    </div>
   );
 }

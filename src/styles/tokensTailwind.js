@@ -1,4 +1,3 @@
-
 // COLOR TOKENS
 
 export const colors = {
@@ -14,7 +13,6 @@ export const colors = {
   gray: "gray-500",
 };
 
-
 // BACKGROUND CLASSES
 
 export const bg = {
@@ -23,12 +21,18 @@ export const bg = {
   brandGreen: "bg-brandGreen",
   brandPink: "bg-brandPink",
   brandPurple: "bg-brandPurple",
+  error: "bg-error",
+
   lightBg: "bg-lightBg",
-
-  success: "bg-success",
-
 };
 
+export const lightBg = {
+  brandBlue: "bg-brandBlue/10",
+  brandOrange: "bg-brandOrange/10",
+  brandGreen: "bg-brandGreen/10",
+  brandPink: "bg-brandPink/10",
+  brandPurple: "bg-brandPurple/10",
+}
 
 // TEXT COLORS
 
@@ -36,6 +40,7 @@ export const textColor = {
   white: "text-white",
   black: "text-slate-900",
   gray: "text-gray-600",
+  success: "text-green-600",
 
   brandBlue: "text-brandBlue",
   brandOrange: "text-brandOrange",
@@ -43,7 +48,6 @@ export const textColor = {
   brandPink: "text-brandPink",
   brandPurple: "text-brandPurple",
 };
-
 
 // BORDER COLORS
 
@@ -55,7 +59,6 @@ export const border = {
   brandOrange: "border-brandOrange",
   light: "border-lightBorder",
 };
-
 
 //HOVER BACKGROUND COLORS
 
@@ -77,7 +80,6 @@ export const ring = {
   brandPurple: "focus:ring-brandPurple",
 };
 
-
 // SIZES
 
 export const sizes = {
@@ -86,11 +88,50 @@ export const sizes = {
   lg: "px-6 py-3 text-lg",
 };
 
-
 // BORDER RADIUS
 
 export const radius = {
   sm: "rounded-md",
   md: "rounded-lg",
   lg: "rounded-3xl",
+};
+
+// SELECT THEMES
+
+export const selectThemes = {
+  brandBlue: {
+    trigger: "border-gray-300 focus:border-brandBlue focus:ring-brandBlue",
+    dropdown: "border-brandBlue",
+    option: "hover:bg-brandBlue/10 focus:bg-brandBlue/20",
+    optionSelected: "bg-brandBlue/20 text-brandBlue font-bold",
+    check: " text-blue-600",
+  },
+  brandOrange: {
+    trigger: "border-gray-300 focus:border-brandOrange focus:ring-brandOrange",
+    dropdown: "border-brandOrange",
+    option: "hover:bg-brandOrange/10 focus:bg-brandOrange/20",
+    optionSelected: "bg-brandOrange/20 text-brandOrange font-bold",
+    check: " text-orange-600",
+  },
+  brandGreen: {
+    trigger: "border-gray-300 focus:border-brandGreen focus:ring-brandGreen",
+    dropdown: "border-brandGreen",
+    option: "hover:bg-brandGreen/10 focus:bg-brandGreen/20",
+    optionSelected: "bg-brandGreen/20 text-brandGreen font-bold",
+    check: " text-green-600",
+  },
+  brandPink: {
+    trigger: "border-gray-300 focus:border-brandPink focus:ring-brandPink",
+    dropdown: "border-brandPink",
+    option: "hover:bg-brandPink/10 focus:bg-brandPink/20",
+    optionSelected: "bg-brandPink/20 text-brandPink font-bold",
+    check: " text-brandPink",
+  },
+  brandPurple: {
+    trigger: "border-gray-300 focus:border-brandPurple focus:ring-brandPurple",
+    dropdown: "border-brandPurple",
+    option: "hover:bg-brandPurple/10 focus:bg-brandPurple/20",
+    optionSelected: "bg-brandPurple/20 text-brandPurple font-bold",
+    check: " text-brandPurple",
+  },
 };
