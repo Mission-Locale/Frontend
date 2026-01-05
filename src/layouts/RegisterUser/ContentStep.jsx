@@ -65,6 +65,16 @@ export default function ContentStep() {
 
   const steps = [ContentStep1, ContentStep2, ContentStep3, ContentStep4];
 
+  // Fonction pour gérer la soumission du formulaire
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (currentStep === 4) {
+      sendFormData();
+    } else {
+      handleNextStep();
+    }
+  };
+
   const { mainTitle, subTitle, branding } = STEPS[currentStep - 1] || {};
 
   // Fonction pour gérer le passage à l'étape suivante
@@ -103,59 +113,63 @@ export default function ContentStep() {
           )}
         </div>
 
-        <div className="flex-1 flex flex-col mx-auto">
-          {steps.map((StepComponent, index) => {
-            if (index + 1 === currentStep) {
-              return (
-                <StepComponent
-                  key={index}
-                  currentStep={currentStep}
-                  branding={branding}
-                  showErrors={currentStep === 1 ? showErrors : false}
-                />
-              );
-            }
-          })}
-        </div>
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col mx-auto">
+            {steps.map((StepComponent, index) => {
+              if (index + 1 === currentStep) {
+                return (
+                  <StepComponent
+                    key={index}
+                    currentStep={currentStep}
+                    branding={branding}
+                    showErrors={currentStep === 1 ? showErrors : false}
+                  />
+                );
+              }
+            })}
+          </div>
 
-        <div className="flex justify-between px-7">
-          <Button
-            text={`${currentStep === 1 ? "Annuler" : "Retour"}`}
-            color={branding}
-            size="md"
-            variant="outline"
-            radiusSize="sm"
-            width="full"
-            onClick={() => handleBack()}
-            disabled={isSubmitting}
-          />
-
-          <div className="flex gap-4">
-            {currentStep === 3 && (
-              <Button
-                text="Passer cette étape"
-                color={branding}
-                size="md"
-                variant="ghost"
-                radiusSize="sm"
-                width="full"
-                onClick={() => handleNext()}
-                disabled={isSubmitting}
-              />
-            )}
-
+          <div className="flex justify-between px-7">
             <Button
-              text={`${currentStep === 4 ? "Terminer inscription" : "Suivant"}`}
+              text={`${currentStep === 1 ? "Annuler" : "Retour"}`}
               color={branding}
               size="md"
-              variant="full"
+              variant="outline"
               radiusSize="sm"
               width="full"
-              onClick={currentStep === 4 ? sendFormData : handleNextStep}
+              onClick={() => handleBack()}
               disabled={isSubmitting}
             />
+
+            <div className="flex gap-4">
+              {currentStep === 3 && (
+                <Button
+                  text="Passer cette étape"
+                  color={branding}
+                  size="md"
+                  variant="ghost"
+                  radiusSize="sm"
+                  width="full"
+                  onClick={() => handleNext()}
+                  disabled={isSubmitting}
+                />
+              )}
+
+              <Button
+                text={`${
+                  currentStep === 4 ? "Terminer inscription" : "Suivant"
+                }`}
+                color={branding}
+                size="md"
+                variant="full"
+                radiusSize="sm"
+                width="full"
+                type="submit"
+                disabled={isSubmitting}
+              />
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

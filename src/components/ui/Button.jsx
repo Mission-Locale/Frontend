@@ -8,7 +8,8 @@ export default function Button({
   radiusSize,
   width,
   onClick,
-  disabled = false
+  disabled = false,
+  type = "button"
 }) {
 
     const variants = {
@@ -19,6 +20,7 @@ export default function Button({
 
   return (
     <button
+      type={type}
       className={`${variants[variant]} ${sizes[size]} ${radius[radiusSize]} font-bold ${
         disabled 
           ? 'opacity-50 cursor-not-allowed' 
