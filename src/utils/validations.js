@@ -1,4 +1,3 @@
-
 // Valide que le champ contient uniquement des lettres, espaces, tirets et apostrophes
 export function validateTextOnly(value) {
   if (!value || value.trim() === "") return false;
@@ -32,7 +31,7 @@ export function validatePassword(password) {
     length: password.length >= 8,
     uppercase: /[A-Z]/.test(password),
     number: /[0-9]/.test(password),
-    symbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    symbol: /[!@#$%^&*(),.?":{}|<>+]/.test(password),
   };
 }
 
@@ -51,50 +50,51 @@ export function isPasswordValid(password) {
 export function validateStep1(personalInfo) {
   const errors = {};
 
-  // Validation du nom
+  // nom et prenom
   if (!validateRequired(personalInfo.lastName)) {
     errors.lastName = "Le nom est requis";
   } else if (!validateTextOnly(personalInfo.lastName)) {
     errors.lastName = "Cela ne doit contenir que des lettres";
   }
 
-  // Validation du prénom
   if (!validateRequired(personalInfo.firstName)) {
     errors.firstName = "Le prénom est requis";
   } else if (!validateTextOnly(personalInfo.firstName)) {
     errors.firstName = "Cela ne doit contenir que des lettres";
   }
 
-  // Validation de l'email
+  // email
   if (!validateRequired(personalInfo.email)) {
     errors.email = "L'email est requis";
   } else if (!validateEmail(personalInfo.email)) {
     errors.email = "Format d'email invalide";
   }
 
-  // Validation de la date de naissance
+  // date de naissance
   if (!validateRequired(personalInfo.birthDate)) {
     errors.birthDate = "La date de naissance est requise";
   }
 
-  // Validation du téléphone
+  // téléphone
   if (!validateRequired(personalInfo.phone)) {
     errors.phone = "Le téléphone est requis";
   } else if (!validatePhone(personalInfo.phone)) {
     errors.phone = "Le numéro doit contenir 10 chiffres";
   }
 
-  // Validation du mot de passe
+  // mot de passe
   if (!validateRequired(personalInfo.password)) {
     errors.password = "Le mot de passe est requis";
   } else if (!isPasswordValid(personalInfo.password)) {
     errors.password = "Le mot de passe ne respecte pas les critères requis";
   }
 
-  // Validation de la confirmation du mot de passe
+  // confirmation du mot de passe
   if (!validateRequired(personalInfo.confirmPassword)) {
     errors.confirmPassword = "La confirmation est requise";
-  } else if (!validatePasswordMatch(personalInfo.password, personalInfo.confirmPassword)) {
+  } else if (
+    !validatePasswordMatch(personalInfo.password, personalInfo.confirmPassword)
+  ) {
     errors.confirmPassword = "Les mots de passe ne correspondent pas";
   }
 

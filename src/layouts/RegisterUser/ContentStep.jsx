@@ -22,7 +22,7 @@ export default function ContentStep() {
 
   const { mainTitle, subTitle, branding } = STEPS[currentStep - 1] || {};
 
-  // const uploadedDocs = useFormStore((state) => state.uploadedDocs); TODO: A DECOMMENTER LORSQUE LE STEP 1 SERA BIEN IMPLEMENTE
+  // const uploadedDocs = useFormStore((state) => state.uploadedDocs); TODO: A DECOMMENTER LORS DE L'IMPLEMENTATION DU STEP 3 POUR L'API
   // const appointment = useFormStore((state) => state.appointment); TODO: A DECOMMENTER LORS DE L'IMPLEMENTATION DU STEP 4
 
   // state pour déclencher l'affichage des erreurs
@@ -96,7 +96,7 @@ export default function ContentStep() {
 
         <div
           className={`${
-            showErrors && currentStep === 1 ? "mb-6" : "mb-10"
+            showErrors && currentStep === 1 ? "mb-4" : "mb-10"
           } text-center`}
         >
           {mainTitle && (
