@@ -1,11 +1,11 @@
-import RegisterUser from "./layouts/registerUser/RegisterUser.jsx";
-import Footer from "./components/Footer.jsx";
+import Router from "./router/Router.jsx";
 
 function App() {
-  return <>
-  <RegisterUser />
-  <Footer/>
-  </>;
+  return (
+    <>
+      <Router />
+    </>
+  );
 }
 
 export default App;

@@ -1,5 +1,5 @@
 import { useFormStore } from "@/stores/useFormStore";
-import { STEPS } from "@/utils/userForm";
+import { STEPS } from "@/utils/userRegister";
 import { useState } from "react";
 import { registerUser } from "@/utils/api";
 import logo from "/assets/img/Logo_Mission_Locale.webp";
@@ -7,9 +7,16 @@ import ContentStep1 from "@/components/registerUser/ContentStep1";
 import ContentStep2 from "@/components/registerUser/ContentStep2";
 import ContentStep3 from "@/components/registerUser/ContentStep3";
 import ContentStep4 from "@/components/registerUser/ContentStep4";
+import ContentStep5 from "@/components/registerUser/ContentStep5";
 import Button from "@/components/ui/Button";
 
-const steps = [ContentStep1, ContentStep2, ContentStep3, ContentStep4];
+const steps = [
+  ContentStep1,
+  ContentStep2,
+  ContentStep3,
+  ContentStep4,
+  ContentStep5,
+];
 
 export default function ContentStep() {
   // Récupération de l'état du formulaire depuis le store
@@ -18,7 +25,9 @@ export default function ContentStep() {
   const handleBack = useFormStore((state) => state.prevStep);
   const handleNext = useFormStore((state) => state.nextStep);
   const personalInfo = useFormStore((state) => state.personalInfo);
-  const canProceedFromStep1 = useFormStore((state) => state.canProceedFromStep1);
+  const canProceedFromStep1 = useFormStore(
+    (state) => state.canProceedFromStep1
+  );
 
   const { mainTitle, subTitle, branding } = STEPS[currentStep - 1] || {};
 
@@ -49,9 +58,8 @@ export default function ContentStep() {
         confirm_password: personalInfo.confirmPassword,
         roleType: "JOB_SEEKER",
       };
-
       await registerUser(formData);
-      // TODO rediriger l'utilisateur sur le step orange
+      handleNext();
     } catch (error) {
       if (error.code === "P2002") {
         setCurrentStep(1);
@@ -88,8 +96,9 @@ export default function ContentStep() {
   };
 
   return (
-    <div className="flex-1 py-4 px-8">
-      <div className="h-full flex flex-col justify-between">
+    <div className={`flex-1 py-4 px-8 flex flex-col overflow-auto ${currentStep === 5 ? 'bg-brandOrange' : ''}`}>
+    {currentStep !== 5 && (
+      <div>
         <div className="w-46">
           <img src={logo} alt="logo mission locale" />
         </div>
@@ -97,8 +106,8 @@ export default function ContentStep() {
         <div
           className={`${
             showErrors && currentStep === 1 ? "mb-4" : "mb-10"
-          } text-center`}
-        >
+            } text-center`}
+            >
           {mainTitle && (
             <h2 className="text-3xl font-medium mb-2">{mainTitle}</h2>
           )}
@@ -108,6 +117,8 @@ export default function ContentStep() {
             </p>
           )}
         </div>
+      </div>
+      )}
 
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
           <div className="flex-1 flex flex-col mx-auto">
@@ -126,48 +137,49 @@ export default function ContentStep() {
             })}
           </div>
 
-          <div className="flex justify-between px-7">
-            <Button
-              text={`${currentStep === 1 ? "Annuler" : "Retour"}`}
-              color={branding}
-              size="md"
-              variant="outline"
-              radiusSize="sm"
-              width="full"
-              onClick={() => handleBack()}
-              disabled={isSubmitting}
-            />
-
-            <div className="flex gap-4">
-              {currentStep === 3 && (
-                <Button
-                  text="Passer cette étape"
-                  color={branding}
-                  size="md"
-                  variant="ghost"
-                  radiusSize="sm"
-                  width="full"
-                  onClick={() => handleNext()}
-                  disabled={isSubmitting}
-                />
-              )}
-
+          {currentStep !== 5 && (
+            <div className="flex justify-between px-7">
               <Button
-                text={`${
-                  currentStep === 4 ? "Terminer inscription" : "Suivant"
-                }`}
+                text={`${currentStep === 1 ? "Annuler" : "Retour"}`}
                 color={branding}
                 size="md"
-                variant="full"
+                variant="outline"
                 radiusSize="sm"
                 width="full"
-                type="submit"
+                onClick={() => handleBack()}
                 disabled={isSubmitting}
               />
+
+              <div className="flex gap-4">
+                {currentStep === 3 && (
+                  <Button
+                    text="Passer cette étape"
+                    color={branding}
+                    size="md"
+                    variant="ghost"
+                    radiusSize="sm"
+                    width="full"
+                    onClick={() => handleNext()}
+                    disabled={isSubmitting}
+                  />
+                )}
+
+                <Button
+                  text={`${
+                    currentStep === 4 ? "Terminer inscription" : "Suivant"
+                  }`}
+                  color={branding}
+                  size="md"
+                  variant="full"
+                  radiusSize="sm"
+                  width="full"
+                  type="submit"
+                  disabled={isSubmitting}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </form>
       </div>
-    </div>
   );
 }

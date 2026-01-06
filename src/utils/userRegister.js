@@ -1,10 +1,19 @@
-import { User, IdCard, Bookmark, Car, House, FilePenLine, Ellipsis } from "lucide-react";
+import {
+  User,
+  IdCard,
+  Bookmark,
+  Car,
+  House,
+  FilePenLine,
+  Ellipsis,
+} from "lucide-react";
 
 export const STEPS = [
   {
     id: 1,
     label: "Informations personnelles",
-    description: "Renseignez vos informations personnelles pour votre inscription.",
+    description:
+      "Renseignez vos informations personnelles pour votre inscription.",
     mainTitle: "Vos informations personnelles",
     subTitle: "Entrez vos informations dans les champs requis",
     branding: "brandPurple",

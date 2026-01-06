@@ -1,12 +1,20 @@
 import SideBar from "@/components/registerUser/SideBar";
 import ContentStep from "./ContentStep";
+import { useFormStore } from "@/stores/useFormStore";
+
 
 export default function RegisterUser() {
+  const currentStep = useFormStore((state) => state.currentStep);
+  const setCurrentStep = useFormStore((state) => state.setCurrentStep);
+
+  setCurrentStep(5);
 
   return (
-    <div className="max-h-screen bg-gray-50 flex">
-      <SideBar />
-      <ContentStep />
+    <div className="h-dvh flex flex-col bg-gray-50">
+      <div className="flex flex-1 overflow-hidden">
+        {currentStep !== 5 && <SideBar />}
+        <ContentStep />
+      </div>
     </div>
   );
 }

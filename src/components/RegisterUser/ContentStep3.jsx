@@ -1,11 +1,11 @@
 import FileInputCard from "../ui/form/InputFileCard";
-import { STEPS } from "@/utils/userForm";
+import { STEPS } from "@/utils/userRegister";
 import { textColor } from "@/styles/tokensTailwind";
 import { useState, useEffect } from "react";
 import { X, RotateCw } from "lucide-react";
 import { useFormStore } from "@/stores/useFormStore";
 
-export default function ContentStep3(currentStep) {
+export default function ContentStep3( currentStep ) {
   const { inputs } = STEPS[currentStep.currentStep - 1] || {};
   const { addDocument, removeDocument } = useFormStore();
 
@@ -51,7 +51,7 @@ export default function ContentStep3(currentStep) {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-3 items-center justify-center">
+    <div className="grid grid-cols-2 gap-4 items-center justify-center">
       {inputs.map((input, index) => {
         const isFirstOfGroup =
           index === 0 || inputs[index - 1].group !== input.group;

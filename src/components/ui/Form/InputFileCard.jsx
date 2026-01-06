@@ -50,6 +50,7 @@ export default function FileInputCard({
       // Vérifier le type de fichier
       if (selectedFile.type !== "application/pdf") {
         setError(`Format invalide. Seul le PDF est accepté`);
+        onFileChange(null)
         fileInputRef.current.value = null;
         return;
       }
@@ -57,6 +58,7 @@ export default function FileInputCard({
       // Vérifier la taille du fichier
       if (selectedFile.size > MAX_FILE_SIZE) {
         setError(`Fichier trop volumineux`);
+        onFileChange(null)
         fileInputRef.current.value = null;
         return;
       }

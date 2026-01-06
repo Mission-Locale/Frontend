@@ -8,7 +8,7 @@ export const useFormStore = create((set, get) => ({
   currentStep: 1,
   setCurrentStep: (step) => set({ currentStep: step }),
   nextStep: () =>
-    set((state) => ({ currentStep: Math.min(4, state.currentStep + 1) })),
+    set((state) => ({ currentStep: Math.min(5, state.currentStep + 1) })),
   prevStep: () =>
     set((state) => ({ currentStep: Math.max(1, state.currentStep - 1) })),
 
