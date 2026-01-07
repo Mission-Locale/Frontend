@@ -9,6 +9,7 @@ import ContentStep3 from "@/components/registerUser/ContentStep3";
 import ContentStep4 from "@/components/registerUser/ContentStep4";
 import ContentStep5 from "@/components/registerUser/ContentStep5";
 import Button from "@/components/ui/Button";
+import useMobileToggle from "@/hooks/useMobileToggle";
 
 const steps = [
   ContentStep1,
@@ -30,6 +31,8 @@ export default function ContentStep() {
   );
 
   const { mainTitle, subTitle, branding } = STEPS[currentStep - 1] || {};
+
+  const isMobile = useMobileToggle();
 
   // const uploadedDocs = useFormStore((state) => state.uploadedDocs); TODO: A DECOMMENTER LORS DE L'IMPLEMENTATION DU STEP 3 POUR L'API
   // const appointment = useFormStore((state) => state.appointment); TODO: A DECOMMENTER LORS DE L'IMPLEMENTATION DU STEP 4
@@ -96,90 +99,96 @@ export default function ContentStep() {
   };
 
   return (
-    <div className={`flex-1 py-4 px-8 flex flex-col ${currentStep === 5 ? 'bg-brandOrange' : ''}`}>
-    {currentStep !== 5 && (
-      <>
-        <div className="w-46 mb-4">
-          <img src={logo} alt="logo mission locale" />
-        </div>
-
-        <div
-          className={`${
-            showErrors && currentStep === 1 ? "mb-4" : "mb-10"
-            } text-center`}
-            >
-          {mainTitle && (
-            <h2 className="text-3xl font-medium mb-2">{mainTitle}</h2>
-          )}
-          {subTitle && (
-            <p className="text-xl font-light text-gray-600 mx-auto whitespace-pre-line">
-              {subTitle}
-            </p>
-          )}
-        </div>
-      </>
-      )}
-
-        <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-          <div className="flex-1 xl:flex xl:flex-col mx-auto">
-            {steps.map((StepComponent, index) => {
-              if (index + 1 === currentStep) {
-                return (
-                  <StepComponent
-                    key={index}
-                    currentStep={currentStep}
-                    branding={branding}
-                    showErrors={currentStep === 1 ? showErrors : false}
-                    emailError={currentStep === 1 ? emailError : null}
-                  />
-                );
-              }
-            })}
-          </div>
-
-          {currentStep !== 5 && (
-            <div className="flex justify-between px-7">
-              <Button
-                text={`${currentStep === 1 ? "Annuler" : "Retour"}`}
-                color={branding}
-                size="md"
-                variant="outline"
-                radiusSize="sm"
-                width="full"
-                onClick={() => handleBack()}
-                disabled={isSubmitting}
-              />
-
-              <div className="flex gap-4">
-                {currentStep === 3 && (
-                  <Button
-                    text="Passer cette étape"
-                    color={branding}
-                    size="md"
-                    variant="ghost"
-                    radiusSize="sm"
-                    width="full"
-                    onClick={() => handleNext()}
-                    disabled={isSubmitting}
-                  />
-                )}
-
-                <Button
-                  text={`${
-                    currentStep === 4 ? "Terminer inscription" : "Suivant"
-                  }`}
-                  color={branding}
-                  size="md"
-                  variant="full"
-                  radiusSize="sm"
-                  width="full"
-                  type="submit"
-                  disabled={isSubmitting}
-                />
-              </div>
+    <div
+      className={`flex-1 py-4 px-8 flex flex-col ${
+        currentStep === 5 ? "bg-brandOrange min-h-[90dvh]" : "min-h-[80dvh]"
+      }`}
+    >
+      {currentStep !== 5 && (
+        <>
+          {!isMobile && (
+            <div className="w-46 mb-4">
+              <img src={logo} alt="logo mission locale" />
             </div>
           )}
-        </form>
-      </div>
+
+          <div
+            className={`${
+              showErrors && currentStep === 1 ? "mb-4" : "mb-6"
+            } text-center`}
+          >
+            {mainTitle && (
+              <h2 className="text-2xl sm:text-3xl font-medium mb-2">{mainTitle}</h2>
+            )}
+            {subTitle && (
+              <p className="text-xl font-light text-gray-600 mx-auto whitespace-pre-line">
+                {subTitle}
+              </p>
+            )}
+          </div>
+        </>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-4">
+        <div className="flex-1 xl:flex xl:flex-col mx-auto">
+          {steps.map((StepComponent, index) => {
+            if (index + 1 === currentStep) {
+              return (
+                <StepComponent
+                  key={index}
+                  currentStep={currentStep}
+                  branding={branding}
+                  showErrors={currentStep === 1 ? showErrors : false}
+                  emailError={currentStep === 1 ? emailError : null}
+                />
+              );
+            }
+          })}
+        </div>
+
+        {currentStep !== 5 && (
+          <div className="flex flex-col-reverse gap-3 w-2/3 mx-auto sm:w-full sm:flex-row justify-between px-7">
+            <Button
+              text={`${currentStep === 1 ? "Annuler" : "Retour"}`}
+              color={branding}
+              size="md"
+              variant="outline"
+              radiusSize="sm"
+              width="full"
+              onClick={() => handleBack()}
+              disabled={isSubmitting}
+            />
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              {currentStep === 3 && (
+                <Button
+                  text="Passer cette étape"
+                  color={branding}
+                  size="md"
+                  variant="ghost"
+                  radiusSize="sm"
+                  width="full"
+                  onClick={() => handleNext()}
+                  disabled={isSubmitting}
+                />
+              )}
+
+              <Button
+                text={`${
+                  currentStep === 4 ? "Terminer l'inscription" : "Suivant"
+                }`}
+                color={branding}
+                size="md"
+                variant="full"
+                radiusSize="sm"
+                width="full"
+                type="submit"
+                disabled={isSubmitting}
+              />
+            </div>
+          </div>
+        )}
+      </form>
+    </div>
   );
 }

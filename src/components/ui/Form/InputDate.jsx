@@ -69,7 +69,7 @@ export default function InputDate({
             ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
           `}
         >
-          <span className={value ? "text-gray-900" : "text-gray-500"}>
+          <span className={value ? "text-gray-900 text-sm sm:text-base" : "text-gray-500 text-sm sm:text-base"}>
             {value ? formatDate(value) : placeholder}
           </span>
           <CalendarDays className="w-5 h-5 text-gray-400 ml-2 shrink-0" />

@@ -51,7 +51,7 @@ export default function ContentStep3( currentStep ) {
   };
 
   return (
-    <div className="grid xl:grid-cols-2 gap-4 items-center justify-center">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 items-center justify-center">
       {inputs.map((input, index) => {
         const isFirstOfGroup =
           index === 0 || inputs[index - 1].group !== input.group;
@@ -97,7 +97,7 @@ export default function ContentStep3( currentStep ) {
       {files.other && files.other.length > 0 && (
         <div className="flex flex-col gap-2">
           <h4 className="hidden xl:block xl:invisible text-lg">''</h4>
-          <div className="border-lightBorder bg-zinc-50 border flex flex-col items-center p-4 gap-4 rounded-lg w-100 h-[101.33px] overflow-y-auto">
+          <div className="border-lightBorder bg-zinc-50 border flex flex-col items-center p-4 gap-4 rounded-lg sm:w-100 h-[101.33px] overflow-y-auto">
             {files.other.map((item) => (
               <div
                 key={item.id}

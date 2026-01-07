@@ -5,8 +5,8 @@ export default function PasswordRequirements({ checks }) {
     <div className="relative inline-block">
       <div className="absolute top-51 -left-2 w-4 h-4 bg-white border-l border-t border-gray-100 -rotate-45 shadow-[-2px_-2px_5px_rgba(0,0,0,0.05)]"></div>
 
-      <div className="bg-white rounded-md shadow-xl p-8 border border-gray-100 w-75 flex flex-col gap-5">
-        <h3 className="text-lg font-bold text-gray-900 mb-2">
+      <div className="bg-white rounded-md shadow-xl px-6 lg:px-8 py-4 border border-gray-100 flex flex-col gap-4">
+        <h3 className="text-base font-bold text-gray-900">
           Votre mot de passe doit<br />contenir au minimum :
         </h3>
         

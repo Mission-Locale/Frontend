@@ -42,7 +42,7 @@ export default function ContentStep1({ branding, showErrors, emailError }) {
   )
 
   return (
-    <div className="h-full flex flex-col min-w-[550px] mx-auto">
+    <div className="h-full flex flex-col w-full sm:min-w-[550px] mx-auto">
       <h3 className="w-full mb-2 font-bold text-slate-900">Nom complet</h3>
       <div className="flex gap-4">
         <InputText
@@ -71,7 +71,7 @@ export default function ContentStep1({ branding, showErrors, emailError }) {
         onChange={handleFieldChange("email")}
         error={errors.email}
       />
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row sm:gap-4">
         <InputDate
           label="Date de naissance"
           selectTheme={branding}
@@ -104,7 +104,7 @@ export default function ContentStep1({ branding, showErrors, emailError }) {
           onBlur={() => setShowRules(false)}
           error={errors.password}
         />
-        <div className="absolute left-59 -top-40 ml-5 z-50 whitespace-nowrap">
+        <div className="absolute left-32 sm:left-70 -top-40 ml-5 z-50 whitespace-nowrap">
           {showRules && <PasswordRequirements checks={currentChecks} />}
         </div>
       </div>

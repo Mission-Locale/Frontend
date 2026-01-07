@@ -82,7 +82,7 @@ export default function FileInputCard({
           : error
           ? " bg-bgError border-error border-2"
           : " border-lightBorder bg-zinc-50 border"
-      } flex items-center p-4 gap-4 rounded-lg w-100`}
+      } flex items-center p-4 gap-4 rounded-lg sm:w-100`}
     >
       <div
         className={`size-10 flex items-center justify-center rounded-md ${

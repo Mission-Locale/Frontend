@@ -31,7 +31,7 @@ export default function InputText({
       <input
         id={inputId}
         type={type}
-        className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 
+        className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 placeholder:text-sm sm:placeholder:text-base
           ${ring[selectTheme]}          
           ${
             error
