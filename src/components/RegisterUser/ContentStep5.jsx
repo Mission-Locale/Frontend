@@ -10,7 +10,7 @@ export default function ContentStep5() {
         Félicitations votre inscription <br />
         est désormais terminée.
       </h3>
-      <div className="flex flex-col bg-gray-50 rounded-lg p-6 mt-8 w-150">
+      <div className="flex flex-col bg-gray-50 rounded-lg px-6 py-4 mt-8 w-150">
         <h4 className="font-semibold text-lg">Votre rendez-vous</h4>
         <div className="flex mt-4 gap-2 justify-between">
             <span className="flex items-center font-medium text-base text-gray-500 gap-2">

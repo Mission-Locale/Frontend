@@ -6,7 +6,7 @@ import { Download } from "lucide-react";
 export default function ContentStep2({ branding }) {
 
   return (
-    <div className="rounded-lg h-full flex flex-col items-center gap-6 mx-auto w-[60%]">
+    <div className="rounded-lg h-full flex flex-col items-center gap-6 mx-auto xl:w-[60%]">
       <h3 className="text-center font-bold">Commencez par télécharger le dossier d'inscription, completez-le puis renvoyez-le depuis votre espace personnel avant votre rendez-vous.</h3>
       <DownloadRegisterFile
         id="registerFile"

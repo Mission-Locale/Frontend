@@ -104,7 +104,7 @@ export default function ContentStep1({ branding, showErrors, emailError }) {
           onBlur={() => setShowRules(false)}
           error={errors.password}
         />
-        <div className="absolute left-full -top-40 ml-5 z-50 whitespace-nowrap">
+        <div className="absolute left-59 -top-40 ml-5 z-50 whitespace-nowrap">
           {showRules && <PasswordRequirements checks={currentChecks} />}
         </div>
       </div>

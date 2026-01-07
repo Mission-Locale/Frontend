@@ -16,7 +16,7 @@ export default function InputText({
   const inputId = label ? label.toLowerCase().replace(/\s+/g, "-") : undefined;
 
   return (
-    <div className="w-full mb-4">
+    <div className="w-full mb-3">
 
       {label && (
         <label

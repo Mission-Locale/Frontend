@@ -9,7 +9,7 @@ export default function SideBar() {
   const branding = STEPS[currentStep - 1]?.branding
 
   return (
-    <div className={`w-90 text-white p-8 ${bg[branding]} h-screen`}>
+    <div className={`w-90 text-white p-8 ${bg[branding]} xl:h-screen`}>
       <div className="mb-12">
         <h2 className="text-2xl font-bold mb-4">Étape {currentStep}</h2>
         <p className="text-white text-md h-20">

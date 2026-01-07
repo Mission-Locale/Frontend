@@ -96,10 +96,10 @@ export default function ContentStep() {
   };
 
   return (
-    <div className={`flex-1 py-4 px-8 flex flex-col overflow-auto ${currentStep === 5 ? 'bg-brandOrange' : ''}`}>
+    <div className={`flex-1 py-4 px-8 flex flex-col ${currentStep === 5 ? 'bg-brandOrange' : ''}`}>
     {currentStep !== 5 && (
-      <div>
-        <div className="w-46">
+      <>
+        <div className="w-46 mb-4">
           <img src={logo} alt="logo mission locale" />
         </div>
 
@@ -117,11 +117,11 @@ export default function ContentStep() {
             </p>
           )}
         </div>
-      </div>
+      </>
       )}
 
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-          <div className="flex-1 flex flex-col mx-auto">
+          <div className="flex-1 xl:flex xl:flex-col mx-auto">
             {steps.map((StepComponent, index) => {
               if (index + 1 === currentStep) {
                 return (
