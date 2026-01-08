@@ -16,8 +16,8 @@ export default function RegisterUser() {
   }, [currentStep]);
 
   return (
-    <div className="min-h-dvh xl:h-dvh flex flex-col bg-gray-50">
-      <div className={`${isMobile ? "" : "flex flex-1 overflow-hidden"}`}>
+    <div className="min-h-dvh flex flex-col bg-gray-50">
+      <div className={`${isMobile ? "" : "flex flex-1"}`}>
         {isMobile && (
           <div className="w-46 p-4 flex justify-center items-center mb-4 mx-auto">
             <img src={logo} alt="logo mission locale" />
