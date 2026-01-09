@@ -14,11 +14,11 @@ export default function ContentStep3(currentStep) {
     }
   };
 
-  const handleOtherFileDelete = (fileId) => {
-    // supprime du store aussi
+  function handleOtherFileDelete(fileId) {
     removeOtherDocument(fileId);
-  };
+  }
 
+  const otherDocuments = getUploadedDocs().other;
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 items-center justify-center">
       {inputs.map((input, index) => {
@@ -51,7 +51,7 @@ export default function ContentStep3(currentStep) {
               file={getUploadedDocs()[input.id]}
               onFileChange={(file) => {
                 if (input.id === "other") {
-                  handleOtherFileChange(`other_${Date.now()}`,file);
+                  handleOtherFileChange(`other_${Date.now()}`, file);
                 } else {
                   // remove dans store si null
                   if (file === null && getUploadedDocs()[input.id]) {
@@ -66,11 +66,11 @@ export default function ContentStep3(currentStep) {
           </div>
         );
       })}
-      {getUploadedDocs().other && Object.keys(getUploadedDocs().other).length > 0 && (
+      {otherDocuments && Object.keys(otherDocuments).length > 0 && (
         <div className="flex flex-col gap-2">
           <h4 className="hidden xl:block xl:invisible text-lg">''</h4>
           <div className="border-lightBorder bg-zinc-50 border flex flex-col items-center p-4 gap-4 rounded-lg sm:w-100 h-[101.33px] overflow-y-auto">
-            {Object.entries(getUploadedDocs().other).map(([key, value]) => (
+            {Object.entries(otherDocuments).map(([key, value]) => (
               <div
                 key={key}
                 className="flex items-center justify-between gap-4 w-full"

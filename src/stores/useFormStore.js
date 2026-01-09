@@ -64,15 +64,17 @@ export const useFormStore = create((set, get) => ({
     set((state) => ({
       uploadedDocs: {
         ...state.uploadedDocs,
-        other: {...state.uploadedDocs.other,
-        [docId]: {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          file: file,
-          uploadedAt: new Date().toISOString(),
+        other: {
+          ...state.uploadedDocs.other,
+          [docId]: {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file,
+            uploadedAt: new Date().toISOString(),
+          },
         },
-      }},
+      },
     }));
 
     return true;
