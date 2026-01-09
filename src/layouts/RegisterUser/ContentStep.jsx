@@ -98,6 +98,8 @@ export default function ContentStep() {
     }
   };
 
+  const StepComponent = steps[currentStep - 1];
+
   return (
     <div
       className={`flex-1 py-4 px-8 flex flex-col ${
@@ -118,7 +120,9 @@ export default function ContentStep() {
             } text-center`}
           >
             {mainTitle && (
-              <h2 className="text-2xl sm:text-3xl font-medium mb-2">{mainTitle}</h2>
+              <h2 className="text-2xl sm:text-3xl font-medium mb-2">
+                {mainTitle}
+              </h2>
             )}
             {subTitle && (
               <p className="text-xl font-light text-gray-600 mx-auto whitespace-pre-line">
@@ -131,19 +135,13 @@ export default function ContentStep() {
 
       <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-4">
         <div className="flex-1 xl:flex xl:flex-col mx-auto">
-          {steps.map((StepComponent, index) => {
-            if (index + 1 === currentStep) {
-              return (
-                <StepComponent
-                  key={index}
-                  currentStep={currentStep}
-                  branding={branding}
-                  showErrors={currentStep === 1 ? showErrors : false}
-                  emailError={currentStep === 1 ? emailError : null}
-                />
-              );
-            }
-          })}
+          <StepComponent
+            key={currentStep - 1}
+            currentStep={currentStep}
+            branding={branding}
+            showErrors={currentStep === 1 ? showErrors : false}
+            emailError={currentStep === 1 ? emailError : null}
+          />
         </div>
 
         {currentStep !== 5 && (
