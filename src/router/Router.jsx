@@ -9,12 +9,11 @@ export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
-          {/* Route d'inscription */}
-          <Route path="/register" element={<RegisterUser />} />
+        {/* Route d'inscription */}
+        <Route path="/register" element={<RegisterUser />} />
         <Route element={<DefaultLayout />}>
-          
           {/* Vitrine */}
-          {/* <Route path="/" index element={<HomePage />} /> */}
+          {/* TODO: <Route path="/" index element={<HomePage />} /> */}
           <Route element={<PrivateRoutes />}>
             <Route element={<DashboardRoutes role={USER} redirect="/" />}>
               {/* Routes des Demandeurs d'emploi */}
