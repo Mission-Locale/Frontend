@@ -18,6 +18,7 @@ export default function ContentStep5() {
                 Date & Heure
             </span>
             <p className="text-sm sm:text-base">Le 25 juin 2026 à 10h00</p>
+        {/* TODO:À remplacer par la donnée dynamique */}
         </div>
         <div className="flex mt-4 gap-2 justify-between">
             <span className="flex items-center font-medium text-sm sm:text-base text-gray-500 gap-2">
@@ -25,6 +26,7 @@ export default function ContentStep5() {
                 Conseiller
             </span>
             <p className="text-sm sm:text-base">Jean Dupont</p>
+        {/* TODO:À remplacer par la donnée dynamique */}
         </div>
       </div>
         <a href="/login" className="mt-10 w-full sm:w-1/2 bg-gray-50 text-center py-3 rounded-md font-semibold text-black hover:bg-yellow-600 hover:text-white transition-colors">

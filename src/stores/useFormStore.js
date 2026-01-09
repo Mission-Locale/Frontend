@@ -3,7 +3,6 @@ import { isStep1Valid } from "@/utils/validations";
 
 // Store Zustand pour gérer l'état global du formulaire
 export const useFormStore = create((set, get) => ({
-  
   // État des étapes
   currentStep: 1,
   setCurrentStep: (step) => set({ currentStep: step }),
@@ -24,16 +23,27 @@ export const useFormStore = create((set, get) => ({
   },
   updatePersonalInfo: (data) =>
     set((state) => ({
-      personalInfo: { 
-        ...state.personalInfo, 
+      personalInfo: {
+        ...state.personalInfo,
         ...data,
-        ...(data.firstName !== undefined && { firstName: (data.firstName).toLowerCase() }),
-        ...(data.lastName !== undefined && { lastName: (data.lastName).toLowerCase() }),
+        ...(data.firstName !== undefined && {
+          firstName: data.firstName.toLowerCase(),
+        }),
+        ...(data.lastName !== undefined && {
+          lastName: data.lastName.toLowerCase(),
+        }),
       },
     })),
 
   // État des documents uploadés (étape 3)
-  uploadedDocs: {},
+  uploadedDocs: {
+    idCard: null,
+    passeport: null,
+    transport: null,
+    domicile: null,
+    other: {},
+  },
+  getUploadedDocs: () => get().uploadedDocs,
   addDocument: (docId, file) => {
     set((state) => ({
       uploadedDocs: {
@@ -50,11 +60,33 @@ export const useFormStore = create((set, get) => ({
 
     return true;
   },
+  addOtherDocument: (docId, file) => {
+    set((state) => ({
+      uploadedDocs: {
+        ...state.uploadedDocs,
+        other: {...state.uploadedDocs.other,
+        [docId]: {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          file: file,
+          uploadedAt: new Date().toISOString(),
+        },
+      }},
+    }));
+
+    return true;
+  },
 
   removeDocument: (docId) =>
     set((state) => {
-      const { [docId]: _removed, ...rest } = state.uploadedDocs;
-      return { uploadedDocs: rest };
+      const docs = { ...state.uploadedDocs, [docId]: null };
+      return { ...state, uploadedDocs: docs };
+    }),
+  removeOtherDocument: (docId) =>
+    set((state) => {
+      const { [docId]: _removed, ...rest } = state.uploadedDocs.other;
+      return { ...state, uploadedDocs: { ...state.uploadedDocs, other: rest } };
     }),
 
   // Rendez-vous (étape 4)

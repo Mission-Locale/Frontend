@@ -4,6 +4,8 @@ import useMobileToggle from "@/hooks/useMobileToggle";
 export default function Header() {
   const isMobile = useMobileToggle();
 
+  //TODO: compléter les liens du header
+
   if (!isMobile) {
     return (
       <header className=" flex justify-between w-full bg-lightBg px-10 py-2 items-center">
