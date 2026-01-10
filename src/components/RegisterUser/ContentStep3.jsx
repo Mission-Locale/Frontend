@@ -6,7 +6,7 @@ import { useFormStore } from "@/stores/useFormStore";
 
 export default function ContentStep3(currentStep) {
   const { inputs } = STEPS[currentStep.currentStep - 1] || {};
-  const { addDocument, removeDocument, getUploadedDocs, addOtherDocument, removeOtherDocument } = useFormStore();
+  const { addDocument, removeDocument, uploadedDocs, addOtherDocument, removeOtherDocument } = useFormStore();  
 
   function handleOtherFileChange(id, newFile) {
     if (newFile) {
@@ -18,7 +18,7 @@ export default function ContentStep3(currentStep) {
     removeOtherDocument(fileId);
   }
 
-  const otherDocuments = getUploadedDocs().other;
+  const otherDocuments = uploadedDocs.other;
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 items-center justify-center">
       {inputs.map((input, index) => {
@@ -48,15 +48,15 @@ export default function ContentStep3(currentStep) {
               subtitle={input.subtitle}
               selectTheme={input.branding}
               icon={input.icon}
-              file={getUploadedDocs()[input.id]}
+              file={uploadedDocs[input.id]}
               onFileChange={(file) => {
                 if (input.id === "other") {
                   handleOtherFileChange(`other_${Date.now()}`, file);
                 } else {
                   // remove dans store si null
-                  if (file === null && getUploadedDocs()[input.id]) {
+                  if (file === null && uploadedDocs[input.id]) {
                     removeDocument(input.id);
-                  } else {
+                  } else if (file !== null) {
                     addDocument(input.id, file);
                   }
                 }

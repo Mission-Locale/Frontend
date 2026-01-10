@@ -43,7 +43,6 @@ export const useFormStore = create((set, get) => ({
     domicile: null,
     other: {},
   },
-  getUploadedDocs: () => get().uploadedDocs,
   addDocument: (docId, file) => {
     set((state) => ({
       uploadedDocs: {
