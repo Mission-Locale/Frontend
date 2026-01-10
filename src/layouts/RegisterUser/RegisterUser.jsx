@@ -1,0 +1,37 @@
+import { useEffect } from "react";
+import SideBar from "@/components/registerUser/SideBar";
+import ContentStep from "./ContentStep";
+import { useFormStore } from "@/stores/useFormStore";
+import useMobileToggle from "@/hooks/useMobileToggle";
+import logo from "/assets/img/Logo_Mission_Locale.webp";
+import Header from "@/components/Header";
+
+export default function RegisterUser() {
+  const currentStep = useFormStore((state) => state.currentStep);
+  const showHeader = currentStep === 5;
+
+  const isMobile = useMobileToggle();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentStep]);
+
+  return (
+    <>
+      {showHeader && <Header />}
+      <main>
+        <div className="min-h-dvh flex flex-col bg-gray-50">
+          <div className={`${isMobile ? "" : "flex flex-1"}`}>
+            {isMobile && (
+              <div className="w-46 p-4 flex justify-center items-center mb-4 mx-auto">
+                <img src={logo} alt="logo mission locale" />
+              </div>
+            )}
+            {currentStep !== 5 && <SideBar />}
+            <ContentStep />
+          </div>
+        </div>
+      </main>
+    </>
+  );
+}
