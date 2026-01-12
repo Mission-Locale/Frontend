@@ -119,3 +119,22 @@ export function isStep1Valid(personalInfo) {
     validatePasswordMatch(personalInfo.password, personalInfo.confirmPassword)
   );
 }
+
+// Valide les champs de connexion
+export function validateLogin(loginData) {
+  const errors = {};
+
+  // email
+  if (!validateRequired(loginData.email)) {
+    errors.email = "L'email est requis";
+  } else if (!validateEmail(loginData.email)) {
+    errors.email = "Format d'email invalide";
+  }
+
+  // mot de passe
+  if (!validateRequired(loginData.password)) {
+    errors.password = "Le mot de passe est requis";
+  }
+
+  return errors;
+}

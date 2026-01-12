@@ -3,7 +3,9 @@ import PrivateRoutes from "./middleswares/PrivateRoutes";
 import DashboardRoutes from "./middleswares/DashboardRoutes";
 import DefaultLayout from "../layouts/DefaultLayout";
 import RegisterUser from "../layouts/RegisterUser/RegisterUser";
-import { USER, ADVISOR, ADMIN } from "../utils/userRole";
+import Connexion from "@/pages/Connexion";
+import User from "@/pages/User";
+import { JOB_SEEKER, ADVISOR, ADMIN } from "../utils/userRole";
 
 export default function Router() {
   return (
@@ -11,12 +13,18 @@ export default function Router() {
       <Routes>
         {/* Route d'inscription */}
         <Route path="/register" element={<RegisterUser />} />
+        {/* Route de connexion */}
+        <Route path="/login" element={<Connexion />} />
         <Route element={<DefaultLayout />}>
           {/* Vitrine */}
           {/* TODO: <Route path="/" index element={<HomePage />} /> */}
           <Route element={<PrivateRoutes />}>
-            <Route element={<DashboardRoutes role={USER} redirect="/" />}>
+            <Route element={<DashboardRoutes role={JOB_SEEKER} redirect="/user" />}>
               {/* Routes des Demandeurs d'emploi */}
+
+              {/* POUR TESTING UNIQUEMENT */}
+              <Route path="/user" element={<User />} /> 
+              
             </Route>
             <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
               {/* Routes des Conseillers */}

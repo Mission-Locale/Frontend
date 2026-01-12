@@ -1,4 +1,9 @@
-import { getToken, setToken, setUserSession } from "./storage";
+import {
+  getToken,
+  updateToken,
+  setUserSession,
+  clearUserSession,
+} from "./storage";
 
 const URI = "http://localhost";
 const PORT = 3000;
@@ -10,6 +15,7 @@ async function callEndpoint(endpoint, method, body = null) {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
   });
 }
 
@@ -23,22 +29,30 @@ async function callAuthorizedEndpoint(endpoint, method, body = null) {
         Authorization: "Bearer " + getToken(),
         "Content-Type": "application/json",
       },
+      credentials: "include",
     });
 
   let response = await request();
   if (response.status == 401) {
-    await refreshUser();
-    response = await request();
+    const refreshed = await refreshUser();
+    if (refreshed) {
+      response = await request();
+    } else {
+      clearUserSession();
+      window.location.href = "/login";
+      throw { status: 401, error: "Session expirée" };
+    }
   }
   return response;
 }
 
 async function handleEndpointError(errorCode, response) {
   if (response.status == errorCode) {
-    console.error(`Une erreur ${errorCode} a eu lieu : ${response.error}`);
+    const errorData = await response.json();
+    console.error(`Une erreur ${errorCode} a eu lieu : ${errorData.error}`);
     throw {
       status: errorCode,
-      error: (await response.json()).error,
+      error: errorData.error,
     };
   } else {
     handleError(response);
@@ -56,33 +70,79 @@ function handleError(response) {
 }
 
 export async function loginUser(body) {
-  const response = await callEndpoint("/auth/login/", "POST", body);
-  handleEndpointError(400, response);
+  const response = await callEndpoint(`:${PORT}/auth/login`, "POST", body);
+
+  if (!response.ok) {
+    return handleEndpointError(400, response);
+  }
 
   const data = await response.json();
+
+  // Stocker uniquement token et role dans le localStorage
   setUserSession(data.token, data.role);
-  return data;
+
+  // Récupérer les informations complètes du profil utilisateur pour le contexte
+  try {
+    const userProfile = await getUserProfile();
+    // Retourner les données pour le contexte
+    return {
+      email: userProfile.email,
+      firstName: userProfile.first_name,
+      lastName: userProfile.last_name,
+      role: data.role,
+    };
+  } catch (error) {
+    console.error("Erreur lors de la récupération du profil:", error);
+    // Retourner au moins le role en cas d'erreur
+    return { role: data.role };
+  }
+}
+
+export async function logoutUser() {
+  const response = await callAuthorizedEndpoint(`:${PORT}/auth/logout`, "GET");
+  handleError(response);
+  clearUserSession();
 }
 
 export async function refreshUser() {
-  const response = await callEndpoint("/auth/refresh/", "POST");
-  handleEndpointError(400, response);
+  try {
+    const response = await callEndpoint(`:${PORT}/auth/refresh`, "POST");
+    if (!response.ok) {
+      return null;
+    }
 
-  const data = await response.json();
-  setToken(data.token);
-  return data;
+    const data = await response.json();
+    updateToken(data.token);
+    return data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
 export async function registerUser(body) {
   const response = await callEndpoint(`:${PORT}/auth/register`, "POST", body);
+  console.log(response);
   
   if (!response.ok) {
     const errorData = await response.json();
+    console.log('Erreur API: ', errorData);
     throw {
       status: response.status,
       error: errorData.error,
-      code: errorData.error?.code
+      code: errorData.error?.code,
     };
+  }
+  
+  const data = await response.json();
+  return data;
+}
+
+export async function getUserProfile() {
+  const response = await callAuthorizedEndpoint(`:${PORT}/profile`, "GET");
+  
+  if (!response.ok) {
+    return null;
   }
   
   const data = await response.json();
