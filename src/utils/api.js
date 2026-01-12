@@ -5,8 +5,8 @@ import {
   clearUserSession,
 } from "./storage";
 
-const URI = "http://localhost";
-const PORT = 3000;
+const URI = import.meta.env.VITE_API_URL;
+const PORT = import.meta.env.VITE_API_PORT;
 
 async function callEndpoint(endpoint, method, body = null) {
   return await fetch(URI + endpoint, {
@@ -81,10 +81,10 @@ export async function loginUser(body) {
   // Stocker uniquement token et role dans le localStorage
   setUserSession(data.token, data.role);
 
-  // Récupérer les informations complètes du profil utilisateur pour le contexte
+  // Récupérer les informations du user connecté pour le context
   try {
     const userProfile = await getUserProfile();
-    // Retourner les données pour le contexte
+
     return {
       email: userProfile.email,
       firstName: userProfile.first_name,
@@ -93,8 +93,6 @@ export async function loginUser(body) {
     };
   } catch (error) {
     console.error("Erreur lors de la récupération du profil:", error);
-    // Retourner au moins le role en cas d'erreur
-    return { role: data.role };
   }
 }
 
@@ -122,11 +120,9 @@ export async function refreshUser() {
 
 export async function registerUser(body) {
   const response = await callEndpoint(`:${PORT}/auth/register`, "POST", body);
-  console.log(response);
   
   if (!response.ok) {
     const errorData = await response.json();
-    console.log('Erreur API: ', errorData);
     throw {
       status: response.status,
       error: errorData.error,

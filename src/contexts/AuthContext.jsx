@@ -48,7 +48,6 @@ export function AuthProvider({ children }) {
           setIsAuthenticated(false);
         }
       }
-
       setIsLoading(false);
     }
 
@@ -56,7 +55,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function login(credentials) {
-    // Nettoyer la session existante avant de se connecter
+
     clearUserSession();
     setUser(null);
     
@@ -70,7 +69,7 @@ export function AuthProvider({ children }) {
     try {
       await apiLogout();
     } catch (error) {
-      console.error("Erreur lors de la déconnexion:", error);
+      console.error(error);
     } finally {
       clearUserSession();
       setUser(null);
