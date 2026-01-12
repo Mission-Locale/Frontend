@@ -134,13 +134,15 @@ export default function Connexion() {
                   Rester connecté
                 </label>
               </div>
-
+              
+              {/* TODO: Add forgot password page */}
               <Link
                 to="/forgot-password"
                 className="text-sm text-slate-900 hover:underline hover:font-bold"
               >
                 Mot de passe oublié ?
               </Link>
+              
             </div>
 
             <div className="flex justify-center gap-4 mt-6">
