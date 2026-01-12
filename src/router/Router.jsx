@@ -4,7 +4,6 @@ import DashboardRoutes from "./middleswares/DashboardRoutes";
 import DefaultLayout from "../layouts/DefaultLayout";
 import RegisterUser from "../layouts/RegisterUser/RegisterUser";
 import Connexion from "@/pages/Connexion";
-import User from "@/pages/User";
 import { JOB_SEEKER, ADVISOR, ADMIN } from "../utils/userRole";
 
 export default function Router() {
@@ -19,12 +18,8 @@ export default function Router() {
           {/* Vitrine */}
           {/* TODO: <Route path="/" index element={<HomePage />} /> */}
           <Route element={<PrivateRoutes />}>
-            <Route element={<DashboardRoutes role={JOB_SEEKER} redirect="/user" />}>
+            <Route element={<DashboardRoutes role={JOB_SEEKER} redirect="/" />}>
               {/* Routes des Demandeurs d'emploi */}
-
-              {/* POUR TESTING UNIQUEMENT */}
-              <Route path="/user" element={<User />} /> 
-              
             </Route>
             <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
               {/* Routes des Conseillers */}
