@@ -5,7 +5,7 @@ import InputText from "@/components/ui/Form/InputText";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
 import { validateLogin } from "@/utils/validations";
-import { JOB_SEEKER, ADVISOR, ADMIN } from "@/utils/userRole";
+import { JOB_SEEKER, ADVISOR, ADMINISTRATOR } from "@/utils/userRole";
 import Footer from "../components/Footer";
 
 export default function Connexion() {
@@ -58,7 +58,7 @@ export default function Connexion() {
         case ADVISOR:
           navigate("/advisor");
           break;
-        case ADMIN:
+        case ADMINISTRATOR:
           navigate("/admin");
           break;
         default:
