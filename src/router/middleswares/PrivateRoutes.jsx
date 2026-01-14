@@ -5,7 +5,7 @@ export default function PrivateRoutes() {
   const { isAuthenticated, isLoading } = useAuth();
   
   if (isLoading) {
-    return null;
+    return null; //TODO: Add a Loading Screen here
   }
   
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
