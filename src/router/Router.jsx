@@ -4,6 +4,8 @@ import DashboardRoutes from "./middleswares/DashboardRoutes";
 import DefaultLayout from "../layouts/DefaultLayout";
 import RegisterUser from "../layouts/RegisterUser/RegisterUser";
 import { USER, ADVISOR, ADMIN } from "../utils/userRole";
+import Dashboard from "@/layouts/Dashboard";
+import AdvisorList from "@/pages/AdvisorList";
 
 export default function Router() {
   return (
@@ -14,16 +16,21 @@ export default function Router() {
         <Route element={<DefaultLayout />}>
           {/* Vitrine */}
           {/* TODO: <Route path="/" index element={<HomePage />} /> */}
+
+            <Route element={<Dashboard />}>
+                <Route path="/advisor-list" element={<AdvisorList />} />
+            </Route>
+            
           <Route element={<PrivateRoutes />}>
-            <Route element={<DashboardRoutes role={USER} redirect="/" />}>
-              {/* Routes des Demandeurs d'emploi */}
-            </Route>
-            <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
-              {/* Routes des Conseillers */}
-            </Route>
-            <Route element={<DashboardRoutes role={ADMIN} redirect="/" />}>
-              {/* Routes des Administrateurs */}
-            </Route>
+              <Route element={<DashboardRoutes role={USER} redirect="/" />}>
+                {/* Routes des Demandeurs d'emploi */}
+              </Route>
+              <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
+                {/* Routes des Conseillers */}
+              </Route>
+              <Route element={<DashboardRoutes role={ADMIN} redirect="/admin" />}>
+                {/* Routes des Administrateurs */}
+              </Route>
           </Route>
         </Route>
       </Routes>
