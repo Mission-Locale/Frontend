@@ -1,7 +1,7 @@
 import Button from "@/components/ui//Button";
 import { Search } from "lucide-react";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import UserTable from "@/components/UserTable";
 
 const users = [
@@ -25,10 +25,13 @@ const users = [
 
 export default function AdvisorList() {
   const [value, setValue] = useState("");
+  const userTableRef = useRef(null);
 
   function handleAddAdvisor() {
-    // Logique pour ajouter un conseiller
-    console.log("Ajouter un conseiller");
+    // Ouvre la modal de création du UserTable
+    if (userTableRef.current) {
+      userTableRef.current.openCreateModal();
+    }
   }
 
   function handleChange(event) {
@@ -78,6 +81,7 @@ export default function AdvisorList() {
           </div>
         </div>
       <UserTable
+        ref={userTableRef}
         users={users}
       />
       </div>
