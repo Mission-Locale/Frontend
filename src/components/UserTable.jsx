@@ -1,5 +1,6 @@
 import { Pencil, Trash2, UserRound, X } from "lucide-react";
 import { useState, useCallback, forwardRef, useImperativeHandle } from "react";
+import { toast } from "react-toastify";
 import Modal from "./Modal";
 import InputText from "./ui/Form/InputText";
 import InputDate from "./ui/Form/InputDate";
@@ -16,39 +17,39 @@ const initialUserForm = {
 };
 
 const UserTable = forwardRef(({ users: initialUsers }, ref) => {
-  // ==================== ÉTATS ====================
+
   const [users, setUsers] = useState(initialUsers);
-  const [failedImages, setFailedImages] = useState(new Set());
   
-  // États pour les modales
+  // states pour les modales
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   
-  // État du formulaire (création/édition)
+  // state du formulaire (création/édition)
   const [formData, setFormData] = useState(initialUserForm);
   const [formErrors, setFormErrors] = useState({});
   
-  // Utilisateur sélectionné pour édition/suppression
+  // state de user sélectionné pour édition/suppression
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedUserIndex, setSelectedUserIndex] = useState(null);
   
-  // État de chargement
   const [isLoading, setIsLoading] = useState(false);
 
-  // GESTION DES IMAGES
+  // gestion des avatars en erreur
+  const [failedImages, setFailedImages] = useState(new Set());
+
   const handleImageError = (index) => {
     setFailedImages((prev) => new Set([...prev, index]));
   };
 
-  // VALIDATION DU FORM
+  // validation du form
   const validateForm = useCallback(() => {
     const errors = validateModalAdvisor(formData);
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   }, [formData]);
 
-  // GESTION DU FORM
+  // gestion des changements dans le form
   const handleInputChange = (field) => (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -69,7 +70,7 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
     setSelectedUserIndex(null);
   };
 
-  // ==================== CREATE ====================
+  // CREATE
   const openCreateModal = () => {
     resetForm();
     setIsCreateModalOpen(true);
@@ -99,15 +100,16 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
 
       setUsers((prev) => [...prev, newUser]);
       closeCreateModal();
+      toast.success("L'utilisateur a été créé avec succès !");
     } catch (error) {
       console.error("Erreur lors de la création:", error);
-      // TODO: Gérer les erreurs de l'API (afficher un toast, etc.)
+      toast.error("Une erreur est survenue lors de la création de l'utilisateur.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ==================== READ ====================
+  // READ
   // La lecture est gérée par l'affichage du tableau
   // TODO: Implémenter l'appel API GET pour récupérer les utilisateurs
   // useEffect(() => {
@@ -118,7 +120,7 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
   //   fetchUsers();
   // }, []);
 
-  // ==================== UPDATE ====================
+  // UPDATE
   const openEditModal = (user, index) => {
     setSelectedUser(user);
     setSelectedUserIndex(index);
@@ -158,15 +160,16 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
         )
       );
       closeEditModal();
+      toast.success("L'utilisateur a été modifié avec succès !");
     } catch (error) {
       console.error("Erreur lors de la mise à jour:", error);
-      // TODO: Gérer les erreurs de l'API
+      toast.error("Une erreur est survenue lors de la modification de l'utilisateur.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ==================== DELETE ====================
+  // DELETE
   const openDeleteModal = (user, index) => {
     setSelectedUser(user);
     setSelectedUserIndex(index);
@@ -195,20 +198,21 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
       });
       
       closeDeleteModal();
+      toast.success("L'utilisateur a été supprimé avec succès !");
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
-      // TODO: Gérer les erreurs de l'API
+      toast.error("Une erreur est survenue lors de la suppression de l'utilisateur.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ==================== EXPOSITION DES MÉTHODES AU PARENT ====================
+  // EXPOSITION DES MÉTHODES AU PARENT
   useImperativeHandle(ref, () => ({
     openCreateModal,
   }));
 
-  // ==================== RENDU DU FORMULAIRE ====================
+  // RENDU DU FORM
   const renderForm = () => (
     <div className="flex flex-col gap-4 min-w-[300px] sm:min-w-[400px]">
       <InputText
@@ -311,7 +315,7 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
                         {user.avatar && !failedImages.has(index) ? (
                           <img
                             src={user.avatar}
-                            alt={user.name}
+                            alt={`${user.firstName} ${user.lastName}`}
                             className="w-10 h-10 rounded-full object-cover border border-gray-200"
                             onError={() => handleImageError(index)}
                           />
@@ -323,7 +327,7 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
 
                         <div className="flex flex-col">
                           <span className="font-bold text-gray-900 text-sm">
-                            {user.name}
+                            {user.firstName} {user.lastName}
                           </span>
                           <span className="text-xs text-gray-500">
                             {user.email}
@@ -522,7 +526,5 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
     </div>
   );
 });
-
-UserTable.displayName = "UserTable";
 
 export default UserTable;

@@ -6,19 +6,21 @@ import UserTable from "@/components/UserTable";
 
 const users = [
   {
-    name: "Jean Dupont",
+    firstName: "Jean",
+    lastName: "Dupont",
     email: "jean.dupont@example.com",
     phone: "06 12 34 56 78",
     assignedCount: 15,
-    createdAt: "2023-01-15",
+    createdAt: "10/09/2025",
     avatar: "https://randomuser.me/api/portraits/men/1.jpg",
   },
   {
-    name: "Marie Curie",
+    firstName: "Marie",
+    lastName: "Curie",
     email: "marie.curie@example.com",
     phone: "06 87 65 43 21",
     assignedCount: 20,
-    createdAt: "2023-02-20",
+    createdAt: "10/09/2025",
     avatar: "https://randomuser.me/api/portraits/women/2.jpg",
   },
 ];
