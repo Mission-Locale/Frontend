@@ -1,6 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { getToken } from "../../utils/storage";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function PrivateRoutes() {
-  return getToken() != null ? <Outlet /> : <Navigate to="/login" />;
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return null; //TODO: Add a Loading Screen here
+  }
+  
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
 }
