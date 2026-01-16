@@ -1,55 +1,40 @@
 import { Pencil, Trash2, UserRound, X } from "lucide-react";
-import { useState, useCallback, forwardRef, useImperativeHandle } from "react";
-import { toast } from "react-toastify";
+import { useState } from "react";
 import Modal from "./Modal";
 import InputText from "./ui/Form/InputText";
 import InputDate from "./ui/Form/InputDate";
 import Button from "./ui/Button";
-import { validateModalAdvisor } from "../utils/validations";
+import FileUpload from "./ui/Form/FileUpload";
+import dateFormater from "@/utils/dateFormater";
 
-// État initial pour un nouvel utilisateur
-const initialUserForm = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  birthDate: "",
-};
-
-const UserTable = forwardRef(({ users: initialUsers }, ref) => {
-
-  const [users, setUsers] = useState(initialUsers);
-  
-  // states pour les modales
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  
-  // state du formulaire (création/édition)
-  const [formData, setFormData] = useState(initialUserForm);
-  const [formErrors, setFormErrors] = useState({});
-  
-  // state de user sélectionné pour édition/suppression
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedUserIndex, setSelectedUserIndex] = useState(null);
-  
-  const [isLoading, setIsLoading] = useState(false);
-
-  // gestion des avatars en erreur
+const UserTable = ({
+  users,
+  onEdit,
+  onDelete,
+  isCreateModalOpen,
+  isEditModalOpen,
+  isDeleteModalOpen,
+  closeCreateModal,
+  closeEditModal,
+  closeDeleteModal,
+  handleCreate,
+  handleUpdate,
+  handleDelete,
+  formData,
+  setFormData,
+  formErrors,
+  setFormErrors,
+  selectedUser,
+  isSaving,
+}) => {
+  // Gestion des avatars en erreur
   const [failedImages, setFailedImages] = useState(new Set());
 
   const handleImageError = (index) => {
     setFailedImages((prev) => new Set([...prev, index]));
   };
 
-  // validation du form
-  const validateForm = useCallback(() => {
-    const errors = validateModalAdvisor(formData);
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  }, [formData]);
-
-  // gestion des changements dans le form
+  // Gestion des changements dans le form
   const handleInputChange = (field) => (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -63,190 +48,41 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
     }
   };
 
-  const resetForm = () => {
-    setFormData(initialUserForm);
-    setFormErrors({});
-    setSelectedUser(null);
-    setSelectedUserIndex(null);
-  };
-
-  // CREATE
-  const openCreateModal = () => {
-    resetForm();
-    setIsCreateModalOpen(true);
-  };
-
-  const closeCreateModal = () => {
-    setIsCreateModalOpen(false);
-    resetForm();
-  };
-
-  const handleCreate = async () => {
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-    try {
-      // TODO: Implémenter l'appel API POST pour créer l'utilisateur
-      // const response = await api.post('/users', formData);
-      // const newUser = response.data;
-
-      // Simulation de la création (à remplacer par la réponse API)
-      const newUser = {
-        ...formData,
-        id: Date.now(), // L'ID sera généré par le backend
-        assignedCount: 0,
-        createdAt: new Date().toLocaleDateString("fr-FR"),
-      };
-
-      setUsers((prev) => [...prev, newUser]);
-      closeCreateModal();
-      toast.success("L'utilisateur a été créé avec succès !");
-    } catch (error) {
-      console.error("Erreur lors de la création:", error);
-      toast.error("Une erreur est survenue lors de la création de l'utilisateur.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // READ
-  // La lecture est gérée par l'affichage du tableau
-  // TODO: Implémenter l'appel API GET pour récupérer les utilisateurs
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     const response = await api.get('/users');
-  //     setUsers(response.data);
-  //   };
-  //   fetchUsers();
-  // }, []);
-
-  // UPDATE
-  const openEditModal = (user, index) => {
-    setSelectedUser(user);
-    setSelectedUserIndex(index);
-    setFormData({
-      lastName: user.lastName || "",
-      firstName: user.firstName || "",
-      email: user.email || "",
-      phone: user.phone || "",
-      birthDate: user.birthDate || "",
-    });
-    setIsEditModalOpen(true);
-  };
-
-  const closeEditModal = () => {
-    setIsEditModalOpen(false);
-    resetForm();
-  };
-
-  const handleUpdate = async () => {
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-    try {
-      // TODO: Implémenter l'appel API PUT/PATCH pour mettre à jour l'utilisateur
-      // const response = await api.put(`/users/${selectedUser.id}`, formData);
-      // const updatedUser = response.data;
-
-      // Simulation de la mise à jour (à remplacer par la réponse API)
-      const updatedUser = {
-        ...selectedUser,
-        ...formData,
-      };
-
-      setUsers((prev) =>
-        prev.map((user, index) =>
-          index === selectedUserIndex ? updatedUser : user
-        )
-      );
-      closeEditModal();
-      toast.success("L'utilisateur a été modifié avec succès !");
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour:", error);
-      toast.error("Une erreur est survenue lors de la modification de l'utilisateur.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // DELETE
-  const openDeleteModal = (user, index) => {
-    setSelectedUser(user);
-    setSelectedUserIndex(index);
-    setIsDeleteModalOpen(true);
-  };
-
-  const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    setSelectedUser(null);
-    setSelectedUserIndex(null);
-  };
-
-  const handleDelete = async () => {
-    setIsLoading(true);
-    try {
-      // TODO: Implémenter l'appel API DELETE pour supprimer l'utilisateur
-      // await api.delete(`/users/${selectedUser.id}`);
-
-      setUsers((prev) => prev.filter((_, index) => index !== selectedUserIndex));
-      
-      // Nettoyer les images en erreur si nécessaire
-      setFailedImages((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(selectedUserIndex);
-        return newSet;
-      });
-      
-      closeDeleteModal();
-      toast.success("L'utilisateur a été supprimé avec succès !");
-    } catch (error) {
-      console.error("Erreur lors de la suppression:", error);
-      toast.error("Une erreur est survenue lors de la suppression de l'utilisateur.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // EXPOSITION DES MÉTHODES AU PARENT
-  useImperativeHandle(ref, () => ({
-    openCreateModal,
-  }));
-
   // RENDU DU FORM
   const renderForm = () => (
-    <div className="flex flex-col gap-4 min-w-[300px] sm:min-w-[400px]">
+    <div className="flex flex-col min-w-[300px] sm:min-w-[400px]">
       <InputText
         label="Nom"
         placeholder="Dupont"
-        value={formData.lastName}
-        onChange={handleInputChange("lastName")}
-        error={formErrors.lastName}
+        value={formData.last_name}
+        onChange={handleInputChange("last_name")}
+        error={formErrors.last_name}
         required
         selectTheme="brandBlue"
       />
       <InputText
         label="Prénom"
         placeholder="Jean"
-        value={formData.firstName}
-        onChange={handleInputChange("firstName")}
-        error={formErrors.firstName}
+        value={formData.first_name}
+        onChange={handleInputChange("first_name")}
+        error={formErrors.first_name}
         required
         selectTheme="brandBlue"
       />
-        <InputDate
-          label="Date de naissance"
-          placeholder="Sélectionner une date"
-          value={formData.birthDate}
-          onChange={(date) => {
-            setFormData((prev) => ({ ...prev, birthDate: date }));
-            if (formErrors.birthDate) {
-              setFormErrors((prev) => ({ ...prev, birthDate: undefined }));
-            }
-          }}
-          error={formErrors.birthDate}
-          required
-          selectTheme="brandBlue"
-        />
+      <InputDate
+        label="Date de naissance"
+        placeholder="Sélectionner une date"
+        value={formData.birth_date}
+        onChange={(date) => {
+          setFormData((prev) => ({ ...prev, birth_date: date }));
+          if (formErrors.birth_date) {
+            setFormErrors((prev) => ({ ...prev, birth_date: undefined }));
+          }
+        }}
+        error={formErrors.birth_date}
+        required
+        selectTheme="brandBlue"
+      />
       <InputText
         label="Email"
         type="email"
@@ -267,17 +103,24 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
         required
         selectTheme="brandBlue"
       />
+      <FileUpload
+        file={formData.avatar}
+        onChange={(file) =>
+          setFormData((prev) => ({
+            ...prev,
+            avatar: file,
+          }))
+        }
+      />
     </div>
   );
 
   return (
     <div className="w-full">
-
       {/* Tableau */}
       <div className="w-full bg-white rounded-xl overflow-hidden border border-gray-100">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-
             <thead className="bg-gray-50/80 border-b border-gray-100">
               <tr>
                 <th className="px-6 py-4 text-sm font-semibold text-gray-700">
@@ -297,14 +140,17 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
             </thead>
 
             <tbody className="divide-y divide-gray-100">
-              {users.length === 0 ? (
+              {users?.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td
+                    colSpan={5}
+                    className="px-6 py-12 text-center text-gray-500"
+                  >
                     Aucun utilisateur trouvé
                   </td>
                 </tr>
               ) : (
-                users.map((user, index) => (
+                users?.map((user, index) => (
                   <tr
                     key={user.id || index}
                     className="hover:bg-gray-50/50 transition-colors group"
@@ -315,7 +161,7 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
                         {user.avatar && !failedImages.has(index) ? (
                           <img
                             src={user.avatar}
-                            alt={`${user.firstName} ${user.lastName}`}
+                            alt={`${user.first_name} ${user.last_name}`}
                             className="w-10 h-10 rounded-full object-cover border border-gray-200"
                             onError={() => handleImageError(index)}
                           />
@@ -327,7 +173,7 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
 
                         <div className="flex flex-col">
                           <span className="font-bold text-gray-900 text-sm">
-                            {user.firstName} {user.lastName}
+                            {user.first_name} {user.last_name}
                           </span>
                           <span className="text-xs text-gray-500">
                             {user.email}
@@ -343,26 +189,26 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
 
                     {/* Count Col */}
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {user.assignedCount}
+                      {user.jobSeekerCount ?? 0 }
                     </td>
 
                     {/* Date Col */}
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {user.createdAt}
+                      {dateFormater(user.createdAt)}
                     </td>
 
                     {/* Actions Col */}
                     <td className="px-6 py-4">
                       <div className="flex justify-end gap-2">
                         <button
-                          onClick={() => openEditModal(user, index)}
+                          onClick={() => onEdit(user, index)}
                           className="p-2 bg-brandOrange hover:bg-orange-500 text-white rounded-full transition-shadow shadow-sm cursor-pointer"
                           title="Modifier"
                         >
                           <Pencil size={18} />
                         </button>
                         <button
-                          onClick={() => openDeleteModal(user, index)}
+                          onClick={() => onDelete(user, index)}
                           className="p-2 bg-brandPurple hover:bg-pink-900 text-white rounded-full transition-shadow shadow-sm cursor-pointer"
                           title="Supprimer"
                         >
@@ -380,7 +226,10 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
 
       {/* Modal de création */}
       {isCreateModalOpen && (
-        <Modal modalKey="create-user-modal" onOutOfBoundClick={closeCreateModal}>
+        <Modal
+          modalKey="create-user-modal"
+          onOutOfBoundClick={closeCreateModal}
+        >
           <div className="flex flex-col gap-4">
             {/* Header */}
             <div className="flex justify-between items-center border-b border-gray-100 pb-4">
@@ -407,16 +256,16 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
                 variant="outline"
                 radiusSize="md"
                 onClick={closeCreateModal}
-                disabled={isLoading}
+                disabled={isSaving}
               />
               <Button
-                text={isLoading ? "Création..." : "Créer"}
+                text={isSaving ? "Création..." : "Créer"}
                 color="brandOrange"
                 size="md"
                 variant="full"
                 radiusSize="md"
                 onClick={handleCreate}
-                disabled={isLoading}
+                disabled={isSaving}
               />
             </div>
           </div>
@@ -452,16 +301,16 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
                 variant="outline"
                 radiusSize="md"
                 onClick={closeEditModal}
-                disabled={isLoading}
+                disabled={isSaving}
               />
               <Button
-                text={isLoading ? "Mise à jour..." : "Mettre à jour"}
+                text={isSaving ? "Mise à jour..." : "Mettre à jour"}
                 color="brandOrange"
                 size="md"
                 variant="full"
                 radiusSize="md"
                 onClick={handleUpdate}
-                disabled={isLoading}
+                disabled={isSaving}
               />
             </div>
           </div>
@@ -470,7 +319,10 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
 
       {/* Modal de suppression */}
       {isDeleteModalOpen && (
-        <Modal modalKey="delete-user-modal" onOutOfBoundClick={closeDeleteModal}>
+        <Modal
+          modalKey="delete-user-modal"
+          onOutOfBoundClick={closeDeleteModal}
+        >
           <div className="flex flex-col gap-4 min-w-[300px] sm:min-w-[400px]">
             {/* Header */}
             <div className="flex justify-between items-center border-b border-gray-100 pb-4">
@@ -488,9 +340,9 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
             {/* Contenu */}
             <div className="py-4">
               <p className="text-gray-600">
-                Êtes-vous sûr de vouloir supprimer l'utilisateur{" "}
+                Êtes-vous sûr de vouloir supprimer le conseiller{" "}
                 <span className="font-bold text-gray-900">
-                  {selectedUser?.name}
+                  {selectedUser ? `${selectedUser.first_name} ${selectedUser.last_name}` : ""}
                 </span>{" "}
                 ?
               </p>
@@ -508,16 +360,16 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
                 variant="outline"
                 radiusSize="md"
                 onClick={closeDeleteModal}
-                disabled={isLoading}
+                disabled={isSaving}
               />
               <Button
-                text={isLoading ? "Suppression..." : "Supprimer"}
+                text={isSaving ? "Suppression..." : "Supprimer"}
                 color="brandPurple"
                 size="md"
                 variant="full"
                 radiusSize="md"
                 onClick={handleDelete}
-                disabled={isLoading}
+                disabled={isSaving}
               />
             </div>
           </div>
@@ -525,6 +377,6 @@ const UserTable = forwardRef(({ users: initialUsers }, ref) => {
       )}
     </div>
   );
-});
+};
 
 export default UserTable;

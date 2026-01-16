@@ -9,7 +9,7 @@ const URI = import.meta.env.VITE_API_URL;
 const PORT = import.meta.env.VITE_API_PORT;
 
 async function callEndpoint(endpoint, method, body = null) {
-  return await fetch(URI + endpoint, {
+  return await fetch(`${URI}:${PORT}${endpoint}`, {
     method: method,
     body: body != null ? JSON.stringify(body) : null,
     headers: {
@@ -22,7 +22,7 @@ async function callEndpoint(endpoint, method, body = null) {
 async function callAuthorizedEndpoint(endpoint, method, body = null) {
   const requestBody = body != null ? JSON.stringify(body) : null;
   const request = () =>
-    fetch(URI + endpoint, {
+    fetch(`${URI}:${PORT}${endpoint}`, {
       method: method,
       body: requestBody,
       headers: {
@@ -70,7 +70,7 @@ function handleError(response) {
 }
 
 export async function loginUser(body) {
-  const response = await callEndpoint(`:${PORT}/auth/login`, "POST", body);
+  const response = await callEndpoint("/auth/login", "POST", body);
 
   if (!response.ok) {
     return handleEndpointError(400, response);
@@ -97,14 +97,14 @@ export async function loginUser(body) {
 }
 
 export async function logoutUser() {
-  const response = await callAuthorizedEndpoint(`:${PORT}/auth/logout`, "GET");
+  const response = await callAuthorizedEndpoint("/auth/logout", "GET");
   handleError(response);
   clearUserSession();
 }
 
 export async function refreshUser() {
   try {
-    const response = await callEndpoint(`:${PORT}/auth/refresh`, "POST");
+    const response = await callEndpoint("/auth/refresh", "POST");
     if (!response.ok) {
       return null;
     }
@@ -119,7 +119,7 @@ export async function refreshUser() {
 }
 
 export async function registerUser(body) {
-  const response = await callEndpoint(`:${PORT}/auth/register`, "POST", body);
+  const response = await callEndpoint("/auth/register", "POST", body);
   
   if (!response.ok) {
     const errorData = await response.json();
@@ -135,10 +135,23 @@ export async function registerUser(body) {
 }
 
 export async function getUserProfile() {
-  const response = await callAuthorizedEndpoint(`:${PORT}/profile`, "GET");
+  const response = await callAuthorizedEndpoint("/profile", "GET");
   
   if (!response.ok) {
     return null;
+  }
+  
+  const data = await response.json();
+  return data;
+}
+
+export async function getUsersFilteredByRole(roleType) {
+  const response = await callAuthorizedEndpoint(`/users?roleType=${roleType}&withJobSeekerCount=true`, "GET");
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      error: `Erreur lors de la récupération des conseillers`,
+    };
   }
   
   const data = await response.json();
