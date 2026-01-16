@@ -27,7 +27,7 @@ const UserTable = ({
   selectedUser,
   isSaving,
 }) => {
-  // Gestion des avatars en erreur
+  // Gestion des images de profil en erreur
   const [failedImages, setFailedImages] = useState(new Set());
 
   const handleImageError = (index) => {
@@ -104,11 +104,11 @@ const UserTable = ({
         selectTheme="brandBlue"
       />
       <FileUpload
-        file={formData.avatar}
+        file={formData.profile_picture_path}
         onChange={(file) =>
           setFormData((prev) => ({
             ...prev,
-            avatar: file,
+            profile_picture_path: file,
           }))
         }
       />
@@ -158,9 +158,9 @@ const UserTable = ({
                     {/* Profil Col */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        {user.avatar && !failedImages.has(index) ? (
+                        {user && !failedImages.has(index) ? (
                           <img
-                            src={user.avatar}
+                            src={user}
                             alt={`${user.first_name} ${user.last_name}`}
                             className="w-10 h-10 rounded-full object-cover border border-gray-200"
                             onError={() => handleImageError(index)}
@@ -172,7 +172,7 @@ const UserTable = ({
                         )}
 
                         <div className="flex flex-col">
-                          <span className="font-bold text-gray-900 text-sm">
+                          <span className="font-bold text-gray-900 text-sm capitalize">
                             {user.first_name} {user.last_name}
                           </span>
                           <span className="text-xs text-gray-500">
@@ -189,7 +189,7 @@ const UserTable = ({
 
                     {/* Count Col */}
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {user.jobSeekerCount ?? 0 }
+                      {user.advisor.assigned_job_seekers.length ?? 0 }
                     </td>
 
                     {/* Date Col */}
@@ -341,7 +341,7 @@ const UserTable = ({
             <div className="py-4">
               <p className="text-gray-600">
                 Êtes-vous sûr de vouloir supprimer le conseiller{" "}
-                <span className="font-bold text-gray-900">
+                <span className="font-bold text-gray-900 capitalize">
                   {selectedUser ? `${selectedUser.first_name} ${selectedUser.last_name}` : ""}
                 </span>{" "}
                 ?

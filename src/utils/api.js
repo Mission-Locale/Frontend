@@ -146,11 +146,36 @@ export async function getUserProfile() {
 }
 
 export async function getUsersFilteredByRole(roleType) {
-  const response = await callAuthorizedEndpoint(`/users?roleType=${roleType}&withJobSeekerCount=true`, "GET");
+  const response = await callAuthorizedEndpoint(`/users?roleType=${roleType}`, "GET");
   if (!response.ok) {
     throw {
       status: response.status,
       error: `Erreur lors de la récupération des conseillers`,
+    };
+  }
+  
+  const data = await response.json();
+  return data;
+}
+
+export async function updateUser(userId, body) {
+  const response = await callAuthorizedEndpoint(`/users/${userId}`, "PATCH", body);
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      error: `Erreur lors de la mise à jour du conseiller`,
+    };
+  }
+  
+  const data = await response.json();
+  return data;
+}
+export async function deleteUser(userId) {
+  const response = await callAuthorizedEndpoint(`/users/${userId}`, "DELETE");
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      error: `Erreur lors de la suppression du conseiller`,
     };
   }
   

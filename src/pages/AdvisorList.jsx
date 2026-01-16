@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { Plus } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import UserTable from "@/components/UserTable";
-import { getUsersFilteredByRole } from "@/utils/api";
+import { getUsersFilteredByRole, registerUser, deleteUser, updateUser } from "@/utils/api";
 import { toast } from "react-toastify";
 import { validateModalAdvisor } from "@/utils/validations";
 
@@ -14,7 +14,7 @@ const initialUserForm = {
   email: "",
   phone: "",
   birth_date: "",
-  avatar: null,
+  profile_picture_path: null,
 };
 
 export default function AdvisorList() {
@@ -41,6 +41,7 @@ export default function AdvisorList() {
     setIsLoading(true);
     try {
       const data = await getUsersFilteredByRole("ADVISOR");
+      console.log(data);
       setUsers(data);
     } catch (error) {
       console.error("Erreur lors du chargement des conseillers:", error);
@@ -51,7 +52,7 @@ export default function AdvisorList() {
   }, []);
 
   useEffect(() => {
-    loadAdvisors()
+    loadAdvisors();
   }, [loadAdvisors]);
 
   // Validation du form
@@ -81,23 +82,22 @@ export default function AdvisorList() {
   };
 
   const handleCreate = async () => {
-    if (!validateForm()) return;
-
+    console.log("handleCreate appelé");
+    console.log("formData:", formData);
+    if (!validateForm()) {
+      return;
+    }
     setIsSaving(true);
     try {
-      // TODO: Implémenter l'appel API POST pour créer l'utilisateur
-      // const response = await createAdvisor(formData);
-      // const newUser = response.data;
-
-      // Simulation de la création (à remplacer par la réponse API)
-      const newUser = {
+      const dataToSend = {
         ...formData,
-        user_id: Date.now(),
-        jobSeeker: [],
-        createdAt: new Date().toISOString(),
+        roleType: "ADVISOR",
+        password: "TempPass123!@",
+        confirm_password: "TempPass123!@",
       };
-
-      setUsers((prev) => [...prev, newUser]);
+      console.log("Données à envoyer:", dataToSend);
+      await registerUser(dataToSend);
+      await loadAdvisors();
       closeCreateModal();
       toast.success("Le conseiller a été créé avec succès !");
     } catch (error) {
@@ -118,7 +118,7 @@ export default function AdvisorList() {
       email: user.email || "",
       phone: user.phone || "",
       birth_date: user.birth_date ? new Date(user.birth_date) : "",
-      avatar: user.avatar || null,
+      profile_picture_path: user.profile_picture_path || null,
     });
     setIsEditModalOpen(true);
   };
@@ -133,7 +133,7 @@ export default function AdvisorList() {
     console.log("formData:", formData);
     console.log("selectedUser:", selectedUser);
     console.log("selectedUserIndex:", selectedUserIndex);
-    
+
     if (!validateForm()) {
       console.log("Validation échouée", formErrors);
       return;
@@ -141,26 +141,15 @@ export default function AdvisorList() {
 
     setIsSaving(true);
     try {
-      // TODO: Implémenter l'appel API PUT/PATCH pour mettre à jour l'utilisateur
-      // const response = await updateAdvisor(selectedUser.user_id, formData);
-      // const updatedUser = response.data;
-
-      // Simulation de la mise à jour (à remplacer par la réponse API)
-      const updatedUser = {
-        ...selectedUser,
-        ...formData,
-      };
-
-      setUsers((prev) =>
-        prev.map((user, index) =>
-          index === selectedUserIndex ? updatedUser : user
-        )
-      );
+      await updateUser(selectedUser.user_id, formData);
+      await loadAdvisors();
       closeEditModal();
       toast.success("Le conseiller a été modifié avec succès !");
     } catch (error) {
       console.error("Erreur lors de la mise à jour:", error);
-      toast.error("Une erreur est survenue lors de la modification du conseiller.");
+      toast.error(
+        "Une erreur est survenue lors de la modification du conseiller."
+      );
     } finally {
       setIsSaving(false);
     }
@@ -182,25 +171,22 @@ export default function AdvisorList() {
   const handleDelete = async () => {
     setIsSaving(true);
     try {
-      // TODO: Implémenter l'appel API DELETE pour supprimer l'utilisateur
-      // await deleteAdvisor(selectedUser.user_id);
-
-      setUsers((prev) =>
-        prev.filter((_, index) => index !== selectedUserIndex)
-      );
-
+      await deleteUser(selectedUser.user_id);
       closeDeleteModal();
+      await loadAdvisors();
       toast.success("Le conseiller a été supprimé avec succès !");
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
-      toast.error("Une erreur est survenue lors de la suppression du conseiller.");
+      toast.error(
+        "Une erreur est survenue lors de la suppression du conseiller."
+      );
     } finally {
       setIsSaving(false);
     }
-  }
+  };
 
-  function handleChange(event) {
-    setSearchValue(event.target.value);
+  function handleChange(e) {
+    setSearchValue(e.target.value);
   }
 
   return (
@@ -222,7 +208,9 @@ export default function AdvisorList() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-lg">
                 Liste de tous les conseillers
-                <span className="font-semibold text-lg ml-5 text-gray-600">{users?.length}</span>
+                <span className="font-semibold text-lg ml-5 text-gray-600">
+                  {users?.length}
+                </span>
               </h3>
 
               <div className="flex gap-2">

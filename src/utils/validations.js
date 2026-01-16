@@ -144,16 +144,16 @@ export function validateModalAdvisor(personalInfo) {
   const errors = {};
 
   // nom et prenom
-  if (!validateRequired(personalInfo.lastName)) {
-    errors.lastName = "Le nom est requis";
-  } else if (!validateTextOnly(personalInfo.lastName)) {
-    errors.lastName = "Cela ne doit contenir que des lettres";
+  if (!validateRequired(personalInfo.last_name)) {
+    errors.last_name = "Le nom est requis";
+  } else if (!validateTextOnly(personalInfo.last_name)) {
+    errors.last_name = "Cela ne doit contenir que des lettres";
   }
 
-  if (!validateRequired(personalInfo.firstName)) {
-    errors.firstName = "Le prénom est requis";
-  } else if (!validateTextOnly(personalInfo.firstName)) {
-    errors.firstName = "Cela ne doit contenir que des lettres";
+  if (!validateRequired(personalInfo.first_name)) {
+    errors.first_name = "Le prénom est requis";
+  } else if (!validateTextOnly(personalInfo.first_name)) {
+    errors.first_name = "Cela ne doit contenir que des lettres";
   }
 
   // email
@@ -164,8 +164,8 @@ export function validateModalAdvisor(personalInfo) {
   }
 
   // date de naissance
-  if (!validateRequired(personalInfo.birthDate)) {
-    errors.birthDate = "La date de naissance est requise";
+  if (!validateRequired(personalInfo.birth_date)) {
+    errors.birth_date = "La date de naissance est requise";
   }
 
   // téléphone
