@@ -1,5 +1,12 @@
+import { AuthProvider } from "./contexts/AuthContext.jsx";
+import Router from "./router/Router.jsx";
+
 function App() {
-  return <></>;
+  return (
+    <AuthProvider>
+      <Router />
+    </AuthProvider>
+  );
 }
 
 export default App;

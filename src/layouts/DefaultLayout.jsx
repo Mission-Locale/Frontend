@@ -1,11 +1,12 @@
 import Footer from "../components/Footer";
+import Header from "../components/Header";
 import { Outlet } from "react-router-dom";
 import { ToastContainer, Slide } from "react-toastify";
 
 export default function DefaultLayout() {
   return (
     <>
-      {/* TODO: <Header /> */}
+      <Header />
       <ToastContainer
         position="top-right"
         autoClose={5000}

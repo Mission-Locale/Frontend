@@ -1,3 +1,3 @@
-export const USER = "USER";
+export const JOB_SEEKER = "JOB_SEEKER";
 export const ADVISOR = "ADVISOR";
-export const ADMIN = "ADMIN";
+export const ADMINISTRATOR = "ADMINISTRATOR";

@@ -10,11 +10,13 @@ export default function InputText({
   error,
   disabled,
   type,
+  ...props
 }) {
-  const inputId = label.toLowerCase().replace(/\s+/g, "-");
+
+  const inputId = label ? label.toLowerCase().replace(/\s+/g, "-") : undefined;
 
   return (
-    <div className="w-full mb-4">
+    <div className="w-full mb-3">
 
       {label && (
         <label
@@ -29,12 +31,12 @@ export default function InputText({
       <input
         id={inputId}
         type={type}
-        className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 
+        className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 placeholder:text-sm sm:placeholder:text-base
           ${ring[selectTheme]}          
           ${
             error
               ? "outline-solid outline-red-500 border-none mb-2"
-              : "border-gray-300 mb-6"
+              : "border-gray-300"
           }
           ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
         placeholder={placeholder}
@@ -42,12 +44,13 @@ export default function InputText({
         value={value}
         disabled={disabled}
         required={required}
+        {...props}
       />
 
       {error && (
         <p
           id={`${inputId}-error`}
-          className="text-red-500 text-sm mb-4 text-start block w-full ml-4"
+          className="text-red-500 text-sm text-start block w-full"
         >
           {error}
         </p>
