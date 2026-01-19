@@ -1,9 +1,14 @@
 import Button from "@/components/ui//Button";
-import { Search } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Plus } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import UserTable from "@/components/UserTable";
-import { getUsersFilteredByRole, registerUser, deleteUser, updateUser } from "@/utils/api";
+import {
+  getUsersFilteredByRole,
+  registerUser,
+  deleteUser,
+  updateUser,
+} from "@/utils/api";
 import { toast } from "react-toastify";
 import { validateModalAdvisor } from "@/utils/validations";
 
@@ -17,10 +22,18 @@ const initialUserForm = {
   profile_picture_path: null,
 };
 
+const ITEMS_PER_PAGE = 5;
+
 export default function AdvisorList() {
   const [searchValue, setSearchValue] = useState("");
+  const [activeSearch, setActiveSearch] = useState(""); // La recherche réellement appliquée
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // States pour la pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const totalPages = Math.ceil(totalUsers / ITEMS_PER_PAGE);
 
   // States pour les modales
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -33,27 +46,41 @@ export default function AdvisorList() {
 
   // State de user sélectionné pour édition/suppression
   const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedUserIndex, setSelectedUserIndex] = useState(null);
 
   const [isSaving, setIsSaving] = useState(false);
 
-  const loadAdvisors = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const data = await getUsersFilteredByRole("ADVISOR");
-      console.log(data);
-      setUsers(data);
-    } catch (error) {
-      console.error("Erreur lors du chargement des conseillers:", error);
-      toast.error("Impossible de charger la liste des conseillers");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const loadAdvisors = useCallback(
+    async (page = currentPage, search = activeSearch) => {
+      setIsLoading(true);
+      try {
+        const data = await getUsersFilteredByRole("ADVISOR", {
+          page,
+          limit: ITEMS_PER_PAGE,
+          name: search,
+        });
+        setUsers(data.users || []);
+        setTotalUsers(data.total || 0);
+      } catch (error) {
+        console.error("Erreur lors du chargement des conseillers:", error);
+        toast.error("Impossible de charger la liste des conseillers");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [currentPage, activeSearch],
+  );
 
   useEffect(() => {
-    loadAdvisors();
-  }, [loadAdvisors]);
+    loadAdvisors(currentPage, activeSearch);
+  }, [loadAdvisors, currentPage, activeSearch]);
+
+  // Reset de la recherche si le champ devient vide
+  useEffect(() => {
+    if (searchValue === "" && activeSearch !== "") {
+      setCurrentPage(1);
+      setActiveSearch("");
+    }
+  }, [searchValue, activeSearch]);
 
   // Validation du form
   const validateForm = useCallback(() => {
@@ -67,7 +94,6 @@ export default function AdvisorList() {
     setFormData(initialUserForm);
     setFormErrors({});
     setSelectedUser(null);
-    setSelectedUserIndex(null);
   };
 
   // CREATE
@@ -82,8 +108,6 @@ export default function AdvisorList() {
   };
 
   const handleCreate = async () => {
-    console.log("handleCreate appelé");
-    console.log("formData:", formData);
     if (!validateForm()) {
       return;
     }
@@ -95,13 +119,16 @@ export default function AdvisorList() {
         password: "TempPass123!@",
         confirm_password: "TempPass123!@",
       };
-      console.log("Données à envoyer:", dataToSend);
       await registerUser(dataToSend);
       await loadAdvisors();
       closeCreateModal();
       toast.success("Le conseiller a été créé avec succès !");
     } catch (error) {
       console.error("Erreur lors de la création:", error);
+      if (error.code === "P2002") {
+        setFormErrors({ email: "Cet email est déjà utilisé" });
+        return;
+      }
       toast.error("Une erreur est survenue lors de la création du conseiller.");
     } finally {
       setIsSaving(false);
@@ -109,9 +136,8 @@ export default function AdvisorList() {
   };
 
   // UPDATE
-  const openEditModal = (user, index) => {
+  const openEditModal = (user) => {
     setSelectedUser(user);
-    setSelectedUserIndex(index);
     setFormData({
       last_name: user.last_name || "",
       first_name: user.first_name || "",
@@ -129,11 +155,6 @@ export default function AdvisorList() {
   };
 
   const handleUpdate = async () => {
-    console.log("handleUpdate appelé");
-    console.log("formData:", formData);
-    console.log("selectedUser:", selectedUser);
-    console.log("selectedUserIndex:", selectedUserIndex);
-
     if (!validateForm()) {
       console.log("Validation échouée", formErrors);
       return;
@@ -147,8 +168,12 @@ export default function AdvisorList() {
       toast.success("Le conseiller a été modifié avec succès !");
     } catch (error) {
       console.error("Erreur lors de la mise à jour:", error);
+      if (error.code === "P2002") {
+        setFormErrors({ email: "Cet email est déjà utilisé" });
+        return;
+      }
       toast.error(
-        "Une erreur est survenue lors de la modification du conseiller."
+        "Une erreur est survenue lors de la modification du conseiller.",
       );
     } finally {
       setIsSaving(false);
@@ -156,16 +181,14 @@ export default function AdvisorList() {
   };
 
   // DELETE
-  const openDeleteModal = (user, index) => {
+  const openDeleteModal = (user) => {
     setSelectedUser(user);
-    setSelectedUserIndex(index);
     setIsDeleteModalOpen(true);
   };
 
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setSelectedUser(null);
-    setSelectedUserIndex(null);
   };
 
   const handleDelete = async () => {
@@ -173,12 +196,21 @@ export default function AdvisorList() {
     try {
       await deleteUser(selectedUser.user_id);
       closeDeleteModal();
-      await loadAdvisors();
+      // Si on est sur la dernière page et qu'il ne reste qu'un seul utilisateur on retourne à la page précédente
+      const newTotal = totalUsers - 1;
+      const newTotalPages = Math.ceil(newTotal / ITEMS_PER_PAGE);
+
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+      } else {
+        await loadAdvisors(currentPage, searchValue);
+      }
+
       toast.success("Le conseiller a été supprimé avec succès !");
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
       toast.error(
-        "Une erreur est survenue lors de la suppression du conseiller."
+        "Une erreur est survenue lors de la suppression du conseiller.",
       );
     } finally {
       setIsSaving(false);
@@ -188,6 +220,29 @@ export default function AdvisorList() {
   function handleChange(e) {
     setSearchValue(e.target.value);
   }
+
+  const handleSearch = () => {
+    setCurrentPage(1);
+    setActiveSearch(searchValue);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <>
@@ -209,7 +264,7 @@ export default function AdvisorList() {
               <h3 className="font-bold text-lg">
                 Liste de tous les conseillers
                 <span className="font-semibold text-lg ml-5 text-gray-600">
-                  {users?.length}
+                  {totalUsers}
                 </span>
               </h3>
 
@@ -225,6 +280,8 @@ export default function AdvisorList() {
                     className="p-1 outline-none w-full"
                     value={searchValue}
                     onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Rechercher par nom..."
                   />
                 </div>
                 <Button
@@ -259,6 +316,40 @@ export default function AdvisorList() {
               selectedUser={selectedUser}
               isSaving={isSaving}
             />
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+                <p className="text-sm text-gray-600">
+                  Page {currentPage} sur {totalPages}
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    text="Précédent"
+                    color="brandBlue"
+                    size="md"
+                    variant='outline'
+                    radiusSize="sm"
+                    width="full"
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    logo={<ChevronLeft size={20} />}
+                  />
+                  <Button
+                    text="Suivant"
+                    color="brandBlue"
+                    size="md"
+                    variant={currentPage === totalPages ? 'outline' : 'full'}
+                    radiusSize="sm"
+                    width="full"
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    logo={<ChevronRight size={20} />}
+                    logoBeforeText={false}
+                  />
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>

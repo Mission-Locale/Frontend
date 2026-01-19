@@ -145,8 +145,18 @@ export async function getUserProfile() {
   return data;
 }
 
-export async function getUsersFilteredByRole(roleType) {
-  const response = await callAuthorizedEndpoint(`/users?roleType=${roleType}`, "GET");
+export async function getUsersFilteredByRole(roleType, { page = 1, limit = 5, name = "" } = {}) {
+  const params = new URLSearchParams({
+    roleType,
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+
+  if (name) {
+    params.append("name", name);
+  }
+
+  const response = await callAuthorizedEndpoint(`/users?${params.toString()}`, "GET");
   if (!response.ok) {
     throw {
       status: response.status,

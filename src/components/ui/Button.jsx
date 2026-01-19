@@ -16,6 +16,7 @@ export default function Button({
   onClick,
   disabled = false,
   logo,
+  logoBeforeText = true,
   type = "button",
 }) {
   const variants = {
@@ -37,8 +38,9 @@ export default function Button({
       disabled={disabled}
     >
       <div className="flex items-center justify-center">
-        {logo && <span className="mr-2">{logo}</span>}
+        {logo && logoBeforeText && <span className="mr-2">{logo}</span>}
         {text}
+        {logo && !logoBeforeText && <span className="ml-2">{logo}</span>}
       </div>
     </button>
   );
