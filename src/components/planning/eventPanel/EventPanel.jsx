@@ -7,7 +7,5 @@ export default function EventPanel({ event }) {
       return <AppointmentPanel event={event} />;
     case "activity":
       return <ActivityPanel event={event} />;
-    default:
-      return <ErrorScreen />;
   }
 }

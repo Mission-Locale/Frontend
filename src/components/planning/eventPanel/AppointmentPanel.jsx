@@ -1,19 +1,72 @@
 import { useState } from "react";
 import Button from "../../ui/Button";
 import AppointmentEditPanel from "./AppointmentEditPanel";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { updateAppointment } from "@/utils/api";
+import { formatDuration, intervalToDuration } from "date-fns";
 
 export default function AppointmentPanel({ event }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [modal, setModal] = useState(null);
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  const jobSeeker = event.jobSeeker;
-
-  function handleAppointmentCancel() {
-    // TODO: Open Modal For Cancel Confirmation
+  const jobSeekerId = event.extendedProps.appointment.job_seeker_id;
+  const { status, data, error } = useQuery({
+    queryKey: ["jobSeeker/user", jobSeekerId],
+    queryFn: () => getJobSeekerUser(jobSeekerId), // TODO: make endpoint
+  });
+  // TODO: verify classes
+  let jobSeekerComponent;
+  switch (status) {
+    case "error":
+      jobSeekerComponent = <span className="error"> {error} </span>;
+      break;
+    case "success":
+      jobSeekerComponent = (
+        <span>
+          {data.lastName} {data.firstName}
+        </span>
+      );
+      break;
+    case "pending":
+      jobSeekerComponent = <span className="transparent"> Loading... </span>;
+      break;
   }
 
-  function handleAppointmentEdit() {
-    // TODO: Send datas to Backend
+  function handleAppointmentCancel() {
+    setModal(
+      <ConfirmationModal
+        modalKey={"cancelConfirmation"}
+        question="Êtes-vous sure de vouloir annuler le rendez-vous ?"
+        allowColor="brandPink"
+        onCancel={() => setModal(null)}
+        onAllow={() => {
+          setIsSending(true);
+          setModal(null);
+          updateAppointment(event.id, {
+            state: "CANCELLED",
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["planning/advisor", user.id],
+          });
+          setIsSending(false);
+        }}
+      />,
+    );
+  }
+
+  function handleAppointmentEdit(startDateTime, duration) {
+    setIsSending(true);
+    updateAppointment(event.id, {
+      startDateTime: startDateTime,
+      duration: duration,
+    }); // TODO incoherence between backend update and expected frontend update
+    queryClient.invalidateQueries({ queryKey: ["planning/advisor", user.id] });
+    setIsSending(false);
+    setIsEditing(false);
   }
 
   if (!isEditing)
@@ -23,20 +76,25 @@ export default function AppointmentPanel({ event }) {
         <ul>
           <li>
             <b>Début : </b>
-            <span>{event.startDate}</span>
+            <span>{event.start}</span>
           </li>
           <li>
             <b>Durée : </b>
-            <span>{event.duration}</span>
+            <span>
+              {formatDuration(
+                intervalToDuration({
+                  start: event.start,
+                  end: event.end,
+                }),
+              )}
+            </span>
           </li>
         </ul>
         <hr />
         <ul>
           <li>
             <b>Demandeur : </b>
-            <span>
-              {jobSeeker.lastName} {jobSeeker.firstName}
-            </span>
+            {jobSeekerComponent}
           </li>
         </ul>
         <div className="flex flex-row">
@@ -61,6 +119,7 @@ export default function AppointmentPanel({ event }) {
             disabled={isSending}
           />
         </div>
+        {modal}
       </>
     );
   else {

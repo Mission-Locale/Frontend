@@ -120,7 +120,7 @@ export async function refreshUser() {
 
 export async function registerUser(body) {
   const response = await callEndpoint(`:${PORT}/auth/register`, "POST", body);
-  
+
   if (!response.ok) {
     const errorData = await response.json();
     throw {
@@ -129,29 +129,94 @@ export async function registerUser(body) {
       code: errorData.error?.code,
     };
   }
-  
-  const data = await response.json();
-  return data;
+
+  return await response.json();
 }
 
 export async function getUserProfile() {
   const response = await callAuthorizedEndpoint(`:${PORT}/profile`, "GET");
-  
+
   if (!response.ok) {
     return null;
   }
-  
-  const data = await response.json();
-  return data;
+
+  return await response.json();
 }
 
 //TODO: Implement backend route (and data model)
 export async function getAdvisorPlanning(advisorId) {
   const response = await callAuthorizedEndpoint(
     "/planning/advisor/" + advisorId,
-    "GET"
+    "GET",
   );
   //handleEndpointError(400, response);
+
+  return await response.json();
+}
+
+export async function createAppointment(request) {
+  const response = await callAuthorizedEndpoint(
+    "/appointments",
+    "POST",
+    request,
+  );
+  handleEndpointError(403, response);
+
+  return await response.json();
+}
+
+export async function getAppointments() {
+  const response = await callAuthorizedEndpoint("/appointments", "GET");
+  handleEndpointError(403, response);
+
+  return await response.json();
+}
+
+export async function getRegistrationAppointments() {
+  const response = await callAuthorizedEndpoint(
+    "/appointments/registration",
+    "GET",
+  );
+  handleEndpointError(403, response);
+
+  return await response.json();
+}
+
+export async function createRegistrationAppointment(request) {
+  const response = await callEndpoint(
+    "/appointments/registration",
+    "POST",
+    request,
+  );
+  handleEndpointError(400, response);
+
+  return await response.json();
+}
+
+export async function getAppointment(id) {
+  const response = await callAuthorizedEndpoint("/appointments/" + id, "GET");
+  handleEndpointError(403, response);
+
+  return await response.json();
+}
+
+export async function updateAppointment(id, body) {
+  const response = await callAuthorizedEndpoint(
+    "/appointments/" + id,
+    "PATCH",
+    body,
+  );
+  handleEndpointError(403, response);
+
+  return await response.json();
+}
+
+export async function deleteAppointment(id) {
+  const response = await callAuthorizedEndpoint(
+    "/appointments/" + id,
+    "DELETE",
+  );
+  handleEndpointError(403, response);
 
   return await response.json();
 }

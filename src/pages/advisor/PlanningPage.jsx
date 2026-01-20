@@ -1,12 +1,13 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Calendar from "../../components/planning/Calendar";
 import { useQuery } from "@tanstack/react-query";
 import { getAdvisorPlanning } from "../../utils/api";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function PlanningPage() {
-  const user = useContext("user");
+  const { user } = useAuth();
   const { status, data, error } = useQuery({
-    queryKey: ["advisorPlanning", user.id],
+    queryKey: ["planning/advisor", user.id],
     queryFn: () => getAdvisorPlanning(user.id),
   });
   const [editState, setEditState] = useState(null);
@@ -14,10 +15,10 @@ export default function PlanningPage() {
 
   switch (status) {
     case "pending":
-      return <LoadingFrame />;
+      return <LoadingFrame />; //TODO implement LoadingFrame
 
     case "error":
-      return <ErrorFrame error={error} />;
+      return <ErrorFrame error={error} />; //TODO implement ErrorFrame
 
     case "success":
       return (
@@ -41,7 +42,11 @@ export default function PlanningPage() {
             {editState == "editing" && editingEvent && (
               <EventPanel event={editingEvent} />
             )}
-            {editState == "adding" && <EventEditPanel />}
+            {
+              editState == "adding" && (
+                <AppointmentAddPanel /> // TODO: implement appointment creation
+              )
+            }
           </div>
         </main>
       );

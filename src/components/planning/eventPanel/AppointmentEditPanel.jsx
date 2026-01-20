@@ -1,8 +1,15 @@
 import { useState } from "react";
-import Button from "../../ui/Button";
-import TextInput from "../../ui/InputTextLabel";
+import Button from "@/components/ui/Button";
+import TextInput from "@/components/ui/Form/InputText";
+import { formatDuration, intervalToDuration } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
 
-export default function AppointmentPanel({ event, onCancel, onValidation }) {
+export default function AppointmentEditPanel({
+  event,
+  onCancel,
+  onValidation,
+  errors = [],
+}) {
   const [isSending, setIsSending] = useState(false);
   const [startDateTime, setStartDateTime] = useState(event.startDate);
   const [duration, setDuration] = useState(event.duration);
@@ -13,7 +20,28 @@ export default function AppointmentPanel({ event, onCancel, onValidation }) {
     setIsSending(false);
   }
 
-  const jobSeeker = event.jobSeeker; //TODO: Get JobSeeker
+  const jobSeekerId = event.extendedProps.appointment.job_seeker_id;
+  const { status, data, error } = useQuery({
+    queryKey: ["jobSeeker/user", jobSeekerId],
+    queryFn: () => getJobSeekerUser(jobSeekerId), // TODO: make endpoint
+  });
+  // TODO: verify classes
+  let jobSeekerComponent;
+  switch (status) {
+    case "error":
+      jobSeekerComponent = <span className="error"> {error} </span>;
+      break;
+    case "success":
+      jobSeekerComponent = (
+        <span>
+          {data.lastName} {data.firstName}
+        </span>
+      );
+      break;
+    case "pending":
+      jobSeekerComponent = <span className="transparent"> Loading... </span>;
+      break;
+  }
 
   return (
     <>
@@ -29,6 +57,7 @@ export default function AppointmentPanel({ event, onCancel, onValidation }) {
             value={startDateTime}
             onChange={(e) => setStartDateTime(e.currentTarget.valueAsDate)}
             ringColor="brandBlue"
+            error={errors["startDateTime"]}
           />
         </li>
         <li>
@@ -41,18 +70,24 @@ export default function AppointmentPanel({ event, onCancel, onValidation }) {
             value={duration}
             onChange={(e) => setDuration(e.currentTarget.value)}
             ringColor="brandBlue"
+            error={errors["duration"]}
           />
           <b>Durée : </b>
-          <span>{event.duration}</span>
+          <span>
+            {formatDuration(
+              intervalToDuration({
+                start: event.start,
+                end: event.end,
+              }),
+            )}
+          </span>
         </li>
       </ul>
       <hr />
       <ul>
         <li>
           <b>Demandeur : </b>
-          <span>
-            {jobSeeker.lastName} {jobSeeker.firstName}
-          </span>
+          {jobSeekerComponent}
         </li>
       </ul>
       <div className="flex flex-row">
