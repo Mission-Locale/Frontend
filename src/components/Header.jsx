@@ -1,8 +1,10 @@
 import logo from "/assets/img/Logo_Mission_Locale.webp";
 import useMobileToggle from "@/hooks/useMobileToggle";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
   const isMobile = useMobileToggle();
+  const { isAuthenticated, logout } = useAuth();
 
   //TODO: compléter les liens du header
 
@@ -30,10 +32,16 @@ export default function Header() {
             <li>
               <a href="#">Prise de rendez-vous</a>
             </li>
-
-            <li>
-              <a href="#">Connexion</a>
-            </li>
+            {!isAuthenticated && (
+              <li>
+                <a href="/login">Connexion</a>
+              </li>
+            )}
+            {isAuthenticated && (
+              <li>
+                <button className="cursor-pointer" onClick={logout}>Déconnexion</button>
+              </li>
+            )}
           </ul>
         </div>
       </header>

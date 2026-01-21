@@ -19,6 +19,16 @@ async function callEndpoint(endpoint, method, body = null) {
   });
 }
 
+async function callPublicEndpoint(endpoint, method, body = null) {
+  return await fetch(`${URI}:${PORT}${endpoint}`, {
+    method: method,
+    body: body != null ? JSON.stringify(body) : null,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
 async function callAuthorizedEndpoint(endpoint, method, body = null) {
   const requestBody = body != null ? JSON.stringify(body) : null;
   const request = () =>
@@ -186,6 +196,36 @@ export async function deleteUser(userId) {
     throw {
       status: response.status,
       error: `Erreur lors de la suppression du conseiller`,
+    };
+  }
+  
+  const data = await response.json();
+  return data;
+}
+
+export async function verifyResetToken(token) {
+  const response = await callPublicEndpoint("/auth/verify-reset-token", "POST", { token });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw {
+      status: response.status,
+      error: errorData,
+    };
+  }
+  
+  const data = await response.json();
+  return data;
+}
+
+export async function resetPassword(body) {
+  const response = await callPublicEndpoint("/auth/reset-password", "POST", body);
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw {
+      status: response.status,
+      error: errorData,
     };
   }
   

@@ -12,6 +12,8 @@ import {
 import { toast } from "react-toastify";
 import { validateModalAdvisor } from "@/utils/validations";
 
+const PASSWORD_SECRET = import.meta.env.VITE_PASSWORD_SECRET;
+
 // État initial pour un nouvel utilisateur
 const initialUserForm = {
   first_name: "",
@@ -19,7 +21,8 @@ const initialUserForm = {
   email: "",
   phone: "",
   birth_date: "",
-  profile_picture_path: null,
+  // TODO : Gérer le profile picture dans le back
+  profile_picture_path: null, 
 };
 
 const ITEMS_PER_PAGE = 5;
@@ -40,7 +43,7 @@ export default function AdvisorList() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  // State du formulaire (création/édition)
+  // State du formulaire
   const [formData, setFormData] = useState(initialUserForm);
   const [formErrors, setFormErrors] = useState({});
 
@@ -115,9 +118,10 @@ export default function AdvisorList() {
     try {
       const dataToSend = {
         ...formData,
+        profile_picture_path: null, // TODO : Gérer le profile picture dans le back
         roleType: "ADVISOR",
-        password: "TempPass123!@",
-        confirm_password: "TempPass123!@",
+        password: PASSWORD_SECRET,
+        confirm_password: PASSWORD_SECRET,
       };
       await registerUser(dataToSend);
       await loadAdvisors();
@@ -144,7 +148,8 @@ export default function AdvisorList() {
       email: user.email || "",
       phone: user.phone || "",
       birth_date: user.birth_date ? new Date(user.birth_date) : "",
-      profile_picture_path: user.profile_picture_path || null,
+      // TODO : Gérer le profile picture dans le back 
+      profile_picture_path: user.profile_picture_path || null, 
     });
     setIsEditModalOpen(true);
   };

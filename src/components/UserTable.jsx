@@ -7,7 +7,7 @@ import Button from "./ui/Button";
 import FileUpload from "./ui/Form/FileUpload";
 import dateFormater from "@/utils/dateFormater";
 
-const UserTable = ({
+export default function UserTable({
   users,
   onEdit,
   onDelete,
@@ -26,7 +26,7 @@ const UserTable = ({
   setFormErrors,
   selectedUser,
   isSaving,
-}) => {
+}) {
   // Gestion des images de profil en erreur
   const [failedImages, setFailedImages] = useState(new Set());
 
@@ -189,7 +189,7 @@ const UserTable = ({
 
                     {/* Count Col */}
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {user.advisor.assigned_job_seekers.length ?? 0 }
+                      {user.advisor.assigned_job_seekers.length ?? 0}
                     </td>
 
                     {/* Date Col */}
@@ -260,7 +260,7 @@ const UserTable = ({
               />
               <Button
                 text={isSaving ? "Création..." : "Créer"}
-                color="brandOrange"
+                color="brandBlue"
                 size="md"
                 variant="full"
                 radiusSize="md"
@@ -342,7 +342,8 @@ const UserTable = ({
               <p className="text-gray-600">
                 Êtes-vous sûr de vouloir supprimer le conseiller{" "}
                 <span className="font-bold text-gray-900 capitalize">
-                  {selectedUser ? `${selectedUser.first_name} ${selectedUser.last_name}` : ""}
+                  {selectedUser &&
+                  `${selectedUser.first_name} ${selectedUser.last_name}`}
                 </span>{" "}
                 ?
               </p>
@@ -378,5 +379,3 @@ const UserTable = ({
     </div>
   );
 };
-
-export default UserTable;
