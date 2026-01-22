@@ -77,12 +77,27 @@ export default function AdvisorList() {
     loadAdvisors(currentPage, activeSearch);
   }, [loadAdvisors, currentPage, activeSearch]);
 
-  // Reset de la recherche si le champ devient vide
   useEffect(() => {
+
     if (searchValue === "" && activeSearch !== "") {
       setCurrentPage(1);
       setActiveSearch("");
+      return;
     }
+
+    if (searchValue.length > 0 && searchValue.length < 3) {
+      return;
+    }
+    
+    const timeoutId = setTimeout(() => {
+      if (searchValue.length >= 3 && searchValue !== activeSearch) {
+        setCurrentPage(1);
+        setActiveSearch(searchValue);
+      }
+    }, 500);
+
+    // cleanup
+    return () => clearTimeout(timeoutId);
   }, [searchValue, activeSearch]);
 
   // Validation du form
@@ -226,17 +241,6 @@ export default function AdvisorList() {
     setSearchValue(e.target.value);
   }
 
-  const handleSearch = () => {
-    setCurrentPage(1);
-    setActiveSearch(searchValue);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
-
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -285,7 +289,6 @@ export default function AdvisorList() {
                     className="p-1 outline-none w-full"
                     value={searchValue}
                     onChange={handleChange}
-                    onKeyDown={handleKeyDown}
                     placeholder="Rechercher par nom..."
                   />
                 </div>
