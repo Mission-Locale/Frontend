@@ -9,7 +9,7 @@ const URI = import.meta.env.VITE_API_URL;
 const PORT = import.meta.env.VITE_API_PORT;
 
 async function callEndpoint(endpoint, method, body = null) {
-  return await fetch(URI + endpoint, {
+  return await fetch(URI + `:${PORT}` + endpoint, {
     method: method,
     body: body != null ? JSON.stringify(body) : null,
     headers: {
@@ -22,7 +22,7 @@ async function callEndpoint(endpoint, method, body = null) {
 async function callAuthorizedEndpoint(endpoint, method, body = null) {
   const requestBody = body != null ? JSON.stringify(body) : null;
   const request = () =>
-    fetch(URI + endpoint, {
+    fetch(URI + `:${PORT}` + endpoint, {
       method: method,
       body: requestBody,
       headers: {
@@ -33,6 +33,7 @@ async function callAuthorizedEndpoint(endpoint, method, body = null) {
     });
 
   let response = await request();
+
   if (response.status == 401) {
     const refreshed = await refreshUser();
     if (refreshed) {
@@ -46,36 +47,30 @@ async function callAuthorizedEndpoint(endpoint, method, body = null) {
   return response;
 }
 
-async function handleEndpointError(errorCode, response) {
-  if (response.status == errorCode) {
-    const errorData = await response.json();
-    console.error(`Une erreur ${errorCode} a eu lieu : ${errorData.error}`);
-    throw {
-      status: errorCode,
-      error: errorData.error,
-    };
-  } else {
-    handleError(response);
-  }
-}
-
-function handleError(response) {
+async function handleError(response) {
   if (!response.ok) {
-    console.error(`Une erreur ${response.status} a eu lieu !`);
-    throw {
-      status: response.status,
-      error: `Une erreur ${response.status} a eu lieu !`,
-    };
+    if (response.headers.get("Content-Type") == "application/json") {
+      const errorData = await response.json();
+      console.error(
+        `Une erreur ${response.status} a eu lieu : ${errorData.error}`,
+      );
+      throw {
+        status: response.status,
+        error: errorData.error,
+      };
+    } else {
+      console.error(`Une erreur ${response.status} a eu lieu !`);
+      throw {
+        status: response.status,
+        error: `Une erreur ${response.status} a eu lieu !`,
+      };
+    }
   }
 }
 
 export async function loginUser(body) {
-  const response = await callEndpoint(`:${PORT}/auth/login`, "POST", body);
-
-  if (!response.ok) {
-    return handleEndpointError(400, response);
-  }
-
+  const response = await callEndpoint("/auth/login", "POST", body);
+  handleError(response);
   const data = await response.json();
 
   // Stocker uniquement token et role dans le localStorage
@@ -97,14 +92,14 @@ export async function loginUser(body) {
 }
 
 export async function logoutUser() {
-  const response = await callAuthorizedEndpoint(`:${PORT}/auth/logout`, "GET");
+  const response = await callAuthorizedEndpoint("/auth/logout", "GET");
   handleError(response);
   clearUserSession();
 }
 
 export async function refreshUser() {
   try {
-    const response = await callEndpoint(`:${PORT}/auth/refresh`, "POST");
+    const response = await callEndpoint("/auth/refresh", "POST");
     if (!response.ok) {
       return null;
     }
@@ -119,7 +114,7 @@ export async function refreshUser() {
 }
 
 export async function registerUser(body) {
-  const response = await callEndpoint(`:${PORT}/auth/register`, "POST", body);
+  const response = await callEndpoint("/auth/register", "POST", body);
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -134,7 +129,7 @@ export async function registerUser(body) {
 }
 
 export async function getUserProfile() {
-  const response = await callAuthorizedEndpoint(`:${PORT}/profile`, "GET");
+  const response = await callAuthorizedEndpoint("/profile", "GET");
 
   if (!response.ok) {
     return null;
@@ -143,14 +138,29 @@ export async function getUserProfile() {
   return await response.json();
 }
 
-//TODO: Implement backend route (and data model)
+export async function getJobSeeker(id) {
+  const response = await callAuthorizedEndpoint(
+    "/users/job-seeker/" + id,
+    "GET",
+  );
+  handleError(response);
+
+  return await response.json();
+}
+
 export async function getAdvisorPlanning(advisorId) {
   const response = await callAuthorizedEndpoint(
     "/planning/advisor/" + advisorId,
     "GET",
   );
-  //handleEndpointError(400, response);
+  handleError(response);
 
+  return await response.json();
+}
+
+export async function getSelfPlanning() {
+  const response = await callAuthorizedEndpoint("/planning/me", "GET");
+  handleError(response);
   return await response.json();
 }
 
@@ -160,14 +170,14 @@ export async function createAppointment(request) {
     "POST",
     request,
   );
-  handleEndpointError(403, response);
+  handleError(response);
 
   return await response.json();
 }
 
 export async function getAppointments() {
   const response = await callAuthorizedEndpoint("/appointments", "GET");
-  handleEndpointError(403, response);
+  handleError(response);
 
   return await response.json();
 }
@@ -177,7 +187,7 @@ export async function getRegistrationAppointments() {
     "/appointments/registration",
     "GET",
   );
-  handleEndpointError(403, response);
+  handleError(response);
 
   return await response.json();
 }
@@ -188,14 +198,14 @@ export async function createRegistrationAppointment(request) {
     "POST",
     request,
   );
-  handleEndpointError(400, response);
+  handleError(response);
 
   return await response.json();
 }
 
 export async function getAppointment(id) {
   const response = await callAuthorizedEndpoint("/appointments/" + id, "GET");
-  handleEndpointError(403, response);
+  handleError(response);
 
   return await response.json();
 }
@@ -206,7 +216,7 @@ export async function updateAppointment(id, body) {
     "PATCH",
     body,
   );
-  handleEndpointError(403, response);
+  handleError(response);
 
   return await response.json();
 }
@@ -216,7 +226,37 @@ export async function deleteAppointment(id) {
     "/appointments/" + id,
     "DELETE",
   );
-  handleEndpointError(403, response);
+  handleError(response);
+
+  return await response.json();
+}
+
+export async function registerJobSeekerToWorkshopRecurrence(
+  recurrenceId,
+  jobSeekerId,
+) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${recurrenceId}/register`,
+    "POST",
+    { jobSeekerId: jobSeekerId },
+  );
+  handleError(response);
+}
+
+export async function removeSelfAnimatorFromWorkshopRecurrence(recurrenceId) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${recurrenceId}/animators`,
+    "DELETE",
+  );
+  handleError(response);
+}
+
+export async function getAssignedJobSeekers(nameQuery = undefined) {
+  const response = await callAuthorizedEndpoint(
+    "/advisors/job-seekers" + (nameQuery ? `?name=${nameQuery}` : ""),
+    "GET",
+  );
+  handleError(response);
 
   return await response.json();
 }

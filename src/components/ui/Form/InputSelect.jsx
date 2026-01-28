@@ -22,9 +22,10 @@
 //   disabled={false}
 //  />
 
-import { selectThemes, sizes } from "../../../styles/tokensTailwind";
+import { selectThemes, sizes } from "@/styles/tokensTailwind";
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, Check } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import OptionList from "./OptionList";
 
 export default function InputSelect({
   label,
@@ -33,8 +34,8 @@ export default function InputSelect({
   onChange,
   placeholder,
   selectTheme,
-  variant="default",
-  size="md",
+  variant = "default",
+  size = "md",
   disabled,
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -78,8 +79,8 @@ export default function InputSelect({
           className={`
             w-full flex items-center justify-between rounded-md
             ${variants[variant]} ${sizes[size]} ${
-            selectThemes[selectTheme].trigger
-          }
+              selectThemes[selectTheme].trigger
+            }
             focus:outline-none focus:ring-2 focus:ring-offset-2
             transition-all duration-200
             ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
@@ -96,41 +97,12 @@ export default function InputSelect({
         </button>
 
         {isOpen && (
-          <ul
-            className={`
-              absolute z-50 w-full mt-2 rounded-lg bg-white shadow-lg border
-              ${selectThemes[selectTheme].dropdown}
-              max-h-60 overflow-auto
-            `}
-          >
-            {options.map((option) => {
-              const isSelected = option.value === value;
-              return (
-                <li
-                  key={option.value}
-                  onClick={() => handleSelect(option.value)}
-                  aria-selected={isSelected}
-                  className={`
-                    w-full px-4 py-2 text-left flex items-center justify-between
-                    transition-colors duration-150 cursor-pointer
-                    ${
-                      isSelected
-                        ? selectThemes[selectTheme].optionSelected
-                        : selectThemes[selectTheme].option
-                    }
-                    first:rounded-t-lg last:rounded-b-lg
-                  `}
-                >
-                  <span>{option.label}</span>
-                  {isSelected && (
-                    <Check
-                      className={`w-5 h-5 ${selectThemes[selectTheme].check}`}
-                    />
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+          <OptionList
+            options={options}
+            value={selectedOption}
+            selectTheme={selectTheme}
+            onSelect={handleSelect}
+          />
         )}
       </div>
     </div>

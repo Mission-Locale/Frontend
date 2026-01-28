@@ -5,6 +5,7 @@ import DefaultLayout from "../layouts/DefaultLayout";
 import RegisterUser from "../layouts/RegisterUser/RegisterUser";
 import Connexion from "@/pages/Connexion";
 import { JOB_SEEKER, ADVISOR, ADMINISTRATOR } from "../utils/userRole";
+import PlanningPage from "@/pages/advisor/PlanningPage";
 
 export default function Router() {
   return (
@@ -23,6 +24,7 @@ export default function Router() {
             </Route>
             <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
               {/* Routes des Conseillers */}
+              <Route element={<PlanningPage/>} />
             </Route>
             <Route element={<DashboardRoutes role={ADMINISTRATOR} redirect="/" />}>
               {/* Routes des Administrateurs */}

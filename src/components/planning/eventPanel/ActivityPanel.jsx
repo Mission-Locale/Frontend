@@ -2,6 +2,10 @@ import { useState } from "react";
 import Button from "@/components/ui/Button";
 import JobSeekerRegisteringModal from "./JobSeekerRegisteringModal";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  registerJobSeekerToWorkshopRecurrence,
+  removeSelfAnimatorFromWorkshopRecurrence,
+} from "@/utils/api";
 //TODO: implement FoldBox
 //TODO: implement Pill
 
@@ -15,16 +19,16 @@ export default function ActivityPanel({ event }) {
     setModal(
       <JobSeekerRegisteringModal
         onCancel={() => setModal(null)}
-        onValidation={(jobSeeker) => {
+        onValidation={(jobSeekerId) => {
           setIsSending(true);
           setModal(null);
-          // TODO: Manage job seeker registering
           registerJobSeekerToWorkshopRecurrence(
-            jobSeeker.job_seeker_id,
+            jobSeekerId,
             workshopRecurrence.workshop_recurrence_id,
-          );
-
-          setIsSending(false);
+          ).then(() => {
+            console.log("Registered to workshop");
+            setIsSending(false);
+          });
         }}
       />,
     );
@@ -40,12 +44,12 @@ export default function ActivityPanel({ event }) {
         onAllow={() => {
           setIsSending(true);
           setModal(null);
-          // TODO: Manage unsubscription request
-          unregisterAnimatorFromWorkshopRecurrence(
-            user.advisor_id,
+          removeSelfAnimatorFromWorkshopRecurrence(
             workshopRecurrence.workshop_recurrence_id,
-          );
-          setIsSending(false);
+          ).then(() => {
+            console.log("Unregister from workshop");
+            setIsSending(false);
+          });
         }}
       />,
     );

@@ -1,14 +1,16 @@
 import { useState } from "react";
 import Calendar from "../../components/planning/Calendar";
+import AppointmentAddPanel from "@/components/planning/eventPanel/AppointmentAddPanel";
+import EventPanel from "@/components/planning/eventPanel/EventPanel";
 import { useQuery } from "@tanstack/react-query";
-import { getAdvisorPlanning } from "../../utils/api";
+import { getSelfPlanning } from "../../utils/api";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function PlanningPage() {
   const { user } = useAuth();
   const { status, data, error } = useQuery({
-    queryKey: ["planning/advisor", user.id],
-    queryFn: () => getAdvisorPlanning(user.id),
+    queryKey: ["planning", user.id],
+    queryFn: getSelfPlanning,
   });
   const [editState, setEditState] = useState(null);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -42,11 +44,12 @@ export default function PlanningPage() {
             {editState == "editing" && editingEvent && (
               <EventPanel event={editingEvent} />
             )}
-            {
-              editState == "adding" && (
-                <AppointmentAddPanel /> // TODO: implement appointment creation
-              )
-            }
+            {editState == "adding" && (
+              <AppointmentAddPanel
+                onCancel={() => setEditState(null)}
+                onValidation={handleAppointmentCreation}
+              /> // TODO: implement appointment creation
+            )}
           </div>
         </main>
       );

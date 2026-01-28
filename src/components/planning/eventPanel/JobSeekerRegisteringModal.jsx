@@ -1,54 +1,50 @@
 import Modal from "@/components/Modal";
 import Button from "@/components/ui/Button";
-import TextInput from "@/components/ui/Form/InputText";
-import { JOB_SEEKER } from "@/utils/userRole";
-import { useQuery } from "@tanstack/react-query";
+import QueryInput from "@/components/ui/Form/QueryInput";
+import { getAssignedJobSeekers } from "@/utils/api";
 import { useState } from "react";
 
 export default function JobSeekerRegisteringModal({ onCancel, onValidation }) {
   const [jobSeeker, setJobSeeker] = useState("");
+  const [jobSeekerId, setJobSeekerId] = useState(null);
 
-  if (jobSeeker.length > 0) {
-    const { status, data, error } = useQuery({
-      queryKey: ["user/search/jobSeeker", jobSeeker],
-      queryFn: () => searchUser(jobSeeker, JOB_SEEKER), // TODO: make endpoint
-    });
-
-    //TODO implement query result
-    switch (status) {
-      case "error":
-        break;
-      case "success":
-        break;
-      case "pending":
-        break;
-    }
+  function handleInput(id, value) {
+    setJobSeeker(value);
+    setJobSeekerId(id);
   }
 
   return (
     <Modal modalKey={"userRegistering"} onOutOfBoundClick={onCancel}>
       <div className="flex flex-col">
-        <TextInput
+        <QueryInput
           label="Demandeur à inscrire"
           placeholder="NOM Prénom"
-          type="text"
           selectTheme="brandBlue"
-          onChange={(e) => setJobSeeker(e.currentTarget.value)}
+          onSelection={handleInput}
           value={jobSeeker}
           required={true}
+          fetchKey="search/assignedJobSeekers"
+          fetchfunction={getAssignedJobSeekers}
+          optionMapper={(jobSeeker) => {
+            return {
+              value: jobSeeker.job_seeker_id,
+              label: `${jobSeeker.lastName} ${jobSeeker.firstName}`,
+            };
+          }}
         />
         <div className="flex flex-row">
           <Button
-            text="Oui"
+            text="Inscrire"
             variant="full"
             color="brandBlue"
             size="md"
             radiusSize="md"
             width="100%"
-            onClick={() => onValidation(jobSeeker)}
+            onClick={() => onValidation(jobSeekerId)}
+            disabled={jobSeekerId == null}
           />
           <Button
-            text="Non"
+            text="Annuler"
             variant="ghost"
             color="brandBlue"
             size="md"

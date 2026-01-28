@@ -3,7 +3,7 @@ import Button from "../../ui/Button";
 import AppointmentEditPanel from "./AppointmentEditPanel";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { updateAppointment } from "@/utils/api";
+import { getJobSeeker, updateAppointment } from "@/utils/api";
 import { formatDuration, intervalToDuration } from "date-fns";
 
 export default function AppointmentPanel({ event }) {
@@ -16,8 +16,9 @@ export default function AppointmentPanel({ event }) {
   const jobSeekerId = event.extendedProps.appointment.job_seeker_id;
   const { status, data, error } = useQuery({
     queryKey: ["jobSeeker/user", jobSeekerId],
-    queryFn: () => getJobSeekerUser(jobSeekerId), // TODO: make endpoint
+    queryFn: () => getJobSeeker(jobSeekerId),
   });
+
   // TODO: verify classes
   let jobSeekerComponent;
   switch (status) {
@@ -27,7 +28,7 @@ export default function AppointmentPanel({ event }) {
     case "success":
       jobSeekerComponent = (
         <span>
-          {data.lastName} {data.firstName}
+          {data.user.lastName} {data.user.firstName}
         </span>
       );
       break;
