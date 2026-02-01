@@ -59,7 +59,9 @@ export default function ContentStep() {
         birth_date: personalInfo.birthDate,
         password: personalInfo.password,
         confirm_password: personalInfo.confirmPassword,
+        // roleType: "ADMINISTRATOR",
         roleType: "JOB_SEEKER",
+        // roleType: "ADVISOR",
       };
       await registerUser(formData);
       handleNext();

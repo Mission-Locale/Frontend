@@ -8,12 +8,7 @@ import {
   sizes,
   border,
 } from "@/styles/tokensTailwind";
-
-const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    })
+import dateFormater from "@/utils/dateFormater";
 
 export default function InputDate({
   label,
@@ -27,8 +22,8 @@ export default function InputDate({
   error,
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [date, setDate] = useState(value || undefined);
   const selectRef = useRef(null);
+  const date = value ? (value instanceof Date ? value : new Date(value)) : undefined;
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -41,11 +36,6 @@ export default function InputDate({
   }, []);
 
   const now = new Date();
-
-  const formatDate = (date) => {
-    if (!date) return null;
-    return dateFormatter.format(date);
-  };
 
   return (
     <div className="w-full mb-4">
@@ -70,7 +60,7 @@ export default function InputDate({
           `}
         >
           <span className={value ? "text-gray-900 text-sm sm:text-base" : "text-gray-500 text-sm sm:text-base"}>
-            {value ? formatDate(value) : placeholder}
+            {value ? dateFormater(value) : placeholder}
           </span>
           <CalendarDays className="w-5 h-5 text-gray-400 ml-2 shrink-0" />
         </button>
@@ -84,7 +74,6 @@ export default function InputDate({
               selected={date}
               captionLayout="dropdown"
               onSelect={(newDate) => {
-                setDate(newDate);
                 onChange?.(newDate);
                 setIsOpen(false);
               }}
