@@ -3,6 +3,13 @@
 
 @custom-variant dark (&:is(.dark *)); /* Générer par shadcn */
 
+@layer components {
+  /* Classe utilitaire pour définir une hauteur pleine moins la hauteur du header */
+  .full-screen-minus-header {
+    height: calc(100dvh - 130px);
+  }
+}
+
 @theme {
   /* Colors Branding */
 
@@ -18,10 +25,10 @@
 
   --color-success: #16a34a;
   --color-bgSuccess: #f0fdf4;
-  --color-bgSuccessIcon: #DCFCE7;
-  --color-error: #DC2626;
+  --color-bgSuccessIcon: #dcfce7;
+  --color-error: #dc2626;
   --color-bgError: #fbf2f5;
-  --color-bgErrorIcon: #FFDADA;
+  --color-bgErrorIcon: #ffdada;
 
   /* Font Families */
 

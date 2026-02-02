@@ -4,8 +4,10 @@ import DashboardRoutes from "./middleswares/DashboardRoutes";
 import DefaultLayout from "../layouts/DefaultLayout";
 import RegisterUser from "../layouts/RegisterUser/RegisterUser";
 import Connexion from "@/pages/Connexion";
+import ResetPassword from "@/pages/ResetPassword";
 import { JOB_SEEKER, ADVISOR, ADMINISTRATOR } from "../utils/userRole";
-import PlanningPage from "@/pages/advisor/PlanningPage";
+import Dashboard from "@/layouts/Dashboard";
+import AdvisorList from "@/pages/AdvisorList";
 
 export default function Router() {
   return (
@@ -15,19 +17,29 @@ export default function Router() {
         <Route path="/register" element={<RegisterUser />} />
         {/* Route de connexion */}
         <Route path="/login" element={<Connexion />} />
+        {/* Route de réinitialisation de mot de passe */}
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<DefaultLayout />}>
           {/* Vitrine */}
           {/* TODO: <Route path="/" index element={<HomePage />} /> */}
+
           <Route element={<PrivateRoutes />}>
-            <Route element={<DashboardRoutes role={JOB_SEEKER} redirect="/" />}>
-              {/* Routes des Demandeurs d'emploi */}
-            </Route>
-            <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
-              {/* Routes des Conseillers */}
-              <Route element={<PlanningPage/>} />
-            </Route>
-            <Route element={<DashboardRoutes role={ADMINISTRATOR} redirect="/" />}>
-              {/* Routes des Administrateurs */}
+            <Route element={<Dashboard />}>
+              <Route
+                element={<DashboardRoutes role={JOB_SEEKER} redirect="/" />}
+              >
+                {/* Routes des Demandeurs d'emploi */}
+              </Route>
+              <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
+                {/* Routes des Conseillers */}
+                <Route element={<PlanningPage />} />
+              </Route>
+              <Route
+                element={<DashboardRoutes role={ADMINISTRATOR} redirect="/" />}
+              >
+                {/* Routes des Administrateurs */}
+                <Route path="/advisor-list" element={<AdvisorList />} />
+              </Route>
             </Route>
           </Route>
         </Route>

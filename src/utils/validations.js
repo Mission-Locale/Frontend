@@ -138,3 +138,41 @@ export function validateLogin(loginData) {
 
   return errors;
 }
+
+// Valide tous les champs de la modal d'ajout/édition d'un conseiller
+export function validateModalAdvisor(personalInfo) {
+  const errors = {};
+
+  // nom et prenom
+  if (!validateRequired(personalInfo.last_name)) {
+    errors.last_name = "Le nom est requis";
+  } else if (!validateTextOnly(personalInfo.last_name)) {
+    errors.last_name = "Cela ne doit contenir que des lettres";
+  }
+
+  if (!validateRequired(personalInfo.first_name)) {
+    errors.first_name = "Le prénom est requis";
+  } else if (!validateTextOnly(personalInfo.first_name)) {
+    errors.first_name = "Cela ne doit contenir que des lettres";
+  }
+
+  // email
+  if (!validateRequired(personalInfo.email)) {
+    errors.email = "L'email est requis";
+  } else if (!validateEmail(personalInfo.email)) {
+    errors.email = "Format d'email invalide";
+  }
+
+  // date de naissance
+  if (!validateRequired(personalInfo.birth_date)) {
+    errors.birth_date = "La date de naissance est requise";
+  }
+
+  // téléphone
+  if (!validateRequired(personalInfo.phone)) {
+    errors.phone = "Le téléphone est requis";
+  } else if (!validatePhone(personalInfo.phone)) {
+    errors.phone = "Le numéro doit contenir 10 chiffres";
+  }
+  return errors;
+}

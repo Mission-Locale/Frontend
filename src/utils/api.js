@@ -9,7 +9,7 @@ const URI = import.meta.env.VITE_API_URL;
 const PORT = import.meta.env.VITE_API_PORT;
 
 async function callEndpoint(endpoint, method, body = null) {
-  return await fetch(URI + `:${PORT}` + endpoint, {
+  return await fetch(`${URI}:${PORT}${endpoint}`, {
     method: method,
     body: body != null ? JSON.stringify(body) : null,
     headers: {
@@ -19,10 +19,20 @@ async function callEndpoint(endpoint, method, body = null) {
   });
 }
 
+async function callPublicEndpoint(endpoint, method, body = null) {
+  return await fetch(`${URI}:${PORT}${endpoint}`, {
+    method: method,
+    body: body != null ? JSON.stringify(body) : null,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
 async function callAuthorizedEndpoint(endpoint, method, body = null) {
   const requestBody = body != null ? JSON.stringify(body) : null;
   const request = () =>
-    fetch(URI + `:${PORT}` + endpoint, {
+    fetch(`${URI}:${PORT}${endpoint}`, {
       method: method,
       body: requestBody,
       headers: {
@@ -115,7 +125,6 @@ export async function refreshUser() {
 
 export async function registerUser(body) {
   const response = await callEndpoint("/auth/register", "POST", body);
-
   if (!response.ok) {
     const errorData = await response.json();
     throw {
@@ -130,7 +139,6 @@ export async function registerUser(body) {
 
 export async function getUserProfile() {
   const response = await callAuthorizedEndpoint("/profile", "GET");
-
   if (!response.ok) {
     return null;
   }
@@ -259,4 +267,101 @@ export async function getAssignedJobSeekers(nameQuery = undefined) {
   handleError(response);
 
   return await response.json();
+}
+
+export async function getUsersFilteredByRole(
+  roleType,
+  { page = 1, limit = 5, name = "" } = {},
+) {
+  const params = new URLSearchParams({
+    roleType,
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+
+  if (name) {
+    params.append("name", name);
+  }
+
+  const response = await callAuthorizedEndpoint(
+    `/users?${params.toString()}`,
+    "GET",
+  );
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      error: `Erreur lors de la récupération des conseillers`,
+    };
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+export async function updateUser(userId, body) {
+  const response = await callAuthorizedEndpoint(
+    `/users/${userId}`,
+    "PATCH",
+    body,
+  );
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      error: `Erreur lors de la mise à jour du conseiller`,
+    };
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+export async function deleteUser(userId) {
+  const response = await callAuthorizedEndpoint(`/users/${userId}`, "DELETE");
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      error: `Erreur lors de la suppression du conseiller`,
+    };
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+export async function verifyResetToken(token) {
+  const response = await callPublicEndpoint(
+    "/auth/verify-reset-token",
+    "POST",
+    { token },
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw {
+      status: response.status,
+      error: errorData,
+    };
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+export async function resetPassword(body) {
+  const response = await callPublicEndpoint(
+    "/auth/reset-password",
+    "POST",
+    body,
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw {
+      status: response.status,
+      error: errorData,
+    };
+  }
+
+  const data = await response.json();
+  return data;
 }
