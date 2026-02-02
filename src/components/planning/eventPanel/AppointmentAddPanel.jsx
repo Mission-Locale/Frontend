@@ -2,7 +2,8 @@ import { useState } from "react";
 import Button from "@/components/ui/Button";
 import TextInput from "@/components/ui/Form/InputText";
 import QueryInput from "@/components/ui/Form/QueryInput";
-import { getAssignedJobSeekers } from "@/utils/api";
+import { createAppointment, getAssignedJobSeekers } from "@/utils/api";
+import { useAuth } from "@/hooks/useAuth";
 
 function getDefaultDate() {
   const date = new Date();
@@ -15,6 +16,7 @@ export default function AppointmentAddPanel({
   onValidation,
   errors = [],
 }) {
+  const { user } = useAuth();
   const [isSending, setIsSending] = useState(false);
   const [startDateTime, setStartDateTime] = useState(getDefaultDate());
   const [duration, setDuration] = useState(60);
@@ -29,8 +31,14 @@ export default function AppointmentAddPanel({
 
   function handleValidation() {
     setIsSending(true);
-    onValidation(jobSeekerId, startDateTime, duration);
-    setIsSending(false);
+    createAppointment({
+      startTime: startDateTime,
+      duration: duration,
+      advisor_id: user.advisor_id,
+      job_seeker_id: jobSeekerId,
+    })
+      .then(onValidation)
+      .finally(() => setIsSending(false));
   }
 
   return (

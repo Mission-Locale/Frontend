@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Button from "@/components/ui/Button";
 import JobSeekerRegisteringModal from "./JobSeekerRegisteringModal";
-import { useAuth } from "@/hooks/useAuth";
 import {
   registerJobSeekerToWorkshopRecurrence,
   removeSelfAnimatorFromWorkshopRecurrence,
@@ -10,7 +9,6 @@ import {
 //TODO: implement Pill
 
 export default function ActivityPanel({ event }) {
-  const { user } = useAuth();
   const [isSending, setIsSending] = useState(false);
   const [modal, setModal] = useState(null);
   const workshopRecurrence = event.extendedProps.workshopReccurence; //TODO: get clicked iteration
