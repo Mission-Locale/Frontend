@@ -48,13 +48,13 @@ export default function QueryInput({
         value={value}
         required={required}
         disabled={disabled}
-        error={error}
+        error={error?.message}
       />
       {fetchQuery && (
         <ListFetcherAndSelector
           selectTheme={selectTheme}
           fetchKeys={[fetchKey, fetchQuery]}
-          fetchfunction={fetchfunction(fetchQuery)}
+          fetchfunction={() => fetchfunction(fetchQuery)}
           optionMapper={optionMapper}
           onError={setError}
           onSelection={(id, value) => {

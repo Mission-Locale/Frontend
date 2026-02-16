@@ -59,7 +59,7 @@ async function callAuthorizedEndpoint(endpoint, method, body = null) {
 
 async function handleError(response) {
   if (!response.ok) {
-    if (response.headers.get("Content-Type") == "application/json") {
+    if (response.headers.get("Content-Type").includes("application/json")) {
       const errorData = await response.json();
       console.error(
         `Une erreur ${response.status} a eu lieu : ${errorData.error}`,
@@ -80,7 +80,7 @@ async function handleError(response) {
 
 export async function loginUser(body) {
   const response = await callEndpoint("/auth/login", "POST", body);
-  handleError(response);
+  await handleError(response);
   const data = await response.json();
 
   // Stocker uniquement token et role dans le localStorage
@@ -103,7 +103,7 @@ export async function loginUser(body) {
 
 export async function logoutUser() {
   const response = await callAuthorizedEndpoint("/auth/logout", "GET");
-  handleError(response);
+  await handleError(response);
   clearUserSession();
 }
 
@@ -151,7 +151,7 @@ export async function getJobSeeker(id) {
     "/users/job-seeker/" + id,
     "GET",
   );
-  handleError(response);
+  await handleError(response);
 
   return await response.json();
 }
@@ -161,14 +161,15 @@ export async function getAdvisorPlanning(advisorId) {
     "/planning/advisor/" + advisorId,
     "GET",
   );
-  handleError(response);
+  await handleError(response);
 
   return await response.json();
 }
 
 export async function getSelfPlanning() {
   const response = await callAuthorizedEndpoint("/planning/me", "GET");
-  handleError(response);
+  await handleError(response);
+
   return await response.json();
 }
 
@@ -178,14 +179,14 @@ export async function createAppointment(request) {
     "POST",
     request,
   );
-  handleError(response);
+  await handleError(response);
 
   return await response.json();
 }
 
 export async function getAppointments() {
   const response = await callAuthorizedEndpoint("/appointments", "GET");
-  handleError(response);
+  await handleError(response);
 
   return await response.json();
 }
@@ -195,7 +196,7 @@ export async function getRegistrationAppointments() {
     "/appointments/registration",
     "GET",
   );
-  handleError(response);
+  await handleError(response);
 
   return await response.json();
 }
@@ -206,14 +207,14 @@ export async function createRegistrationAppointment(request) {
     "POST",
     request,
   );
-  handleError(response);
+  await handleError(response);
 
   return await response.json();
 }
 
 export async function getAppointment(id) {
   const response = await callAuthorizedEndpoint("/appointments/" + id, "GET");
-  handleError(response);
+  await handleError(response);
 
   return await response.json();
 }
@@ -224,7 +225,7 @@ export async function updateAppointment(id, body) {
     "PATCH",
     body,
   );
-  handleError(response);
+  await handleError(response);
 
   return await response.json();
 }
@@ -234,7 +235,21 @@ export async function deleteAppointment(id) {
     "/appointments/" + id,
     "DELETE",
   );
-  handleError(response);
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getWorkshop(id) {
+  const response = await callAuthorizedEndpoint(`/workshops/${id}`, "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getWorkshopRecurrence(id) {
+  const response = await callAuthorizedEndpoint(`/workshops/recurrences/${id}`, "GET");
+  await handleError(response);
 
   return await response.json();
 }
@@ -248,7 +263,7 @@ export async function registerJobSeekerToWorkshopRecurrence(
     "POST",
     { jobSeekerId: jobSeekerId },
   );
-  handleError(response);
+  await handleError(response);
 }
 
 export async function removeSelfAnimatorFromWorkshopRecurrence(recurrenceId) {
@@ -256,7 +271,7 @@ export async function removeSelfAnimatorFromWorkshopRecurrence(recurrenceId) {
     `/workshops/recurrences/${recurrenceId}/animators`,
     "DELETE",
   );
-  handleError(response);
+  await handleError(response);
 }
 
 export async function getAssignedJobSeekers(nameQuery = undefined) {
@@ -264,7 +279,7 @@ export async function getAssignedJobSeekers(nameQuery = undefined) {
     "/advisors/job-seekers" + (nameQuery ? `?name=${nameQuery}` : ""),
     "GET",
   );
-  handleError(response);
+  await handleError(response);
 
   return await response.json();
 }

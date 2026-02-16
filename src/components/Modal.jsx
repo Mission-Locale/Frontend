@@ -16,13 +16,13 @@ export default function Modal({ modalKey, children, onOutOfBoundClick }) {
           isMobile
             ? "rounded-t-2xl w-screen mt-auto"
             : "rounded-2xl w-fit my-auto"
-        } p-4 bg-white border-lightBorder flex flex-col gap-2 relative z-50`}
+        } p-4 bg-white border-lightBorder shadow-md shadow-black/75 flex flex-col gap-2 relative z-50`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>
     </div>,
     document.body,
-    modalKey
+    modalKey,
   );
 }

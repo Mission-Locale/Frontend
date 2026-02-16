@@ -3,7 +3,8 @@ import Button from "@/components/ui/Button";
 import TextInput from "@/components/ui/Form/InputText";
 import QueryInput from "@/components/ui/Form/QueryInput";
 import { createAppointment, getAssignedJobSeekers } from "@/utils/api";
-import { useAuth } from "@/hooks/useAuth";
+import InputText from "@/components/ui/Form/InputText";
+import { lightFormat, parseISO } from "date-fns";
 
 function getDefaultDate() {
   const date = new Date();
@@ -16,7 +17,6 @@ export default function AppointmentAddPanel({
   onValidation,
   errors = [],
 }) {
-  const { user } = useAuth();
   const [isSending, setIsSending] = useState(false);
   const [startDateTime, setStartDateTime] = useState(getDefaultDate());
   const [duration, setDuration] = useState(60);
@@ -34,7 +34,6 @@ export default function AppointmentAddPanel({
     createAppointment({
       startTime: startDateTime,
       duration: duration,
-      advisor_id: user.advisor_id,
       job_seeker_id: jobSeekerId,
     })
       .then(onValidation)
@@ -46,15 +45,17 @@ export default function AppointmentAddPanel({
       <h2>Création d'un rendez-vous</h2>
       <ul>
         <li>
-          <TextInput
+          <InputText
             label="Début"
             placeholder="Date et heure"
             required={true}
             disabled={isSending}
             type="datetime-local"
-            value={startDateTime}
-            onChange={(e) => setStartDateTime(e.currentTarget.valueAsDate)}
-            ringColor="brandBlue"
+            value={lightFormat(startDateTime, "yyyy-MM-dd'T'HH:mm:ss")}
+            onChange={(e) =>
+              setStartDateTime(parseISO(e.currentTarget.value) || startDateTime)
+            }
+            selectTheme="brandBlue"
             error={errors["startDateTime"]}
           />
         </li>
@@ -67,7 +68,7 @@ export default function AppointmentAddPanel({
             type="number"
             value={duration}
             onChange={(e) => setDuration(e.currentTarget.value)}
-            ringColor="brandBlue"
+            selectTheme="brandBlue"
             error={errors["duration"]}
           />
         </li>
@@ -85,7 +86,7 @@ export default function AppointmentAddPanel({
             optionMapper={(jobSeeker) => {
               return {
                 value: jobSeeker.job_seeker_id,
-                label: `${jobSeeker.lastName} ${jobSeeker.firstName}`,
+                label: `${jobSeeker.user.last_name} ${jobSeeker.user.first_name}`,
               };
             }}
             onSelection={handleInput}

@@ -32,7 +32,7 @@ export const lightBg = {
   brandGreen: "bg-brandGreen/10",
   brandPink: "bg-brandPink/10",
   brandPurple: "bg-brandPurple/10",
-}
+};
 
 // TEXT COLORS
 

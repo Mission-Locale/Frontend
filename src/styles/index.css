@@ -10,6 +10,50 @@
   }
 }
 
+/* Override full calendar styles */
+:root {
+  --fc-button-bg-color: #0098d9;
+  --fc-button-border-color: #0098d9;
+  --fc-button-hover-bg-color: #007baf;
+  --fc-button-hover-border-color: #0098d9;
+  --fc-button-active-bg-color: #007baf;
+  --fc-button-active-border-color: #007baf;
+}
+.fc-v-event {
+  font-weight: 500;
+}
+.fc .fc-button {
+  border-radius: 0.5em;
+}
+.fc-h-event .fc-event-time {
+  overflow: initial;
+}
+.fc-h-event .fc-event-main-frame {
+  flex-direction: column;
+  font-size: smaller;
+}
+.fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
+  min-height: 3em;
+}
+.fc .fc-footer-toolbar {
+  gap: 5px;
+  align-items: flex-end;
+}
+.fc .fc-customButton-button {
+  background-color: #7bc50f;
+  border-color: #7bc50f;
+
+  &:hover {
+    background-color: #5b9207;
+    border-color: #7bc50f;
+  }
+
+  &:not(:disabled):active {
+    background-color: #5b9207;
+    border-color: #5b9207;
+  }
+}
+
 @theme {
   /* Colors Branding */
 
@@ -33,6 +77,9 @@
   /* Font Families */
 
   --font-sans: "Marianne";
+
+  /* Shadows */
+  --shadow-md: 0 0 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
 }
 
 /* 300 – Light */

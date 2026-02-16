@@ -7,8 +7,8 @@ export default function OptionList({
   selectTheme,
   onSelect,
 }) {
-  const handleSelect = (optionValue) => {
-    onSelect(optionValue);
+  const handleSelect = (option) => {
+    onSelect(option);
   };
 
   return (
@@ -24,7 +24,7 @@ export default function OptionList({
         return (
           <li
             key={option.value}
-            onClick={() => handleSelect(option.value)}
+            onClick={() => handleSelect(option)}
             aria-selected={isSelected}
             className={`
                     w-full px-4 py-2 text-left flex items-center justify-between

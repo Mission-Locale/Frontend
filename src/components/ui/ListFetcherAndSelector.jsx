@@ -17,17 +17,21 @@ export default function ListFetcherAndSelector({
   switch (status) {
     case "error":
       onError(error);
-      return;
+      return undefined;
     case "success":
-      return (
-        <OptionList
-          options={data.map(optionMapper)}
-          selectTheme={selectTheme}
-          onSelect={(option) => onSelection(option.value, option.label)}
-        />
-      );
+      if (data instanceof Array)
+        return (
+          <OptionList
+            options={data.map(optionMapper)}
+            selectTheme={selectTheme}
+            onSelect={(option) => {
+              onSelection(option.value, option.label);
+            }}
+          />
+        );
+      else return undefined;
     case "pending":
       //TODO: handle query pending
-      return;
+      return undefined;
   }
 }

@@ -3,28 +3,23 @@ import { useState, useMemo } from "react";
 import InputText from "../ui/form/InputText";
 import InputDate from "../ui/form/InputDate";
 import PasswordRequirements from "../RegisterUser/PasswordRequirements";
-import { 
-  validatePassword,
-  validateStep1
-} from "@/utils/validations";
+import { validatePassword, validateStep1 } from "@/utils/validations";
 
 export default function ContentStep1({ branding, showErrors, emailError }) {
-
   // modifie le FormStore et le met a jour avec les valeurs des champs
   const personalInfo = useFormStore((state) => state.personalInfo);
   const updatePersonalInfo = useFormStore((state) => state.updatePersonalInfo);
-  
+
   // state pour afficher/masquer les règles de mot de passe
   const [showRules, setShowRules] = useState(false);
 
-
   const handleFieldChange = (fieldName) => (e) => {
     updatePersonalInfo({ [fieldName]: e.target.value });
-  }
+  };
 
   const handleDateChange = (date) => {
     updatePersonalInfo({ birthDate: date });
-  }
+  };
 
   // Calcul des erreurs de validation
   const errors = useMemo(() => {
@@ -38,8 +33,10 @@ export default function ContentStep1({ branding, showErrors, emailError }) {
 
   const currentChecks = useMemo(
     () => validatePassword(personalInfo.password || ""),
-    [personalInfo.password]
-  )
+    [personalInfo.password],
+  );
+
+  const now = new Date();
 
   return (
     <div className="h-full flex flex-col w-full sm:min-w-[550px] mx-auto">
@@ -79,6 +76,8 @@ export default function ContentStep1({ branding, showErrors, emailError }) {
           value={personalInfo.birthDate}
           onChange={handleDateChange}
           error={errors.birthDate}
+          startDate={new Date(now.getFullYear() - 70, 0)}
+          endDate={now}
         />
         <InputText
           label="Téléphone"

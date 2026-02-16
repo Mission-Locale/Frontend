@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Button from "@/components/ui/Button";
 import TextInput from "@/components/ui/Form/InputText";
-import { useQuery } from "@tanstack/react-query";
-import { getJobSeeker } from "@/utils/api";
+import JobSeekerSpan from "./JobSeekerSpan";
 
 export default function AppointmentEditPanel({
   event,
@@ -20,76 +19,56 @@ export default function AppointmentEditPanel({
     setIsSending(false);
   }
 
-  const jobSeekerId = event.extendedProps.appointment.job_seeker_id;
-  const { status, data, error } = useQuery({
-    queryKey: ["jobSeeker/user", jobSeekerId],
-    queryFn: () => getJobSeeker(jobSeekerId),
-  });
-
-  // TODO: verify classes
-  let jobSeekerComponent;
-  switch (status) {
-    case "error":
-      jobSeekerComponent = <span className="error"> {error} </span>;
-      break;
-    case "success":
-      jobSeekerComponent = (
-        <span>
-          {data.lastName} {data.firstName}
-        </span>
-      );
-      break;
-    case "pending":
-      jobSeekerComponent = <span className="transparent"> Loading... </span>;
-      break;
-  }
-
   return (
-    <>
-      <h2>{event.title}</h2>
-      <ul>
-        <li>
-          <TextInput
-            label="Début"
-            placeholder="Date et heure"
-            required={true}
-            disabled={isSending}
-            type="datetime-local"
-            value={startDateTime}
-            onChange={(e) => setStartDateTime(e.currentTarget.valueAsDate)}
-            ringColor="brandBlue"
-            error={errors["startDateTime"]}
-          />
-        </li>
-        <li>
-          <TextInput
-            label="Durée"
-            placeholder="Durée en minutes"
-            required={true}
-            disabled={isSending}
-            type="number"
-            value={duration}
-            onChange={(e) => setDuration(e.currentTarget.value)}
-            ringColor="brandBlue"
-            error={errors["duration"]}
-          />
-        </li>
-      </ul>
-      <hr />
-      <ul>
-        <li>
-          <b>Demandeur : </b>
-          {jobSeekerComponent}
-        </li>
-      </ul>
-      <div className="flex flex-row">
+    <div className="flex flex-col justify-between size-full">
+      <div className="flex flex-col gap-4">
+        <h2 className="text-xl font-bold text-center -mt-2">{event.title}</h2>
+        <ul className="flex flex-col">
+          <li>
+            <TextInput
+              label="Début"
+              placeholder="Date et heure"
+              required={true}
+              disabled={isSending}
+              type="datetime-local"
+              value={startDateTime}
+              onChange={(e) => setStartDateTime(e.currentTarget.valueAsDate)}
+              selectTheme="brandBlue"
+              error={errors["startDateTime"]}
+            />
+          </li>
+          <li>
+            <TextInput
+              label="Durée"
+              placeholder="Durée en minutes"
+              required={true}
+              disabled={isSending}
+              type="number"
+              value={duration}
+              onChange={(e) => setDuration(e.currentTarget.value)}
+              selectTheme="brandBlue"
+              error={errors["duration"]}
+            />
+          </li>
+        </ul>
+        <hr className="border-gray-500 border -my-2" />
+        <ul className="flex flex-col gap-2">
+          <li>
+            <b>Demandeur : </b>
+            <JobSeekerSpan
+              jobSeekerId={event.extendedProps.appointment.job_seeker_id}
+            />
+          </li>
+        </ul>
+      </div>
+      <div className="flex flex-row gap-2 -m-2">
         <Button
           text="Valider"
           color="brandBlue"
           width="100%"
           variant="full"
-          size="md"
-          radiusSize="rounded-lg"
+          size="sm"
+          radiusSize="lg"
           onClick={handleValidation}
           disabled={isSending}
         />
@@ -98,8 +77,8 @@ export default function AppointmentEditPanel({
           color="brandOrange"
           width="100%"
           variant="outline"
-          size="md"
-          radiusSize="rounded-lg"
+          size="sm"
+          radiusSize="lg"
           onClick={() => {
             onCancel();
             setStartDateTime(event.startDate);
@@ -108,6 +87,6 @@ export default function AppointmentEditPanel({
           disabled={isSending}
         />
       </div>
-    </>
+    </div>
   );
 }

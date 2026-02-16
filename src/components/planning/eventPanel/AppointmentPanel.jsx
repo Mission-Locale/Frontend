@@ -1,47 +1,27 @@
 import { useState } from "react";
 import Button from "../../ui/Button";
 import AppointmentEditPanel from "./AppointmentEditPanel";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { getJobSeeker, updateAppointment } from "@/utils/api";
-import { formatDuration, intervalToDuration } from "date-fns";
+import { updateAppointment } from "@/utils/api";
+import JobSeekerSpan from "./JobSeekerSpan";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { formatEvent } from "@/utils/dateFormater";
 
-export default function AppointmentPanel({ event }) {
+export default function AppointmentPanel({ event, onClose }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [modal, setModal] = useState(null);
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const jobSeekerId = event.extendedProps.appointment.job_seeker_id;
-  const { status, data, error } = useQuery({
-    queryKey: ["jobSeeker/user", jobSeekerId],
-    queryFn: () => getJobSeeker(jobSeekerId),
-  });
-
-  // TODO: verify classes
-  let jobSeekerComponent;
-  switch (status) {
-    case "error":
-      jobSeekerComponent = <span className="error"> {error} </span>;
-      break;
-    case "success":
-      jobSeekerComponent = (
-        <span>
-          {data.user.lastName} {data.user.firstName}
-        </span>
-      );
-      break;
-    case "pending":
-      jobSeekerComponent = <span className="transparent"> Loading... </span>;
-      break;
-  }
+  const appointment = event.extendedProps.appointment;
 
   function handleAppointmentCancel() {
     setModal(
       <ConfirmationModal
         modalKey={"cancelConfirmation"}
-        question="Êtes-vous sure de vouloir annuler le rendez-vous ?"
+        question="Êtes-vous sure de vouloir annuler ce rendez-vous ?"
         allowColor="brandPink"
         onCancel={() => setModal(null)}
         onAllow={() => {
@@ -49,11 +29,13 @@ export default function AppointmentPanel({ event }) {
           setModal(null);
           updateAppointment(event.id, {
             state: "CANCELLED",
+          }).then(() => {
+            queryClient.invalidateQueries({
+              queryKey: ["planning", user.id],
+            });
+            onClose();
+            setIsSending(false);
           });
-          queryClient.invalidateQueries({
-            queryKey: ["planning/advisor", user.id],
-          });
-          setIsSending(false);
         }}
       />,
     );
@@ -61,7 +43,7 @@ export default function AppointmentPanel({ event }) {
 
   function handleAppointmentEdit(startDateTime, duration) {
     setIsSending(true);
-    updateAppointment(event.id, {
+    updateAppointment(appointment.id, {
       startDateTime: startDateTime,
       duration: duration,
     }); // TODO incoherence between backend update and expected frontend update
@@ -70,42 +52,39 @@ export default function AppointmentPanel({ event }) {
     setIsEditing(false);
   }
 
-  if (!isEditing)
+  if (!isEditing) {
+    const startTime = new Date(appointment.startTime);
+
     return (
-      <>
-        <h2>{event.title}</h2>
-        <ul>
-          <li>
-            <b>Début : </b>
-            <span>{event.start}</span>
-          </li>
-          <li>
-            <b>Durée : </b>
-            <span>
-              {formatDuration(
-                intervalToDuration({
-                  start: event.start,
-                  end: event.end,
-                }),
-              )}
-            </span>
-          </li>
-        </ul>
-        <hr />
-        <ul>
-          <li>
-            <b>Demandeur : </b>
-            {jobSeekerComponent}
-          </li>
-        </ul>
-        <div className="flex flex-row">
+      <div className="flex flex-col justify-between size-full">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xl font-bold text-center -mt-2">{event.title}</h2>
+          <ul className="flex flex-col gap-2">
+            <li>
+              <b>Début : </b>
+              <span>{formatEvent(startTime)}</span>
+            </li>
+            <li>
+              <b>Durée : </b>
+              <span>{appointment.duration}</span>
+            </li>
+          </ul>
+          <hr className="border-gray-500 border -my-2" />
+          <ul className="flex flex-col gap-2">
+            <li>
+              <b>Demandeur : </b>
+              <JobSeekerSpan jobSeekerId={appointment.job_seeker_id} />
+            </li>
+          </ul>
+        </div>
+        <div className="flex flex-row gap-2 -m-2">
           <Button
             text="Modifier"
             color="brandBlue"
             width="100%"
             variant="full"
-            size="md"
-            radiusSize="rounded-lg"
+            size="sm"
+            radiusSize="lg"
             onClick={() => setIsEditing(true)}
             disabled={isSending}
           />
@@ -114,16 +93,16 @@ export default function AppointmentPanel({ event }) {
             color="brandPink"
             width="100%"
             variant="full"
-            size="md"
-            radiusSize="rounded-lg"
+            size="sm"
+            radiusSize="lg"
             onClick={handleAppointmentCancel}
             disabled={isSending}
           />
         </div>
         {modal}
-      </>
+      </div>
     );
-  else {
+  } else {
     return (
       <AppointmentEditPanel
         event={event}
