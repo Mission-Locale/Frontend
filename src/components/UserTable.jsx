@@ -48,6 +48,8 @@ export default function UserTable({
     }
   };
 
+  const now = new Date()
+
   // RENDU DU FORM
   const renderForm = () => (
     <div className="flex flex-col min-w-[300px] sm:min-w-[400px]">
@@ -82,6 +84,8 @@ export default function UserTable({
         error={formErrors.birth_date}
         required
         selectTheme="brandBlue"
+        startDate={new Date(now.getFullYear() - 70, 0)}
+        endDate={now}
       />
       <InputText
         label="Email"

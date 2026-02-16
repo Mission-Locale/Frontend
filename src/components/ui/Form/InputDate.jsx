@@ -19,11 +19,17 @@ export default function InputDate({
   size = "md",
   disabled = false,
   required = false,
+  startDate,
+  endDate,
   error,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);
-  const date = value ? (value instanceof Date ? value : new Date(value)) : undefined;
+  const date = value
+    ? value instanceof Date
+      ? value
+      : new Date(value)
+    : undefined;
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -59,7 +65,13 @@ export default function InputDate({
             ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
           `}
         >
-          <span className={value ? "text-gray-900 text-sm sm:text-base" : "text-gray-500 text-sm sm:text-base"}>
+          <span
+            className={
+              value
+                ? "text-gray-900 text-sm sm:text-base"
+                : "text-gray-500 text-sm sm:text-base"
+            }
+          >
             {value ? dateFormater(value) : placeholder}
           </span>
           <CalendarDays className="w-5 h-5 text-gray-400 ml-2 shrink-0" />
@@ -77,7 +89,7 @@ export default function InputDate({
                 onChange?.(newDate);
                 setIsOpen(false);
               }}
-              disabled={{ after: now }}
+              disabled={{ after: endDate, before: startDate }}
               locale={fr}
               classNames={{
                 today: ``,
@@ -88,13 +100,15 @@ export default function InputDate({
                   ? new Date(value.getFullYear(), value.getMonth())
                   : new Date(now.getFullYear(), now.getMonth())
               }
-              startMonth={new Date(now.getFullYear() - 70, 0)}
-              endMonth={new Date(now.getFullYear(), now.getMonth())}
+              startMonth={
+                new Date(startDate.getFullYear(), startDate.getMonth())
+              }
+              endMonth={new Date(endDate.getFullYear(), endDate.getMonth())}
             />
           </div>
         )}
       </div>
-      
+
       {error && (
         <p className="text-red-500 text-sm mt-1 text-start block w-full">
           {error}

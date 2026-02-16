@@ -28,11 +28,8 @@ export default function Button({
   return (
     <button
       type={type}
-      className={`${variants[variant]} ${sizes[size]} ${
-        radius[radiusSize]
-      } font-bold ${
-        disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-      }`}
+      className={`${variants[variant]} ${sizes[size]} ${radius[radiusSize]} font-bold 
+        ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
       style={{ width }}
       onClick={onClick}
       disabled={disabled}

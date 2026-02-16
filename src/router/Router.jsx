@@ -8,6 +8,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import { JOB_SEEKER, ADVISOR, ADMINISTRATOR } from "../utils/userRole";
 import Dashboard from "@/layouts/Dashboard";
 import AdvisorList from "@/pages/AdvisorList";
+import PlanningPage from "@/pages/advisor/PlanningPage";
 
 export default function Router() {
   return (
@@ -32,9 +33,14 @@ export default function Router() {
               </Route>
               <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
                 {/* Routes des Conseillers */}
+                <Route index path="/" element={<PlanningPage />} />
+                <Route path="/planning" element={<PlanningPage />} />
               </Route>
-              <Route element={<DashboardRoutes role={ADMINISTRATOR} redirect="/" />}>
+              <Route
+                element={<DashboardRoutes role={ADMINISTRATOR} redirect="/" />}
+              >
                 {/* Routes des Administrateurs */}
+                <Route index path="/" element={<AdvisorList />} />
                 <Route path="/advisor-list" element={<AdvisorList />} />
               </Route>
             </Route>

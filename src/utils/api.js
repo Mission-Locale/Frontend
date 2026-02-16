@@ -43,6 +43,7 @@ async function callAuthorizedEndpoint(endpoint, method, body = null) {
     });
 
   let response = await request();
+
   if (response.status == 401) {
     const refreshed = await refreshUser();
     if (refreshed) {
@@ -56,36 +57,30 @@ async function callAuthorizedEndpoint(endpoint, method, body = null) {
   return response;
 }
 
-async function handleEndpointError(errorCode, response) {
-  if (response.status == errorCode) {
-    const errorData = await response.json();
-    console.error(`Une erreur ${errorCode} a eu lieu : ${errorData.error}`);
-    throw {
-      status: errorCode,
-      error: errorData.error,
-    };
-  } else {
-    handleError(response);
-  }
-}
-
-function handleError(response) {
+async function handleError(response) {
   if (!response.ok) {
-    console.error(`Une erreur ${response.status} a eu lieu !`);
-    throw {
-      status: response.status,
-      error: `Une erreur ${response.status} a eu lieu !`,
-    };
+    if (response.headers.get("Content-Type").includes("application/json")) {
+      const errorData = await response.json();
+      console.error(
+        `Une erreur ${response.status} a eu lieu : ${errorData.error}`,
+      );
+      throw {
+        status: response.status,
+        error: errorData.error,
+      };
+    } else {
+      console.error(`Une erreur ${response.status} a eu lieu !`);
+      throw {
+        status: response.status,
+        error: `Une erreur ${response.status} a eu lieu !`,
+      };
+    }
   }
 }
 
 export async function loginUser(body) {
   const response = await callEndpoint("/auth/login", "POST", body);
-
-  if (!response.ok) {
-    return handleEndpointError(400, response);
-  }
-
+  await handleError(response);
   const data = await response.json();
 
   // Stocker uniquement token et role dans le localStorage
@@ -108,7 +103,7 @@ export async function loginUser(body) {
 
 export async function logoutUser() {
   const response = await callAuthorizedEndpoint("/auth/logout", "GET");
-  handleError(response);
+  await handleError(response);
   clearUserSession();
 }
 
@@ -130,7 +125,6 @@ export async function refreshUser() {
 
 export async function registerUser(body) {
   const response = await callEndpoint("/auth/register", "POST", body);
-  
   if (!response.ok) {
     const errorData = await response.json();
     throw {
@@ -139,23 +133,161 @@ export async function registerUser(body) {
       code: errorData.error?.code,
     };
   }
-  
-  const data = await response.json();
-  return data;
+
+  return await response.json();
 }
 
 export async function getUserProfile() {
   const response = await callAuthorizedEndpoint("/profile", "GET");
-  
   if (!response.ok) {
     return null;
   }
-  
-  const data = await response.json();
-  return data;
+
+  return await response.json();
 }
 
-export async function getUsersFilteredByRole(roleType, { page = 1, limit = 5, name = "" } = {}) {
+export async function getJobSeeker(id) {
+  const response = await callAuthorizedEndpoint(
+    "/users/job-seeker/" + id,
+    "GET",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getAdvisorPlanning(advisorId) {
+  const response = await callAuthorizedEndpoint(
+    "/planning/advisor/" + advisorId,
+    "GET",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getSelfPlanning() {
+  const response = await callAuthorizedEndpoint("/planning/me", "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function createAppointment(request) {
+  const response = await callAuthorizedEndpoint(
+    "/appointments",
+    "POST",
+    request,
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getAppointments() {
+  const response = await callAuthorizedEndpoint("/appointments", "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getRegistrationAppointments() {
+  const response = await callAuthorizedEndpoint(
+    "/appointments/registration",
+    "GET",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function createRegistrationAppointment(request) {
+  const response = await callEndpoint(
+    "/appointments/registration",
+    "POST",
+    request,
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getAppointment(id) {
+  const response = await callAuthorizedEndpoint("/appointments/" + id, "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function updateAppointment(id, body) {
+  const response = await callAuthorizedEndpoint(
+    "/appointments/" + id,
+    "PATCH",
+    body,
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function deleteAppointment(id) {
+  const response = await callAuthorizedEndpoint(
+    "/appointments/" + id,
+    "DELETE",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getWorkshop(id) {
+  const response = await callAuthorizedEndpoint(`/workshops/${id}`, "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getWorkshopRecurrence(id) {
+  const response = await callAuthorizedEndpoint(`/workshops/recurrences/${id}`, "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function registerJobSeekerToWorkshopRecurrence(
+  recurrenceId,
+  jobSeekerId,
+) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${recurrenceId}/register`,
+    "POST",
+    { jobSeekerId: jobSeekerId },
+  );
+  await handleError(response);
+}
+
+export async function removeSelfAnimatorFromWorkshopRecurrence(recurrenceId) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${recurrenceId}/animators`,
+    "DELETE",
+  );
+  await handleError(response);
+}
+
+export async function getAssignedJobSeekers(nameQuery = undefined) {
+  const response = await callAuthorizedEndpoint(
+    "/advisors/job-seekers" + (nameQuery ? `?name=${nameQuery}` : ""),
+    "GET",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getUsersFilteredByRole(
+  roleType,
+  { page = 1, limit = 5, name = "" } = {},
+) {
   const params = new URLSearchParams({
     roleType,
     page: page.toString(),
@@ -166,30 +298,38 @@ export async function getUsersFilteredByRole(roleType, { page = 1, limit = 5, na
     params.append("name", name);
   }
 
-  const response = await callAuthorizedEndpoint(`/users?${params.toString()}`, "GET");
+  const response = await callAuthorizedEndpoint(
+    `/users?${params.toString()}`,
+    "GET",
+  );
   if (!response.ok) {
     throw {
       status: response.status,
       error: `Erreur lors de la récupération des conseillers`,
     };
   }
-  
+
   const data = await response.json();
   return data;
 }
 
 export async function updateUser(userId, body) {
-  const response = await callAuthorizedEndpoint(`/users/${userId}`, "PATCH", body);
+  const response = await callAuthorizedEndpoint(
+    `/users/${userId}`,
+    "PATCH",
+    body,
+  );
   if (!response.ok) {
     throw {
       status: response.status,
       error: `Erreur lors de la mise à jour du conseiller`,
     };
   }
-  
+
   const data = await response.json();
   return data;
 }
+
 export async function deleteUser(userId) {
   const response = await callAuthorizedEndpoint(`/users/${userId}`, "DELETE");
   if (!response.ok) {
@@ -198,14 +338,18 @@ export async function deleteUser(userId) {
       error: `Erreur lors de la suppression du conseiller`,
     };
   }
-  
+
   const data = await response.json();
   return data;
 }
 
 export async function verifyResetToken(token) {
-  const response = await callPublicEndpoint("/auth/verify-reset-token", "POST", { token });
-  
+  const response = await callPublicEndpoint(
+    "/auth/verify-reset-token",
+    "POST",
+    { token },
+  );
+
   if (!response.ok) {
     const errorData = await response.json();
     throw {
@@ -213,14 +357,18 @@ export async function verifyResetToken(token) {
       error: errorData,
     };
   }
-  
+
   const data = await response.json();
   return data;
 }
 
 export async function resetPassword(body) {
-  const response = await callPublicEndpoint("/auth/reset-password", "POST", body);
-  
+  const response = await callPublicEndpoint(
+    "/auth/reset-password",
+    "POST",
+    body,
+  );
+
   if (!response.ok) {
     const errorData = await response.json();
     throw {
@@ -228,7 +376,7 @@ export async function resetPassword(body) {
       error: errorData,
     };
   }
-  
+
   const data = await response.json();
   return data;
 }
