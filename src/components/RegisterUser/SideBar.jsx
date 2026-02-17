@@ -1,4 +1,4 @@
-import { useFormStore } from "../../stores/useFormStore";
+import { useFormStore } from "@/stores/useFormStore";
 import StepIndicator from "./StepIndicator";
 import { STEPS } from "@/utils/userRegister.js";
 import { bg } from "@/styles/tokensTailwind";
