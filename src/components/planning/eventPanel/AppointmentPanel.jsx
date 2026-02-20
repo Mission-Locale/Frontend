@@ -78,7 +78,8 @@ export default function AppointmentPanel({ event, onClose }) {
           </ul>
         </div>
         <div className="flex flex-row gap-2 -m-2">
-          <Button
+          {/* TODO: Complete appointment update */}
+          {/* <Button
             text="Modifier"
             color="brandBlue"
             width="100%"
@@ -87,7 +88,7 @@ export default function AppointmentPanel({ event, onClose }) {
             radiusSize="lg"
             onClick={() => setIsEditing(true)}
             disabled={isSending}
-          />
+          /> */}
           <Button
             text="Annuler le Rendez-vous"
             color="brandPink"
