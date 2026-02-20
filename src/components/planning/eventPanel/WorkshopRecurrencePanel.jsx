@@ -10,14 +10,17 @@ import FoldBox from "@/components/ui/FoldBox";
 import WorkshopRecurrencesPills from "./WorkshopRecurrencesPills";
 import LoadingFrame from "@/components/ui/LoadingFrame";
 import ErrorFrame from "@/components/ui/ErrorFrame";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatEvent } from "@/utils/dateFormater";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { useAuth } from "@/hooks/useAuth";
 
-export default function ActivityPanel({ event }) {
+export default function ActivityPanel({ event, onClose }) {
   const [isSending, setIsSending] = useState(false);
   const [modal, setModal] = useState(null);
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  //TODO: load recurrence details
   const workshopRecurrenceId =
     event.extendedProps.workshopReccurence.workshop_recurrence_id;
   const { status, data, error } = useQuery({
@@ -40,10 +43,12 @@ export default function ActivityPanel({ event }) {
           setIsSending(true);
           setModal(null);
           registerJobSeekerToWorkshopRecurrence(
-            jobSeekerId,
             workshopRecurrenceId,
+            jobSeekerId,
           ).then(() => {
-            console.log("Registered to workshop");
+            queryClient.invalidateQueries({
+              queryKey: ["workshop/recurrences", workshopRecurrenceId],
+            });
             setIsSending(false);
           });
         }}
@@ -63,7 +68,13 @@ export default function ActivityPanel({ event }) {
           setModal(null);
           removeSelfAnimatorFromWorkshopRecurrence(workshopRecurrenceId).then(
             () => {
-              console.log("Unregister from workshop");
+              onClose();
+              queryClient.invalidateQueries({
+                queryKey: ["workshop/recurrences", workshopRecurrenceId],
+              });
+              queryClient.invalidateQueries({
+                queryKey: ["planning", user.id],
+              });
               setIsSending(false);
             },
           );
@@ -95,8 +106,6 @@ export default function ActivityPanel({ event }) {
     }
   });
 
-  console.log(data);
-
   return (
     <div className="flex flex-col justify-between size-full">
       <div className="flex flex-col gap-4">
@@ -115,7 +124,7 @@ export default function ActivityPanel({ event }) {
         <ul className="flex flex-col gap-2">
           <li>
             <b>Atelier : </b>
-            <span>{data.workshop.name}</span>
+            <span>{data.workshop.title}</span>
           </li>
           <li>
             <b>Prochaines occurences</b>
@@ -123,7 +132,7 @@ export default function ActivityPanel({ event }) {
           </li>
           <li>
             <b>Sujet : </b>
-            <span>{data.subject}</span>
+            <span>{data.topic}</span>
           </li>
           <li>
             <b>Animateurs : </b>
@@ -163,8 +172,8 @@ export default function ActivityPanel({ event }) {
           color="brandBlue"
           width="100%"
           variant="full"
-          size="md"
-          radiusSize="rounded-lg"
+          size="sm"
+          radiusSize="lg"
           onClick={handleUserRegistering}
           disabled={isSending}
         />
@@ -173,8 +182,8 @@ export default function ActivityPanel({ event }) {
           color="brandPink"
           width="100%"
           variant="full"
-          size="md"
-          radiusSize="rounded-lg"
+          size="sm"
+          radiusSize="lg"
           onClick={handleAdvisorUnsubscribe}
           disabled={isSending}
         />

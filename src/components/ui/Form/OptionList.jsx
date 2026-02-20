@@ -14,7 +14,7 @@ export default function OptionList({
   return (
     <ul
       className={`
-              absolute z-50 w-full mt-2 rounded-lg bg-white shadow-lg border
+              absolute -top-5 z-50 w-full mt-2 rounded-lg bg-white shadow-lg border
               ${selectThemes[selectTheme].dropdown}
               max-h-60 overflow-auto
             `}

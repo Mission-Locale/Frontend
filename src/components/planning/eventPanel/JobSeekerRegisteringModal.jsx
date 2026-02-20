@@ -28,7 +28,7 @@ export default function JobSeekerRegisteringModal({ onCancel, onValidation }) {
           optionMapper={(jobSeeker) => {
             return {
               value: jobSeeker.job_seeker_id,
-              label: `${jobSeeker.lastName} ${jobSeeker.firstName}`,
+              label: `${jobSeeker.user.last_name} ${jobSeeker.user.first_name}`,
             };
           }}
         />
