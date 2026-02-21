@@ -15,7 +15,7 @@ export default function JobSeekerRegisteringModal({ onCancel, onValidation }) {
 
   return (
     <Modal modalKey={"userRegistering"} onOutOfBoundClick={onCancel}>
-      <div className="flex flex-col">
+      <div className="flex flex-col w-100">
         <QueryInput
           label="Demandeur à inscrire"
           placeholder="NOM Prénom"
@@ -32,13 +32,13 @@ export default function JobSeekerRegisteringModal({ onCancel, onValidation }) {
             };
           }}
         />
-        <div className="flex flex-row">
+        <div className="flex flex-row gap-2">
           <Button
             text="Inscrire"
             variant="full"
             color="brandBlue"
             size="md"
-            radiusSize="md"
+            radiusSize="lg"
             width="100%"
             onClick={() => onValidation(jobSeekerId)}
             disabled={jobSeekerId == null}
@@ -48,7 +48,7 @@ export default function JobSeekerRegisteringModal({ onCancel, onValidation }) {
             variant="ghost"
             color="brandBlue"
             size="md"
-            radiusSize="md"
+            radiusSize="lg"
             width="100%"
             onClick={onCancel}
           />
