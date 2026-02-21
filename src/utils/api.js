@@ -248,7 +248,10 @@ export async function getWorkshop(id) {
 }
 
 export async function getWorkshopRecurrence(id) {
-  const response = await callAuthorizedEndpoint(`/workshops/recurrences/${id}`, "GET");
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${id}`,
+    "GET",
+  );
   await handleError(response);
 
   return await response.json();

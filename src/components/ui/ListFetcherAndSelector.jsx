@@ -19,15 +19,17 @@ export default function ListFetcherAndSelector({
       onError(error);
       return undefined;
     case "success":
-      if (data instanceof Array)
+      if (data instanceof Array && data.length > 0)
         return (
-          <OptionList
-            options={data.map(optionMapper)}
-            selectTheme={selectTheme}
-            onSelect={(option) => {
-              onSelection(option.value, option.label);
-            }}
-          />
+          <div className="relative">
+            <OptionList
+              options={data.map(optionMapper)}
+              selectTheme={selectTheme}
+              onSelect={(option) => {
+                onSelection(option.value, option.label);
+              }}
+            />
+          </div>
         );
       else return undefined;
     case "pending":
