@@ -4,7 +4,8 @@ import TextInput from "@/components/ui/Form/InputText";
 import QueryInput from "@/components/ui/Form/QueryInput";
 import { createAppointment, getAssignedJobSeekers } from "@/utils/api";
 import InputText from "@/components/ui/Form/InputText";
-import { lightFormat, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
+import { formatInput } from "@/utils/dateFormater";
 
 function getDefaultDate() {
   const date = new Date();
@@ -54,7 +55,7 @@ export default function AppointmentAddPanel({
               required={true}
               disabled={isSending}
               type="datetime-local"
-              value={lightFormat(startDateTime, "yyyy-MM-dd'T'HH:mm:ss")}
+              value={formatInput(startDateTime)}
               onChange={(e) =>
                 setStartDateTime(
                   parseISO(e.currentTarget.value) || startDateTime,

@@ -2,6 +2,8 @@ import { useState } from "react";
 import Button from "@/components/ui/Button";
 import TextInput from "@/components/ui/Form/InputText";
 import JobSeekerSpan from "./JobSeekerSpan";
+import { differenceInMinutes, parseISO } from "date-fns";
+import { formatInput } from "@/utils/dateFormater";
 
 export default function AppointmentEditPanel({
   event,
@@ -9,9 +11,15 @@ export default function AppointmentEditPanel({
   onValidation,
   errors = [],
 }) {
+  const appointment = event.extendedProps.appointment;
+
   const [isSending, setIsSending] = useState(false);
-  const [startDateTime, setStartDateTime] = useState(event.startDate);
-  const [duration, setDuration] = useState(event.duration);
+  const [startDateTime, setStartDateTime] = useState(() =>
+    formatInput(new Date(appointment.startTime)),
+  );
+  const [duration, setDuration] = useState(() =>
+    differenceInMinutes(appointment.endTime, appointment.startTime),
+  );
 
   function handleValidation() {
     setIsSending(true);
@@ -31,8 +39,12 @@ export default function AppointmentEditPanel({
               required={true}
               disabled={isSending}
               type="datetime-local"
-              value={startDateTime}
-              onChange={(e) => setStartDateTime(e.currentTarget.valueAsDate)}
+              value={formatInput(startDateTime)}
+              onChange={(e) =>
+                setStartDateTime(
+                  parseISO(e.currentTarget.value) || startDateTime,
+                )
+              }
               selectTheme="brandBlue"
               error={errors["startDateTime"]}
             />
@@ -55,9 +67,7 @@ export default function AppointmentEditPanel({
         <ul className="flex flex-col gap-2">
           <li>
             <b>Demandeur : </b>
-            <JobSeekerSpan
-              jobSeekerId={event.extendedProps.appointment.job_seeker_id}
-            />
+            <JobSeekerSpan jobSeekerId={appointment.job_seeker_id} />
           </li>
         </ul>
       </div>
