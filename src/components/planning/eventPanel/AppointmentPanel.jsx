@@ -3,10 +3,11 @@ import Button from "../../ui/Button";
 import AppointmentEditPanel from "./AppointmentEditPanel";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { updateAppointment } from "@/utils/api";
+import { cancelAppointment, updateAppointmentTime } from "@/utils/api";
 import JobSeekerSpan from "./JobSeekerSpan";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { formatEvent } from "@/utils/dateFormater";
+import { differenceInMinutes } from "date-fns";
 
 export default function AppointmentPanel({ event, onClose }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -27,15 +28,14 @@ export default function AppointmentPanel({ event, onClose }) {
         onAllow={() => {
           setIsSending(true);
           setModal(null);
-          updateAppointment(event.id, {
-            state: "CANCELLED",
-          }).then(() => {
-            queryClient.invalidateQueries({
-              queryKey: ["planning", user.id],
-            });
-            onClose();
-            setIsSending(false);
-          });
+          cancelAppointment(event.id)
+            .then(() => {
+              queryClient.invalidateQueries({
+                queryKey: ["planning", user.id],
+              });
+              onClose();
+            })
+            .finally(() => setIsSending(false));
         }}
       />,
     );
@@ -43,13 +43,14 @@ export default function AppointmentPanel({ event, onClose }) {
 
   function handleAppointmentEdit(startDateTime, duration) {
     setIsSending(true);
-    updateAppointment(appointment.id, {
-      startDateTime: startDateTime,
-      duration: duration,
-    }); // TODO incoherence between backend update and expected frontend update
-    queryClient.invalidateQueries({ queryKey: ["planning/advisor", user.id] });
-    setIsSending(false);
-    setIsEditing(false);
+    updateAppointmentTime(appointment.appointment_id, startDateTime, duration)
+      .then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["planning", user.id],
+        });
+        setIsEditing(false);
+      })
+      .finally(() => setIsSending(false));
   }
 
   if (!isEditing) {
@@ -66,7 +67,7 @@ export default function AppointmentPanel({ event, onClose }) {
             </li>
             <li>
               <b>Durée : </b>
-              <span>{appointment.duration}</span>
+              <span>{differenceInMinutes(appointment.endTime, startTime)}</span>
             </li>
           </ul>
           <hr className="border-gray-500 border -my-2" />
@@ -78,8 +79,7 @@ export default function AppointmentPanel({ event, onClose }) {
           </ul>
         </div>
         <div className="flex flex-row gap-2 -m-2">
-          {/* TODO: Complete appointment update */}
-          {/* <Button
+          <Button
             text="Modifier"
             color="brandBlue"
             width="100%"
@@ -88,7 +88,7 @@ export default function AppointmentPanel({ event, onClose }) {
             radiusSize="lg"
             onClick={() => setIsEditing(true)}
             disabled={isSending}
-          /> */}
+          />
           <Button
             text="Annuler le Rendez-vous"
             color="brandPink"

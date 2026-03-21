@@ -219,11 +219,31 @@ export async function getAppointment(id) {
   return await response.json();
 }
 
-export async function updateAppointment(id, body) {
+export async function updateAppointmentTime(id, startTime, duration) {
   const response = await callAuthorizedEndpoint(
     "/appointments/" + id,
     "PATCH",
-    body,
+    { startTime, duration },
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function cancelAppointment(id) {
+  const response = await callAuthorizedEndpoint(
+    `/appointments/${id}/cancel`,
+    "PATCH",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function assignAppointment(id, advisorId) {
+  const response = await callAuthorizedEndpoint(
+    `/appointments/${id}/assign/${advisorId}`,
+    "PATCH",
   );
   await handleError(response);
 

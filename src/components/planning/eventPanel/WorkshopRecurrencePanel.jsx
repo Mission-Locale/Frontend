@@ -14,6 +14,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatEvent } from "@/utils/dateFormater";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { useAuth } from "@/hooks/useAuth";
+import { differenceInMinutes } from "date-fns";
 
 export default function ActivityPanel({ event, onClose }) {
   const [isSending, setIsSending] = useState(false);
@@ -45,12 +46,13 @@ export default function ActivityPanel({ event, onClose }) {
           registerJobSeekerToWorkshopRecurrence(
             workshopRecurrenceId,
             jobSeekerId,
-          ).then(() => {
-            queryClient.invalidateQueries({
-              queryKey: ["workshop/recurrences", workshopRecurrenceId],
-            });
-            setIsSending(false);
-          });
+          )
+            .then(() =>
+              queryClient.invalidateQueries({
+                queryKey: ["workshop/recurrences", workshopRecurrenceId],
+              }),
+            )
+            .finally(() => setIsSending(false));
         }}
       />,
     );
@@ -66,8 +68,8 @@ export default function ActivityPanel({ event, onClose }) {
         onAllow={() => {
           setIsSending(true);
           setModal(null);
-          removeSelfAnimatorFromWorkshopRecurrence(workshopRecurrenceId).then(
-            () => {
+          removeSelfAnimatorFromWorkshopRecurrence(workshopRecurrenceId)
+            .then(() => {
               onClose();
               queryClient.invalidateQueries({
                 queryKey: ["workshop/recurrences", workshopRecurrenceId],
@@ -75,9 +77,8 @@ export default function ActivityPanel({ event, onClose }) {
               queryClient.invalidateQueries({
                 queryKey: ["planning", user.id],
               });
-              setIsSending(false);
-            },
-          );
+            })
+            .finally(() => setIsSending(false));
         }}
       />,
     );
@@ -106,6 +107,8 @@ export default function ActivityPanel({ event, onClose }) {
     }
   });
 
+  const startDate = new Date(data.startTime);
+
   return (
     <div className="flex flex-col justify-between size-full">
       <div className="flex flex-col gap-4">
@@ -113,11 +116,11 @@ export default function ActivityPanel({ event, onClose }) {
         <ul className="flex flex-col gap-2">
           <li>
             <b>Début : </b>
-            <span>{formatEvent(new Date(data.startTime))}</span>
+            <span>{formatEvent(startDate)}</span>
           </li>
           <li>
             <b>Durée : </b>
-            <span>{data.duration}</span>
+            <span>{differenceInMinutes(data.endTime, startDate)}</span>
           </li>
         </ul>
         <hr className="border-gray-500 border -my-2" />

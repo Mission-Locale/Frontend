@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export const DayFormatter = new Intl.DateTimeFormat(undefined, {
   year: "numeric",
   month: "numeric",
@@ -11,6 +13,10 @@ export const TimeFormatter = new Intl.DateTimeFormat(undefined, {
 
 export function formatEvent(date) {
   return `${DayFormatter.format(date)} à ${TimeFormatter.format(date)}`;
+}
+
+export function formatInput(date) {
+  return format(date, "yyyy-MM-dd'T'HH:mm:ss");
 }
 
 export default function dateFormater(date) {
