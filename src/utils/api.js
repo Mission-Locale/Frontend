@@ -156,6 +156,13 @@ export async function getJobSeeker(id) {
   return await response.json();
 }
 
+export async function getAdvisor(id) {
+  const response = await callAuthorizedEndpoint("/users/advisor/" + id, "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
 export async function getAdvisorPlanning(advisorId) {
   const response = await callAuthorizedEndpoint(
     "/planning/advisor/" + advisorId,
@@ -270,6 +277,16 @@ export async function getWorkshop(id) {
 export async function getWorkshopRecurrence(id) {
   const response = await callAuthorizedEndpoint(
     `/workshops/recurrences/${id}`,
+    "GET",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getRegistrations(id) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${id}/registrations`,
     "GET",
   );
   await handleError(response);

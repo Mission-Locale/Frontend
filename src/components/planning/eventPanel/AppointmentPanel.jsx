@@ -3,8 +3,11 @@ import Button from "../../ui/Button";
 import AppointmentEditPanel from "./AppointmentEditPanel";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { cancelAppointment, updateAppointmentTime } from "@/utils/api";
-import JobSeekerSpan from "./JobSeekerSpan";
+import {
+  cancelAppointment,
+  getAppointment,
+  updateAppointmentTime,
+} from "@/utils/api";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { formatEvent } from "@/utils/dateFormater";
 import { differenceInMinutes } from "date-fns";
@@ -16,7 +19,18 @@ export default function AppointmentPanel({ event, onClose }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const appointment = event.extendedProps.appointment;
+  const appointmentId = event.extendedProps.appointment.appointment_id;
+  const { status, data, error } = useQuery({
+    queryKey: ["workshop/appointments", appointmentId],
+    queryFn: () => getAppointment(appointmentId),
+  });
+
+  switch (status) {
+    case "pending":
+      return <LoadingFrame />;
+    case "error":
+      return <ErrorFrame error={error} />;
+  }
 
   function handleAppointmentCancel() {
     setModal(
@@ -48,13 +62,16 @@ export default function AppointmentPanel({ event, onClose }) {
         queryClient.invalidateQueries({
           queryKey: ["planning", user.id],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["workshop/appointments", appointmentId],
+        });
         setIsEditing(false);
       })
       .finally(() => setIsSending(false));
   }
 
   if (!isEditing) {
-    const startTime = new Date(appointment.startTime);
+    const startTime = new Date(data.startTime);
 
     return (
       <div className="flex flex-col justify-between size-full">
@@ -67,39 +84,54 @@ export default function AppointmentPanel({ event, onClose }) {
             </li>
             <li>
               <b>Durée : </b>
-              <span>{differenceInMinutes(appointment.endTime, startTime)}</span>
+              <span>{differenceInMinutes(data.endTime, startTime)}</span>
             </li>
           </ul>
           <hr className="border-gray-500 border -my-2" />
           <ul className="flex flex-col gap-2">
-            <li>
-              <b>Demandeur : </b>
-              <JobSeekerSpan jobSeekerId={appointment.job_seeker_id} />
-            </li>
+            {user.role != "JOB_SEEKER" && (
+              <li>
+                <b>Demandeur : </b>
+                <span className="capitalize">
+                  {data.jobSeeker.user.last_name}{" "}
+                  {data.jobSeeker.user.first_name}
+                </span>
+              </li>
+            )}
+            {user.role != "ADVISOR" && (
+              <li>
+                <b>Conseiller : </b>
+                <span className="capitalize">
+                  {data.advisor.user.last_name} {data.advisor.user.first_name}
+                </span>
+              </li>
+            )}
           </ul>
         </div>
-        <div className="flex flex-row gap-2 -m-2">
-          <Button
-            text="Modifier"
-            color="brandBlue"
-            width="100%"
-            variant="full"
-            size="sm"
-            radiusSize="lg"
-            onClick={() => setIsEditing(true)}
-            disabled={isSending}
-          />
-          <Button
-            text="Annuler le Rendez-vous"
-            color="brandPink"
-            width="100%"
-            variant="full"
-            size="sm"
-            radiusSize="lg"
-            onClick={handleAppointmentCancel}
-            disabled={isSending}
-          />
-        </div>
+        {user.role == "ADVISOR" && (
+          <div className="flex flex-row gap-2 -m-2">
+            <Button
+              text="Modifier"
+              color="brandBlue"
+              width="100%"
+              variant="full"
+              size="sm"
+              radiusSize="lg"
+              onClick={() => setIsEditing(true)}
+              disabled={isSending}
+            />
+            <Button
+              text="Annuler le Rendez-vous"
+              color="brandPink"
+              width="100%"
+              variant="full"
+              size="sm"
+              radiusSize="lg"
+              onClick={handleAppointmentCancel}
+              disabled={isSending}
+            />
+          </div>
+        )}
         {modal}
       </div>
     );

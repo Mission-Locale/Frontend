@@ -15,6 +15,7 @@ import { formatEvent } from "@/utils/dateFormater";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { differenceInMinutes } from "date-fns";
+import Pill from "@/components/ui/Pill";
 
 export default function ActivityPanel({ event, onClose }) {
   const [isSending, setIsSending] = useState(false);
@@ -86,26 +87,38 @@ export default function ActivityPanel({ event, onClose }) {
 
   const registeredUsers = [];
   const pendingUsers = [];
+  let registerState = undefined;
 
-  data.registrations.map((registration) => {
-    const user = registration.job_seeker.user;
-    const component = (
-      <li key={user.user_id}>
-        {user.last_name} {user.first_name}
-      </li>
-    );
-    switch (registration.state) {
-      case "REGISTERED":
-        registeredUsers.push(component);
-        break;
-      case "PENDING":
-        pendingUsers.push(component);
-        break;
-      default:
-        console.warn("Unknown registration state : " + registration.state);
-        break;
-    }
-  });
+  switch (user.role) {
+    case "ADVISOR":
+    case "ADMINISTRATOR":
+      data.registrations.map((registration) => {
+        const user = registration.job_seeker.user;
+        const component = (
+          <li key={user.user_id}>
+            {user.last_name} {user.first_name}
+          </li>
+        );
+        switch (registration.state) {
+          case "REGISTERED":
+            registeredUsers.push(component);
+            break;
+          case "PENDING":
+            pendingUsers.push(component);
+            break;
+          default:
+            console.warn("Unknown registration state : " + registration.state);
+            break;
+        }
+      });
+      break;
+    case "JOB_SEEKER":
+      registerState =
+        data.registrations.length > 0 ? data.registrations[0].state : null;
+      break;
+    default:
+      break;
+  }
 
   const startDate = new Date(data.startTime);
 
@@ -113,6 +126,7 @@ export default function ActivityPanel({ event, onClose }) {
     <div className="flex flex-col justify-between size-full">
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-bold text-center -mt-2">{event.title}</h2>
+        {/* TODO: Add registration pill */}
         <ul className="flex flex-col gap-2">
           <li>
             <b>Début : </b>
@@ -157,39 +171,65 @@ export default function ActivityPanel({ event, onClose }) {
               <p>{data.topicDescription}</p>
             </FoldBox>
           </li>
-          <li>
-            <FoldBox header="Inscrits">
-              <ul>{registeredUsers}</ul>
-            </FoldBox>
-          </li>
-          <li>
-            <FoldBox header="En liste d'attente">
-              <ul>{pendingUsers}</ul>
-            </FoldBox>
-          </li>
+          {(user.role == "ADVISOR" || user.role == "ADMINISTRATOR") && (
+            <>
+              <li>
+                <FoldBox header="Inscrits">
+                  <ul>{registeredUsers}</ul>
+                </FoldBox>
+              </li>
+              <li>
+                <FoldBox header="En liste d'attente">
+                  <ul>{pendingUsers}</ul>
+                </FoldBox>
+              </li>
+            </>
+          )}
+          {user.role == "JOB_SEEKER" && (
+            <li className="flex flex-row">
+              <RegistrationCount workshopRecurrenceId={workshopRecurrenceId} />
+            </li>
+          )}
         </ul>
       </div>
       <div className="flex flex-row gap-2 -m-2">
-        <Button
-          text="Inscrire un demandeur"
-          color="brandBlue"
-          width="100%"
-          variant="full"
-          size="sm"
-          radiusSize="lg"
-          onClick={handleUserRegistering}
-          disabled={isSending}
-        />
-        <Button
-          text="Se retirer"
-          color="brandPink"
-          width="100%"
-          variant="full"
-          size="sm"
-          radiusSize="lg"
-          onClick={handleAdvisorUnsubscribe}
-          disabled={isSending}
-        />
+        {(user.role == "ADVISOR" || user.role == "ADMINISTRATOR") && (
+          <Button
+            text="Inscrire un demandeur"
+            color="brandBlue"
+            width="100%"
+            variant="full"
+            size="sm"
+            radiusSize="lg"
+            onClick={handleUserRegistering}
+            disabled={isSending}
+          />
+        )}
+        {user.role == "ADVISOR" && (
+          <Button
+            text="Se retirer"
+            color="brandPink"
+            width="100%"
+            variant="full"
+            size="sm"
+            radiusSize="lg"
+            onClick={handleAdvisorUnsubscribe}
+            disabled={isSending}
+          />
+        )}
+        {/* TODO: Modify button if registered or not */}
+        {user.role == "JOB_SEEKER" && (
+          <Button
+            text="Se désinscrire"
+            color="brandPink"
+            width="100%"
+            variant="full"
+            size="sm"
+            radiusSize="lg"
+            onClick={handleJobSeekerUnsubscribe}
+            disabled={isSending}
+          />
+        )}
       </div>
       {modal}
     </div>
