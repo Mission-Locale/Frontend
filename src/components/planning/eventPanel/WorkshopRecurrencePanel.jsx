@@ -16,6 +16,7 @@ import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { differenceInMinutes } from "date-fns";
 import Pill from "@/components/ui/Pill";
+import RegistrationCount from "./RegistrationCount";
 
 export default function ActivityPanel({ event, onClose }) {
   const [isSending, setIsSending] = useState(false);
@@ -124,9 +125,19 @@ export default function ActivityPanel({ event, onClose }) {
 
   return (
     <div className="flex flex-col justify-between size-full">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 relative">
         <h2 className="text-xl font-bold text-center -mt-2">{event.title}</h2>
-        {/* TODO: Add registration pill */}
+        <span className="absolute top-1 right-1">
+          {registerState == "REGISTERED" && (
+            <Pill content="Inscrit" theme="brandGreen" />
+          )}
+          {registerState == "PENDING" && (
+            <Pill content="Liste d'attente" theme="brandOrange" />
+          )}
+          {registerState == null && (
+            <Pill content="Non inscrit" theme="brandViolet" />
+          )}
+        </span>
         <ul className="flex flex-col gap-2">
           <li>
             <b>Début : </b>
@@ -217,8 +228,7 @@ export default function ActivityPanel({ event, onClose }) {
             disabled={isSending}
           />
         )}
-        {/* TODO: Modify button if registered or not */}
-        {user.role == "JOB_SEEKER" && (
+        {(user.role == "JOB_SEEKER" && registerState && (
           <Button
             text="Se désinscrire"
             color="brandPink"
@@ -229,7 +239,19 @@ export default function ActivityPanel({ event, onClose }) {
             onClick={handleJobSeekerUnsubscribe}
             disabled={isSending}
           />
-        )}
+        )) ||
+          (!registerState && (
+            <Button
+              text="S'inscrire"
+              color="brandBlue"
+              width="100%"
+              variant="full"
+              size="sm"
+              radiusSize="lg"
+              onClick={handleJobSeekerSubscribe}
+              disabled={isSending}
+            />
+          ))}
       </div>
       {modal}
     </div>
