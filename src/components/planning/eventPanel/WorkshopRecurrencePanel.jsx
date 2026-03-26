@@ -5,6 +5,7 @@ import {
   getWorkshopRecurrence,
   registerJobSeekerToWorkshopRecurrence,
   removeSelfAnimatorFromWorkshopRecurrence,
+  unregisterJobSeekerToWorkshopRecurrence,
 } from "@/utils/api";
 import FoldBox from "@/components/ui/FoldBox";
 import WorkshopRecurrencesPills from "./WorkshopRecurrencesPills";
@@ -18,7 +19,7 @@ import { differenceInMinutes } from "date-fns";
 import Pill from "@/components/ui/Pill";
 import RegistrationCount from "./RegistrationCount";
 
-export default function ActivityPanel({ event, onClose }) {
+export default function WorkshopRecurrencePanel({ event, onClose }) {
   const [isSending, setIsSending] = useState(false);
   const [modal, setModal] = useState(null);
   const { user } = useAuth();
@@ -38,7 +39,35 @@ export default function ActivityPanel({ event, onClose }) {
       return <ErrorFrame error={error} />;
   }
 
-  function handleUserRegistering() {
+  function handleJobSeekerSelfRegistering() {
+    setIsSending(true);
+    registerJobSeekerToWorkshopRecurrence(workshopRecurrenceId)
+      .then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["workshop/recurrences", workshopRecurrenceId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["planning", user.id],
+        });
+      })
+      .finally(() => setIsSending(false));
+  }
+
+  function handleJobSeekerSelfUnregistering() {
+    setIsSending(true);
+    unregisterJobSeekerToWorkshopRecurrence(workshopRecurrenceId)
+      .then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["workshop/recurrences", workshopRecurrenceId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["planning", user.id],
+        });
+      })
+      .finally(() => setIsSending(false));
+  }
+
+  function handleJobSeekerRegistering() {
     setModal(
       <JobSeekerRegisteringModal
         onCancel={() => setModal(null)}
@@ -89,6 +118,8 @@ export default function ActivityPanel({ event, onClose }) {
   const registeredUsers = [];
   const pendingUsers = [];
   let registerState = undefined;
+
+  console.log(data);
 
   switch (user.role) {
     case "ADVISOR":
@@ -212,7 +243,7 @@ export default function ActivityPanel({ event, onClose }) {
             variant="full"
             size="sm"
             radiusSize="lg"
-            onClick={handleUserRegistering}
+            onClick={handleJobSeekerRegistering}
             disabled={isSending}
           />
         )}
@@ -228,30 +259,31 @@ export default function ActivityPanel({ event, onClose }) {
             disabled={isSending}
           />
         )}
-        {(user.role == "JOB_SEEKER" && registerState && (
-          <Button
-            text="Se désinscrire"
-            color="brandPink"
-            width="100%"
-            variant="full"
-            size="sm"
-            radiusSize="lg"
-            onClick={handleJobSeekerUnsubscribe}
-            disabled={isSending}
-          />
-        )) ||
-          (!registerState && (
+        {user.role == "JOB_SEEKER" &&
+          ((registerState && (
             <Button
-              text="S'inscrire"
-              color="brandBlue"
+              text="Se désinscrire"
+              color="brandPink"
               width="100%"
               variant="full"
               size="sm"
               radiusSize="lg"
-              onClick={handleJobSeekerSubscribe}
+              onClick={handleJobSeekerSelfUnregistering}
               disabled={isSending}
             />
-          ))}
+          )) ||
+            (!registerState && (
+              <Button
+                text="S'inscrire"
+                color="brandBlue"
+                width="100%"
+                variant="full"
+                size="sm"
+                radiusSize="lg"
+                onClick={handleJobSeekerSelfRegistering}
+                disabled={isSending}
+              />
+            )))}
       </div>
       {modal}
     </div>

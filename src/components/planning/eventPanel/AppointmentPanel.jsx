@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../../ui/Button";
 import AppointmentEditPanel from "./AppointmentEditPanel";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import {
   cancelAppointment,
@@ -11,6 +11,8 @@ import {
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { formatEvent } from "@/utils/dateFormater";
 import { differenceInMinutes } from "date-fns";
+import LoadingFrame from "@/components/ui/LoadingFrame";
+import ErrorFrame from "@/components/ui/ErrorFrame";
 
 export default function AppointmentPanel({ event, onClose }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -57,7 +59,7 @@ export default function AppointmentPanel({ event, onClose }) {
 
   function handleAppointmentEdit(startDateTime, duration) {
     setIsSending(true);
-    updateAppointmentTime(appointment.appointment_id, startDateTime, duration)
+    updateAppointmentTime(appointmentId, startDateTime, duration)
       .then(() => {
         queryClient.invalidateQueries({
           queryKey: ["planning", user.id],
@@ -93,8 +95,8 @@ export default function AppointmentPanel({ event, onClose }) {
               <li>
                 <b>Demandeur : </b>
                 <span className="capitalize">
-                  {data.jobSeeker.user.last_name}{" "}
-                  {data.jobSeeker.user.first_name}
+                  {data.job_seeker.user.last_name}{" "}
+                  {data.job_seeker.user.first_name}
                 </span>
               </li>
             )}

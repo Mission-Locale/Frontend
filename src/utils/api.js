@@ -296,12 +296,23 @@ export async function getRegistrations(id) {
 
 export async function registerJobSeekerToWorkshopRecurrence(
   recurrenceId,
-  jobSeekerId,
+  jobSeekerId = undefined,
 ) {
   const response = await callAuthorizedEndpoint(
     `/workshops/recurrences/${recurrenceId}/register`,
     "POST",
     { jobSeekerId: jobSeekerId },
+  );
+  await handleError(response);
+}
+
+export async function unregisterJobSeekerToWorkshopRecurrence(
+  recurrenceId,
+  jobSeekerId = undefined,
+) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${recurrenceId}/unregister${jobSeekerId && "/" + jobSeekerId}`,
+    "DELETE",
   );
   await handleError(response);
 }
