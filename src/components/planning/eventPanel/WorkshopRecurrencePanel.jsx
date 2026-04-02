@@ -161,8 +161,6 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
       break;
   }
 
-  console.log(registerState);
-
   const startDate = new Date(data.startTime);
 
   return (
