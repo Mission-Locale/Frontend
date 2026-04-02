@@ -47,6 +47,9 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
           queryKey: ["workshop/recurrences", workshopRecurrenceId],
         });
         queryClient.invalidateQueries({
+          queryKey: ["workshop/registrations", workshopRecurrenceId],
+        });
+        queryClient.invalidateQueries({
           queryKey: ["planning", user.id],
         });
       })
@@ -59,6 +62,9 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
       .then(() => {
         queryClient.invalidateQueries({
           queryKey: ["workshop/recurrences", workshopRecurrenceId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["workshop/registrations", workshopRecurrenceId],
         });
         queryClient.invalidateQueries({
           queryKey: ["planning", user.id],
@@ -78,11 +84,14 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
             workshopRecurrenceId,
             jobSeekerId,
           )
-            .then(() =>
+            .then(() => {
               queryClient.invalidateQueries({
                 queryKey: ["workshop/recurrences", workshopRecurrenceId],
-              }),
-            )
+              });
+              queryClient.invalidateQueries({
+                queryKey: ["workshop/registrations", workshopRecurrenceId],
+              });
+            })
             .finally(() => setIsSending(false));
         }}
       />,
@@ -119,8 +128,6 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
   const pendingUsers = [];
   let registerState = undefined;
 
-  console.log(data);
-
   switch (user.role) {
     case "ADVISOR":
     case "ADMINISTRATOR":
@@ -146,11 +153,15 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
       break;
     case "JOB_SEEKER":
       registerState =
-        data.registrations.length > 0 ? data.registrations[0].state : null;
+        data.registrations.length > 0
+          ? data.registrations[0].state
+          : "UNREGISTERED";
       break;
     default:
       break;
   }
+
+  console.log(registerState);
 
   const startDate = new Date(data.startTime);
 
@@ -158,15 +169,15 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
     <div className="flex flex-col justify-between size-full">
       <div className="flex flex-col gap-4 relative">
         <h2 className="text-xl font-bold text-center -mt-2">{event.title}</h2>
-        <span className="absolute top-1 right-1">
+        <span className="absolute -top-1 -right-1">
           {registerState == "REGISTERED" && (
             <Pill content="Inscrit" theme="brandGreen" />
           )}
           {registerState == "PENDING" && (
             <Pill content="Liste d'attente" theme="brandOrange" />
           )}
-          {registerState == null && (
-            <Pill content="Non inscrit" theme="brandViolet" />
+          {registerState == "UNREGISTERED" && (
+            <Pill content="Non inscrit" theme="brandPurple" />
           )}
         </span>
         <ul className="flex flex-col gap-2">
@@ -228,7 +239,7 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
             </>
           )}
           {user.role == "JOB_SEEKER" && (
-            <li className="flex flex-row">
+            <li className="flex flex-row gap-2">
               <RegistrationCount workshopRecurrenceId={workshopRecurrenceId} />
             </li>
           )}
@@ -260,7 +271,7 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
           />
         )}
         {user.role == "JOB_SEEKER" &&
-          ((registerState && (
+          ((registerState != "UNREGISTERED" && (
             <Button
               text="Se désinscrire"
               color="brandPink"
@@ -272,7 +283,7 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
               disabled={isSending}
             />
           )) ||
-            (!registerState && (
+            (registerState == "UNREGISTERED" && (
               <Button
                 text="S'inscrire"
                 color="brandBlue"

@@ -311,7 +311,7 @@ export async function unregisterJobSeekerToWorkshopRecurrence(
   jobSeekerId = undefined,
 ) {
   const response = await callAuthorizedEndpoint(
-    `/workshops/recurrences/${recurrenceId}/unregister${jobSeekerId && "/" + jobSeekerId}`,
+    `/workshops/recurrences/${recurrenceId}/unregister${(jobSeekerId && "/" + jobSeekerId) || ""}`,
     "DELETE",
   );
   await handleError(response);

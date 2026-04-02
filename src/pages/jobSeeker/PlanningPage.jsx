@@ -44,6 +44,8 @@ export default function PlanningPage() {
                 onEventClick={(e) => {
                   setViewingEvent(e.event);
                 }}
+                defaultDate={viewingEvent ? viewingEvent.start : undefined}
+                key={viewingEvent == null}
               />
             </Box>
           </div>

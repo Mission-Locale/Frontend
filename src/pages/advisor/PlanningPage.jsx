@@ -60,6 +60,7 @@ export default function PlanningPage() {
                     setEditState("adding");
                   },
                 }}
+                defaultDate={editingEvent ? editingEvent.start : undefined}
                 key={editState == null}
               />
             </Box>

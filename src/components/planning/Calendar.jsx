@@ -28,6 +28,7 @@ export default function Calendar({
   customButton = undefined,
   startDateDisplay = getDefaultStartDate(),
   endDateDisplay = getDefaultEndDate(),
+  defaultDate = undefined,
 }) {
   const calendarRef = useRef(null);
   const mobileMode = useMobileToggle(900, () => calendarRef.current.width);
@@ -53,6 +54,7 @@ export default function Calendar({
           start: startDateDisplay.toISOString().split("T")[0],
           end: endDateDisplay.toISOString().split("T")[0],
         }}
+        initialDate={defaultDate}
         customButtons={{ customButton: customButton }}
         headerToolbar={
           noNavigation

@@ -1,5 +1,6 @@
 import Pill from "@/components/ui/Pill";
 import { getRegistrations } from "@/utils/api";
+import { useQuery } from "@tanstack/react-query";
 
 export default function RegistrationCount({ workshopRecurrenceId }) {
   const { status, data, error } = useQuery({
@@ -14,11 +15,11 @@ export default function RegistrationCount({ workshopRecurrenceId }) {
       return (
         <>
           <Pill
-            content={`${data.find((count) => count.state == "REGISTERED")._count} inscrits`}
+            content={`${data.find((count) => count.state == "REGISTERED")?._count?.job_seeker_id || 0} inscrits`}
             theme="brandGreen"
           />
           <Pill
-            content={`${data.find((count) => count.state == "PENDING")._count} en liste d'attente`}
+            content={`${data.find((count) => count.state == "PENDING")?._count?.job_seeker_id || 0} en liste d'attente`}
             theme="brandPink"
           />
         </>
