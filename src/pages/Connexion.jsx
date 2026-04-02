@@ -53,14 +53,13 @@ export default function Connexion() {
       // Route à ajuster selon les besoins
       switch (userData.role) {
         case JOB_SEEKER:
-          navigate("/");
+          navigate("/dashboard/user");
           break;
         case ADVISOR:
-          navigate("/");
+          navigate("/dashboard/advisor");
           break;
         case ADMINISTRATOR:
-          // navigate("/");
-          navigate("/advisor-list"); // Redirect temporaire pour dev
+          navigate("/dashboard/admin");
           break;
         default:
           navigate("/");

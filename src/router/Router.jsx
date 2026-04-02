@@ -15,6 +15,7 @@ export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route index path="/" element={<Navigate to="/login" />} />
         {/* Route d'inscription */}
         <Route path="/register" element={<RegisterUser />} />
         {/* Route de connexion */}
@@ -26,29 +27,42 @@ export default function Router() {
           {/* TODO: <Route path="/" index element={<HomePage />} /> */}
 
           <Route element={<PrivateRoutes />}>
-            <Route element={<Dashboard />}>
+            <Route path="/dashboard" element={<Dashboard />}>
               <Route
+                path="user"
                 element={<DashboardRoutes role={JOB_SEEKER} redirect="/" />}
               >
                 {/* Routes des Demandeurs d'emploi */}
-                <Route index path="/" element={<Navigate to="planning" />} />
-                <Route path="/planning" element={<JobSeekerPlanningPage />} />
-              </Route>
-              <Route element={<DashboardRoutes role={ADVISOR} redirect="/" />}>
-                {/* Routes des Conseillers */}
-                <Route index path="/" element={<Navigate to="planning" />} />
-                <Route path="/planning" element={<AdvisorPlanningPage />} />
+                <Route
+                  index
+                  path=""
+                  element={<Navigate to="/dashboard/user/planning" />}
+                />
+                <Route path="planning" element={<JobSeekerPlanningPage />} />
               </Route>
               <Route
+                path="advisor"
+                element={<DashboardRoutes role={ADVISOR} redirect="/" />}
+              >
+                {/* Routes des Conseillers */}
+                <Route
+                  index
+                  path=""
+                  element={<Navigate to="/dashboard/advisor/planning" />}
+                />
+                <Route path="planning" element={<AdvisorPlanningPage />} />
+              </Route>
+              <Route
+                path="admin"
                 element={<DashboardRoutes role={ADMINISTRATOR} redirect="/" />}
               >
                 {/* Routes des Administrateurs */}
                 <Route
                   index
-                  path="/"
-                  element={<Navigate to="advisor-list" />}
+                  path=""
+                  element={<Navigate to="/dashboard/admin/advisor-list" />}
                 />
-                <Route path="/advisor-list" element={<AdvisorList />} />
+                <Route path="advisor-list" element={<AdvisorList />} />
               </Route>
             </Route>
           </Route>
