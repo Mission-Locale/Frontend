@@ -7,9 +7,10 @@ import Connexion from "@/pages/Connexion";
 import ResetPassword from "@/pages/ResetPassword";
 import { JOB_SEEKER, ADVISOR, ADMINISTRATOR } from "../utils/userRole";
 import Dashboard from "@/layouts/Dashboard";
-import AdvisorList from "@/pages/AdvisorList";
+import AdvisorList from "@/pages/administrator/AdvisorList";
 import AdvisorPlanningPage from "@/pages/advisor/PlanningPage";
 import JobSeekerPlanningPage from "@/pages/jobSeeker/PlanningPage";
+import WorkshopPlanningPage from "@/pages/workshop/WorkshopPlanningPage";
 
 export default function Router() {
   return (
@@ -24,7 +25,8 @@ export default function Router() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<DefaultLayout />}>
           {/* Vitrine */}
-          {/* TODO: <Route path="/" index element={<HomePage />} /> */}
+          <Route path="/" index element={undefined} />
+          <Route path="/workshop" index element={<WorkshopPlanningPage />} />
 
           <Route element={<PrivateRoutes />}>
             <Route path="/dashboard" element={<Dashboard />}>

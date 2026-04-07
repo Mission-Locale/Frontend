@@ -173,6 +173,13 @@ export async function getAdvisorPlanning(advisorId) {
   return await response.json();
 }
 
+export async function getWorkshopPlanning() {
+  const response = await callEndpoint("/planning/workshop/", "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
 export async function getSelfPlanning() {
   const response = await callAuthorizedEndpoint("/planning/me", "GET");
   await handleError(response);
