@@ -5,6 +5,7 @@ import {
   getWorkshopRecurrence,
   registerJobSeekerToWorkshopRecurrence,
   removeSelfAnimatorFromWorkshopRecurrence,
+  unregisterJobSeekerToWorkshopRecurrence,
 } from "@/utils/api";
 import FoldBox from "@/components/ui/FoldBox";
 import WorkshopRecurrencesPills from "./WorkshopRecurrencesPills";
@@ -15,8 +16,10 @@ import { formatEvent } from "@/utils/dateFormater";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { differenceInMinutes } from "date-fns";
+import Pill from "@/components/ui/Pill";
+import RegistrationCount from "./RegistrationCount";
 
-export default function ActivityPanel({ event, onClose }) {
+export default function WorkshopRecurrencePanel({ event, onClose }) {
   const [isSending, setIsSending] = useState(false);
   const [modal, setModal] = useState(null);
   const { user } = useAuth();
@@ -36,7 +39,41 @@ export default function ActivityPanel({ event, onClose }) {
       return <ErrorFrame error={error} />;
   }
 
-  function handleUserRegistering() {
+  function handleJobSeekerSelfRegistering() {
+    setIsSending(true);
+    registerJobSeekerToWorkshopRecurrence(workshopRecurrenceId)
+      .then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["workshop/recurrences", workshopRecurrenceId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["workshop/registrations", workshopRecurrenceId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["planning", user.id],
+        });
+      })
+      .finally(() => setIsSending(false));
+  }
+
+  function handleJobSeekerSelfUnregistering() {
+    setIsSending(true);
+    unregisterJobSeekerToWorkshopRecurrence(workshopRecurrenceId)
+      .then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["workshop/recurrences", workshopRecurrenceId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["workshop/registrations", workshopRecurrenceId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["planning", user.id],
+        });
+      })
+      .finally(() => setIsSending(false));
+  }
+
+  function handleJobSeekerRegistering() {
     setModal(
       <JobSeekerRegisteringModal
         onCancel={() => setModal(null)}
@@ -47,11 +84,14 @@ export default function ActivityPanel({ event, onClose }) {
             workshopRecurrenceId,
             jobSeekerId,
           )
-            .then(() =>
+            .then(() => {
               queryClient.invalidateQueries({
                 queryKey: ["workshop/recurrences", workshopRecurrenceId],
-              }),
-            )
+              });
+              queryClient.invalidateQueries({
+                queryKey: ["workshop/registrations", workshopRecurrenceId],
+              });
+            })
             .finally(() => setIsSending(false));
         }}
       />,
@@ -86,33 +126,58 @@ export default function ActivityPanel({ event, onClose }) {
 
   const registeredUsers = [];
   const pendingUsers = [];
+  let registerState = undefined;
 
-  data.registrations.map((registration) => {
-    const user = registration.job_seeker.user;
-    const component = (
-      <li key={user.user_id}>
-        {user.last_name} {user.first_name}
-      </li>
-    );
-    switch (registration.state) {
-      case "REGISTERED":
-        registeredUsers.push(component);
-        break;
-      case "PENDING":
-        pendingUsers.push(component);
-        break;
-      default:
-        console.warn("Unknown registration state : " + registration.state);
-        break;
-    }
-  });
+  switch (user.role) {
+    case "ADVISOR":
+    case "ADMINISTRATOR":
+      data.registrations.map((registration) => {
+        const user = registration.job_seeker.user;
+        const component = (
+          <li key={user.user_id}>
+            {user.last_name} {user.first_name}
+          </li>
+        );
+        switch (registration.state) {
+          case "REGISTERED":
+            registeredUsers.push(component);
+            break;
+          case "PENDING":
+            pendingUsers.push(component);
+            break;
+          default:
+            console.warn("Unknown registration state : " + registration.state);
+            break;
+        }
+      });
+      break;
+    case "JOB_SEEKER":
+      registerState =
+        data.registrations.length > 0
+          ? data.registrations[0].state
+          : "UNREGISTERED";
+      break;
+    default:
+      break;
+  }
 
   const startDate = new Date(data.startTime);
 
   return (
     <div className="flex flex-col justify-between size-full">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 relative">
         <h2 className="text-xl font-bold text-center -mt-2">{event.title}</h2>
+        <span className="absolute -top-1 -right-1">
+          {registerState == "REGISTERED" && (
+            <Pill content="Inscrit" theme="brandGreen" />
+          )}
+          {registerState == "PENDING" && (
+            <Pill content="Liste d'attente" theme="brandOrange" />
+          )}
+          {registerState == "UNREGISTERED" && (
+            <Pill content="Non inscrit" theme="brandPurple" />
+          )}
+        </span>
         <ul className="flex flex-col gap-2">
           <li>
             <b>Début : </b>
@@ -157,39 +222,77 @@ export default function ActivityPanel({ event, onClose }) {
               <p>{data.topicDescription}</p>
             </FoldBox>
           </li>
-          <li>
-            <FoldBox header="Inscrits">
-              <ul>{registeredUsers}</ul>
-            </FoldBox>
-          </li>
-          <li>
-            <FoldBox header="En liste d'attente">
-              <ul>{pendingUsers}</ul>
-            </FoldBox>
-          </li>
+          {(user.role == "ADVISOR" || user.role == "ADMINISTRATOR") && (
+            <>
+              <li>
+                <FoldBox header="Inscrits">
+                  <ul>{registeredUsers}</ul>
+                </FoldBox>
+              </li>
+              <li>
+                <FoldBox header="En liste d'attente">
+                  <ul>{pendingUsers}</ul>
+                </FoldBox>
+              </li>
+            </>
+          )}
+          {user.role == "JOB_SEEKER" && (
+            <li className="flex flex-row gap-2">
+              <RegistrationCount workshopRecurrenceId={workshopRecurrenceId} />
+            </li>
+          )}
         </ul>
       </div>
       <div className="flex flex-row gap-2 -m-2">
-        <Button
-          text="Inscrire un demandeur"
-          color="brandBlue"
-          width="100%"
-          variant="full"
-          size="sm"
-          radiusSize="lg"
-          onClick={handleUserRegistering}
-          disabled={isSending}
-        />
-        <Button
-          text="Se retirer"
-          color="brandPink"
-          width="100%"
-          variant="full"
-          size="sm"
-          radiusSize="lg"
-          onClick={handleAdvisorUnsubscribe}
-          disabled={isSending}
-        />
+        {(user.role == "ADVISOR" || user.role == "ADMINISTRATOR") && (
+          <Button
+            text="Inscrire un demandeur"
+            color="brandBlue"
+            width="100%"
+            variant="full"
+            size="sm"
+            radiusSize="lg"
+            onClick={handleJobSeekerRegistering}
+            disabled={isSending}
+          />
+        )}
+        {user.role == "ADVISOR" && (
+          <Button
+            text="Se retirer"
+            color="brandPink"
+            width="100%"
+            variant="full"
+            size="sm"
+            radiusSize="lg"
+            onClick={handleAdvisorUnsubscribe}
+            disabled={isSending}
+          />
+        )}
+        {user.role == "JOB_SEEKER" &&
+          ((registerState != "UNREGISTERED" && (
+            <Button
+              text="Se désinscrire"
+              color="brandPink"
+              width="100%"
+              variant="full"
+              size="sm"
+              radiusSize="lg"
+              onClick={handleJobSeekerSelfUnregistering}
+              disabled={isSending}
+            />
+          )) ||
+            (registerState == "UNREGISTERED" && (
+              <Button
+                text="S'inscrire"
+                color="brandBlue"
+                width="100%"
+                variant="full"
+                size="sm"
+                radiusSize="lg"
+                onClick={handleJobSeekerSelfRegistering}
+                disabled={isSending}
+              />
+            )))}
       </div>
       {modal}
     </div>

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Button from "@/components/ui/Button";
 import TextInput from "@/components/ui/Form/InputText";
-import JobSeekerSpan from "./JobSeekerSpan";
 import { differenceInMinutes, parseISO } from "date-fns";
 import { formatInput } from "@/utils/dateFormater";
 
@@ -67,7 +66,9 @@ export default function AppointmentEditPanel({
         <ul className="flex flex-col gap-2">
           <li>
             <b>Demandeur : </b>
-            <JobSeekerSpan jobSeekerId={appointment.job_seeker_id} />
+            <span className="capitalize">
+              {data.job_seeker.user.last_name} {data.job_seeker.user.first_name}
+            </span>
           </li>
         </ul>
       </div>

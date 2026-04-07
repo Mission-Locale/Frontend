@@ -156,6 +156,13 @@ export async function getJobSeeker(id) {
   return await response.json();
 }
 
+export async function getAdvisor(id) {
+  const response = await callAuthorizedEndpoint("/users/advisor/" + id, "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
 export async function getAdvisorPlanning(advisorId) {
   const response = await callAuthorizedEndpoint(
     "/planning/advisor/" + advisorId,
@@ -277,14 +284,35 @@ export async function getWorkshopRecurrence(id) {
   return await response.json();
 }
 
+export async function getRegistrations(id) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${id}/registrations`,
+    "GET",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
 export async function registerJobSeekerToWorkshopRecurrence(
   recurrenceId,
-  jobSeekerId,
+  jobSeekerId = undefined,
 ) {
   const response = await callAuthorizedEndpoint(
     `/workshops/recurrences/${recurrenceId}/register`,
     "POST",
     { jobSeekerId: jobSeekerId },
+  );
+  await handleError(response);
+}
+
+export async function unregisterJobSeekerToWorkshopRecurrence(
+  recurrenceId,
+  jobSeekerId = undefined,
+) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${recurrenceId}/unregister${(jobSeekerId && "/" + jobSeekerId) || ""}`,
+    "DELETE",
   );
   await handleError(response);
 }

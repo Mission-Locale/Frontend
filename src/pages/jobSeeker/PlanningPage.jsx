@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Calendar from "@/components/planning/Calendar";
-import AppointmentAddPanel from "@/components/planning/eventPanel/AppointmentAddPanel";
 import EventPanel from "@/components/planning/eventPanel/EventPanel";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getSelfPlanning } from "@/utils/api";
 import { useAuth } from "@/hooks/useAuth";
 import ErrorFrame from "@/components/ui/ErrorFrame";
@@ -15,15 +14,7 @@ export default function PlanningPage() {
     queryKey: ["planning", user.id],
     queryFn: getSelfPlanning,
   });
-  const queryClient = useQueryClient();
-
-  const [editState, setEditState] = useState(null);
-  const [editingEvent, setEditingEvent] = useState(null);
-
-  function handleAppointmentCreation() {
-    setEditState(null);
-    queryClient.invalidateQueries({ queryKey: ["planning", user.id] });
-  }
+  const [viewingEvent, setViewingEvent] = useState(null);
 
   switch (status) {
     case "pending":
@@ -45,41 +36,26 @@ export default function PlanningPage() {
         <main className="col-span-full row-span-full flex flex-row justify-between gap-4">
           <div
             id="calendar"
-            className={`h-full ${editState ? "w-5/7" : "w-full"}`}
+            className={`h-full ${viewingEvent ? "w-5/7" : "w-full"}`}
           >
             <Box>
               <Calendar
                 events={data}
                 onEventClick={(e) => {
-                  setEditState("editing");
-                  setEditingEvent(e.event);
+                  setViewingEvent(e.event);
                 }}
-                customButton={{
-                  text: "Programmez un rendez-vous",
-                  click: function () {
-                    setEditState("adding");
-                  },
-                }}
-                defaultDate={editingEvent ? editingEvent.start : undefined}
-                key={editState == null}
+                defaultDate={viewingEvent ? viewingEvent.start : undefined}
+                key={viewingEvent == null}
               />
             </Box>
           </div>
-          {editState && (
+          {viewingEvent && (
             <div id="sidePanel" className="relative w-2/7 h-full">
               <Box>
-                {editState == "editing" && editingEvent && (
-                  <EventPanel
-                    event={editingEvent}
-                    onClose={() => setEditState(null)}
-                  />
-                )}
-                {editState == "adding" && (
-                  <AppointmentAddPanel
-                    onCancel={() => setEditState(null)}
-                    onValidation={handleAppointmentCreation}
-                  />
-                )}
+                <EventPanel
+                  event={viewingEvent}
+                  onClose={() => setEditState(null)}
+                />
               </Box>
             </div>
           )}
