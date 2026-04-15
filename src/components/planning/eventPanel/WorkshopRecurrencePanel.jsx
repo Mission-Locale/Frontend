@@ -57,20 +57,31 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
   }
 
   function handleJobSeekerSelfUnregistering() {
-    setIsSending(true);
-    unregisterJobSeekerToWorkshopRecurrence(workshopRecurrenceId)
-      .then(() => {
-        queryClient.invalidateQueries({
-          queryKey: ["workshop/recurrences", workshopRecurrenceId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["workshop/registrations", workshopRecurrenceId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["planning", user.id],
-        });
-      })
-      .finally(() => setIsSending(false));
+    setModal(
+      <ConfirmationModal
+        modalKey={"unregisterConfirmation"}
+        question="Êtes-vous sure de vouloir vous désinscrire ?"
+        allowColor="brandPink"
+        onCancel={() => setModal(null)}
+        onAllow={() => {
+          setIsSending(true);
+          setModal(null);
+          unregisterJobSeekerToWorkshopRecurrence(workshopRecurrenceId)
+            .then(() => {
+              queryClient.invalidateQueries({
+                queryKey: ["workshop/recurrences", workshopRecurrenceId],
+              });
+              queryClient.invalidateQueries({
+                queryKey: ["workshop/registrations", workshopRecurrenceId],
+              });
+              queryClient.invalidateQueries({
+                queryKey: ["planning", user.id],
+              });
+            })
+            .finally(() => setIsSending(false));
+        }}
+      />,
+    );
   }
 
   function handleJobSeekerRegistering() {

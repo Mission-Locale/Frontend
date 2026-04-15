@@ -1,13 +1,11 @@
 import logo from "/assets/img/Logo_Mission_Locale.webp";
-import useMobileToggle from "@/hooks/useMobileToggle";
 import { useAuth } from "@/hooks/useAuth";
 import HeaderLink from "./HeaderLink";
 import { ADMINISTRATOR, ADVISOR, JOB_SEEKER } from "@/utils/userRole";
 import HeaderDropdown from "./HeaderDropdown";
 
 export default function Header() {
-  const isMobile = useMobileToggle();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   //TODO: compléter les liens du header
 
@@ -42,28 +40,23 @@ export default function Header() {
     }
   }
 
-  if (!isMobile) {
-    return (
-      <header className="flex justify-between w-full bg-lightBg px-10 py-2 items-center">
-        <div className="hidden md:flex items-center w-[150px]">
-          <img className="w-full" src={logo} alt="Logo Mission Locale" />
-        </div>
+  return (
+    <header className="flex flex-col md:flex-row justify-center md:justify-start w-full bg-lightBg px-5 py-2 gap-4 items-center">
+      <div className="items-center w-[175px]">
+        <img className="size-full" src={logo} alt="Logo Mission Locale" />
+      </div>
 
-        <div className="flex items-center justify-center gap-2">
-          <ul className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-15 text-md w-full">
-            <HeaderLink label="Accueil" link="/" />
-            <HeaderLink label="Les ateliers" link="/workshop" />
-            <HeaderLink label="Actualités" link="#" />
-            <HeaderLink label="Prise de rendez-vous" link="#" />
+      <ul className="flex flex-col sm:flex-row items-center md:items-start not-md:gap-6 md:justify-around text-md w-full">
+        <HeaderLink label="Accueil" link="/" />
+        <HeaderLink label="Les ateliers" link="/workshop" />
+        <HeaderLink label="Actualités" link="#" />
+        <HeaderLink label="Prise de rendez-vous" link="#" />
 
-            {!isAuthenticated && <HeaderLink label="Connexion" link="/login" />}
-            {isAuthenticated && (
-              <HeaderDropdown label={"Espace " + roleDisplay} links={links} />
-            )}
-          </ul>
-        </div>
-      </header>
-    );
-  }
-  return <header className="w-full"></header>;
+        {!isAuthenticated && <HeaderLink label="Connexion" link="/login" />}
+        {isAuthenticated && (
+          <HeaderDropdown label={"Espace " + roleDisplay} links={links} />
+        )}
+      </ul>
+    </header>
+  );
 }

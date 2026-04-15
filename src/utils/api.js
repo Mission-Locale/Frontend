@@ -50,7 +50,6 @@ async function callAuthorizedEndpoint(endpoint, method, body = null) {
       response = await request();
     } else {
       clearUserSession();
-      window.location.href = "/login";
       throw { status: 401, error: "Session expirée" };
     }
   }
@@ -276,6 +275,27 @@ export async function deleteAppointment(id) {
 
 export async function getWorkshop(id) {
   const response = await callAuthorizedEndpoint(`/workshops/${id}`, "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getWorkshopRecurrences(
+  workshopId = undefined,
+  from = undefined,
+) {
+  const params = new URLSearchParams();
+  if (workshopId) {
+    params.append("workshopId", workshopId);
+  }
+  if (from) {
+    params.append("from", from);
+  }
+
+  const response = await callAuthorizedEndpoint(
+    `/workshops?${params.toString()}`,
+    "GET",
+  );
   await handleError(response);
 
   return await response.json();

@@ -28,7 +28,7 @@ export default function Button({
   return (
     <button
       type={type}
-      className={`${variants[variant]} ${sizes[size]} ${radius[radiusSize]} font-bold 
+      className={`${variants[variant]} ${sizes[size]} ${radius[radiusSize]} font-bold whitespace-nowrap min-w-fit
         ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
       style={{ width }}
       onClick={onClick}

@@ -4,9 +4,9 @@ import { ChevronDown } from "lucide-react";
 import HeaderLinkList from "./HeaderLinkList";
 
 export default function HeaderDropdown({
-  label = "brandBlue",
+  label,
   links = [],
-  theme,
+  theme = "brandBlue",
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);
@@ -22,14 +22,13 @@ export default function HeaderDropdown({
   }, []);
 
   return (
-    <div ref={selectRef} className="relative w-full mb-4">
+    <div ref={selectRef} className="relative">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`
-            w-full flex items-center justify-between rounded-md
+            w-full px-2 flex items-center gap-0.5 justify-between rounded-md
             ${selectThemes[theme].trigger}
-            focus:outline-none focus:ring-2 focus:ring-offset-2
             transition-all duration-200 cursor-pointer
           `}
       >
