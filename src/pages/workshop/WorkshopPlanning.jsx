@@ -5,7 +5,7 @@ import ErrorFrame from "@/components/ui/ErrorFrame";
 import LoadingFrame from "@/components/ui/LoadingFrame";
 import { useNavigate } from "react-router";
 
-export default function WorkshopPlanning() {
+export default function WorkshopPlanning({defaultDate = undefined}) {
   const { status, data, error } = useQuery({
     queryKey: ["planning/workshop"],
     queryFn: getWorkshopPlanning,
@@ -37,6 +37,7 @@ export default function WorkshopPlanning() {
                 e.event.extendedProps.workshopReccurence.workshop_recurrence_id,
             )
           }
+          defaultDate={defaultDate}
         />
       );
     default:

@@ -352,6 +352,14 @@ export async function removeSelfAnimatorFromWorkshopRecurrence(recurrenceId) {
   await handleError(response);
 }
 
+export async function addSelfAnimatorFromWorkshopRecurrence(recurrenceId) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${recurrenceId}/animators`,
+    "POST",
+  );
+  await handleError(response);
+}
+
 export async function getAssignedJobSeekers(nameQuery = undefined) {
   const response = await callAuthorizedEndpoint(
     "/advisors/job-seekers" + (nameQuery ? `?name=${nameQuery}` : ""),

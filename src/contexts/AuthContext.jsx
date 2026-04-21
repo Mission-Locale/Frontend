@@ -31,6 +31,7 @@ export function AuthProvider({ children }) {
           if (userData) {
             const role = getUserRole();
             setUser({
+              id: userData.user_id,
               email: userData.email,
               firstName: userData.first_name,
               lastName: userData.last_name,
@@ -55,10 +56,9 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function login(credentials) {
-
     clearUserSession();
     setUser(null);
-    
+
     const userData = await apiLogin(credentials);
     setUser(userData);
     setIsAuthenticated(true);
@@ -83,6 +83,7 @@ export function AuthProvider({ children }) {
       if (userData) {
         const role = getUserRole();
         const user = {
+          id: userData.user_id,
           email: userData.email,
           firstName: userData.first_name,
           lastName: userData.last_name,

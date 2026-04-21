@@ -113,7 +113,7 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
     setModal(
       <ConfirmationModal
         modalKey={"unsubConfirmation"}
-        question="Êtes-vous sure de vouloir vous désinscrire ?"
+        question="Êtes-vous sure de vouloir vous retirer ?"
         allowColor="brandPink"
         onCancel={() => setModal(null)}
         onAllow={() => {

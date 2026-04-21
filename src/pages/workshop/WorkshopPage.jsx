@@ -1,7 +1,9 @@
 import { useAuth } from "@/hooks/useAuth";
 import {
+  addSelfAnimatorFromWorkshopRecurrence,
   getWorkshopRecurrence,
   registerJobSeekerToWorkshopRecurrence,
+  removeSelfAnimatorFromWorkshopRecurrence,
   unregisterJobSeekerToWorkshopRecurrence,
 } from "@/utils/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,7 +14,7 @@ import { formatDuration, interval, intervalToDuration } from "date-fns";
 import WorkshopRecurrencesPills from "@/components/planning/eventPanel/WorkshopRecurrencesPills";
 import RegistrationCount from "./RegistrationCount";
 import Button from "@/components/ui/Button";
-import { JOB_SEEKER } from "@/utils/userRole";
+import { ADVISOR, JOB_SEEKER } from "@/utils/userRole";
 import Box from "@/components/ui/Box";
 import WorkshopPlanning from "./WorkshopPlanning";
 import { useState } from "react";
@@ -59,17 +61,24 @@ export default function WorkshopPage() {
             : "UNREGISTERED"
           : undefined;
 
+      const isAnimating =
+        isAuthenticated && user.role == ADVISOR
+          ? data.animators.some(
+              (animator) => animator.advisor.user.user_id == user.id,
+            )
+          : undefined;
+
       function handleJobSeekerSelfRegistering() {
         setIsSending(true);
         registerJobSeekerToWorkshopRecurrence(id)
-          .then(async () => {
-            await queryClient.invalidateQueries({
+          .then(() => {
+            queryClient.invalidateQueries({
               queryKey: ["workshop/recurrences", id],
             });
-            await queryClient.invalidateQueries({
+            queryClient.invalidateQueries({
               queryKey: ["workshop/registrations", id],
             });
-            await queryClient.invalidateQueries({
+            queryClient.invalidateQueries({
               queryKey: ["planning", user.id],
             });
           })
@@ -104,10 +113,37 @@ export default function WorkshopPage() {
         );
       }
 
+      function handleAdvisorUnsubscribe() {
+        setIsSending(true);
+        removeSelfAnimatorFromWorkshopRecurrence(id)
+          .then(() => {
+            queryClient.invalidateQueries({
+              queryKey: ["workshop/recurrences", id],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["planning", user.id],
+            });
+          })
+          .finally(() => setIsSending(false));
+      }
+
+      function handleAdvisorSubscribe() {
+        setIsSending(true);
+        addSelfAnimatorFromWorkshopRecurrence(id)
+          .then(() => {
+            queryClient.invalidateQueries({
+              queryKey: ["workshop/recurrences", id],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["planning", user.id],
+            });
+          })
+          .finally(() => setIsSending(false));
+      }
+
       const startTime = new Date(data.startTime);
       const endTime = new Date(data.endTime);
 
-      // TODO: test header rendering with an image
       return (
         <main className="col-span-full row-span-full flex flex-col gap-8">
           <section className="relative h-[33dvh]">
@@ -119,9 +155,9 @@ export default function WorkshopPage() {
                 alt="Image d'atelier"
               />
             )}
-            <div className="absolute size-full flex flex-col justify-center items-center">
-              <div className="p-4 size-fit bg-white/75">
-                <h1 className="size-fit">{data.workshop.title}</h1>
+            <div className="absolute top-0 size-full flex flex-col justify-center items-center">
+              <div className="p-8 size-fit bg-white/60 rounded-2xl backdrop-blur-sm">
+                <h1 className="size-fit text-3xl">{data.workshop.title}</h1>
               </div>
             </div>
           </section>
@@ -188,6 +224,7 @@ export default function WorkshopPage() {
                     <RegistrationCount workshopRecurrence={data} />
                     {registerState == "UNREGISTERED" && (
                       <Button
+                        text="S'inscrire"
                         color="brandBlue"
                         size="lg"
                         radiusSize="sm"
@@ -195,12 +232,12 @@ export default function WorkshopPage() {
                         width="50%"
                         disabled={isSending}
                         onClick={handleJobSeekerSelfRegistering}
-                        text="S'inscrire"
                       />
                     )}
                     {(registerState == "PENDING" ||
                       registerState == "REGISTERED") && (
                       <Button
+                        text="Se désinscrire"
                         color="brandPink"
                         size="lg"
                         radiusSize="sm"
@@ -208,7 +245,30 @@ export default function WorkshopPage() {
                         width="50%"
                         disabled={isSending}
                         onClick={handleJobSeekerSelfUnregistering}
-                        text="Se désinscrire"
+                      />
+                    )}
+                    {isAnimating == false && (
+                      <Button
+                        text="Animer"
+                        color="brandBlue"
+                        size="lg"
+                        radiusSize="sm"
+                        variant="full"
+                        width="50%"
+                        onClick={handleAdvisorSubscribe}
+                        disabled={isSending}
+                      />
+                    )}
+                    {isAnimating == true && (
+                      <Button
+                        text="Se retirer"
+                        color="brandPink"
+                        size="lg"
+                        radiusSize="sm"
+                        variant="full"
+                        width="50%"
+                        onClick={handleAdvisorUnsubscribe}
+                        disabled={isSending}
                       />
                     )}
                   </li>
@@ -221,7 +281,7 @@ export default function WorkshopPage() {
             <h2 className="pl-8 text-2xl font-bold">Tout nos ateliers</h2>
             <div className={`py-8 ${mobileMode ? "" : "h-dvh"}`}>
               <Box>
-                <WorkshopPlanning />
+                <WorkshopPlanning defaultDate={data.startTime} />
               </Box>
             </div>
           </section>
