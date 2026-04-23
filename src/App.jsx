@@ -3,6 +3,7 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 import Router from "./router/Router.jsx";
 
 const queryClient = new QueryClient();
+//window.__TANSTACK_QUERY_CLIENT__ = queryClient // enable devtools
 
 function App() {
   return (

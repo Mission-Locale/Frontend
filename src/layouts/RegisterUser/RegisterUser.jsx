@@ -4,7 +4,7 @@ import ContentStep from "./ContentStep";
 import { useFormStore } from "@/stores/useFormStore";
 import useMobileToggle from "@/hooks/useMobileToggle";
 import logo from "/assets/img/Logo_Mission_Locale.webp";
-import Header from "@/components/Header";
+import Header from "@/components/header/Header";
 
 export default function RegisterUser() {
   const currentStep = useFormStore((state) => state.currentStep);

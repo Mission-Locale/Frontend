@@ -7,15 +7,17 @@ import Connexion from "@/pages/Connexion";
 import ResetPassword from "@/pages/ResetPassword";
 import { JOB_SEEKER, ADVISOR, ADMINISTRATOR } from "../utils/userRole";
 import Dashboard from "@/layouts/Dashboard";
-import AdvisorList from "@/pages/AdvisorList";
+import AdvisorList from "@/pages/administrator/AdvisorList";
 import AdvisorPlanningPage from "@/pages/advisor/PlanningPage";
 import JobSeekerPlanningPage from "@/pages/jobSeeker/PlanningPage";
+import WorkshopPlanningPage from "@/pages/workshop/WorkshopPlanningPage";
+import WorkshopPage from "@/pages/workshop/WorkshopPage";
+import HomePage from "@/pages/HomePage";
 
 export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index path="/" element={<Navigate to="/login" />} />
         {/* Route d'inscription */}
         <Route path="/register" element={<RegisterUser />} />
         {/* Route de connexion */}
@@ -24,7 +26,9 @@ export default function Router() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<DefaultLayout />}>
           {/* Vitrine */}
-          {/* TODO: <Route path="/" index element={<HomePage />} /> */}
+          <Route path="/" index element={<HomePage />} />
+          <Route path="/workshop" element={<WorkshopPlanningPage />} />
+          <Route path="/workshop/:id" element={<WorkshopPage />} />
 
           <Route element={<PrivateRoutes />}>
             <Route path="/dashboard" element={<Dashboard />}>

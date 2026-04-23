@@ -1,7 +1,8 @@
 import Pill from "@/components/ui/Pill";
-import { getWorkshop } from "@/utils/api";
+import { getWorkshopRecurrences } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { DayFormatter } from "@/utils/dateFormater";
+import { useNavigate } from "react-router";
 
 const pillColors = [
   "brandBlue",
@@ -11,10 +12,12 @@ const pillColors = [
   "brandGreen",
 ];
 
-export default function WorkshopRecurrencesPills({ workshopId }) {
+export default function WorkshopRecurrencesPills({ workshopId, size = "sm" }) {
+  const from = Date.now();
+  const navigate = useNavigate();
   const { status, data, error } = useQuery({
-    queryKey: ["workshop", workshopId],
-    queryFn: () => getWorkshop(workshopId),
+    queryKey: ["workshops", workshopId, from],
+    queryFn: () => getWorkshopRecurrences(workshopId, from),
   });
 
   switch (status) {
@@ -23,16 +26,23 @@ export default function WorkshopRecurrencesPills({ workshopId }) {
     case "error":
       return <span className="text-red-500"> {error.error} </span>;
     case "success":
-      return (
-        <div className="flex flex-row gap-1">
-          {data.recurrences.map((recurrence, index) => (
-            <Pill
-              key={recurrence.workshop_recurrence_id}
-              content={DayFormatter.format(recurrence.startDate)}
-              theme={pillColors[index % pillColors.length]}
-            />
-          ))}
-        </div>
-      );
+      if (data.length == 0)
+        return <p className="pl-4">Aucune session planifié</p>;
+      else
+        return (
+          <div className="flex flex-row gap-1 flex-wrap">
+            {data.map((recurrence, index) => (
+              <Pill
+                key={recurrence.workshop_recurrence_id}
+                content={DayFormatter.format(recurrence.startDate)}
+                theme={pillColors[index % pillColors.length]}
+                size={size}
+                onClick={() =>
+                  navigate("/workshop/" + recurrence.workshop_recurrence_id)
+                }
+              />
+            ))}
+          </div>
+        );
   }
 }

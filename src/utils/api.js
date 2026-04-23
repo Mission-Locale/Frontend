@@ -50,7 +50,6 @@ async function callAuthorizedEndpoint(endpoint, method, body = null) {
       response = await request();
     } else {
       clearUserSession();
-      window.location.href = "/login";
       throw { status: 401, error: "Session expirée" };
     }
   }
@@ -173,6 +172,13 @@ export async function getAdvisorPlanning(advisorId) {
   return await response.json();
 }
 
+export async function getWorkshopPlanning() {
+  const response = await callEndpoint("/planning/workshop/", "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
 export async function getSelfPlanning() {
   const response = await callAuthorizedEndpoint("/planning/me", "GET");
   await handleError(response);
@@ -274,6 +280,27 @@ export async function getWorkshop(id) {
   return await response.json();
 }
 
+export async function getWorkshopRecurrences(
+  workshopId = undefined,
+  from = undefined,
+) {
+  const params = new URLSearchParams();
+  if (workshopId) {
+    params.append("workshopId", workshopId);
+  }
+  if (from) {
+    params.append("from", from);
+  }
+
+  const response = await callAuthorizedEndpoint(
+    `/workshops?${params.toString()}`,
+    "GET",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
 export async function getWorkshopRecurrence(id) {
   const response = await callAuthorizedEndpoint(
     `/workshops/recurrences/${id}`,
@@ -321,6 +348,14 @@ export async function removeSelfAnimatorFromWorkshopRecurrence(recurrenceId) {
   const response = await callAuthorizedEndpoint(
     `/workshops/recurrences/${recurrenceId}/animators`,
     "DELETE",
+  );
+  await handleError(response);
+}
+
+export async function addSelfAnimatorFromWorkshopRecurrence(recurrenceId) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops/recurrences/${recurrenceId}/animators`,
+    "POST",
   );
   await handleError(response);
 }
