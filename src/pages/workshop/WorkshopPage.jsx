@@ -22,6 +22,7 @@ import LoadingFrame from "@/components/ui/LoadingFrame";
 import ErrorFrame from "@/components/ui/ErrorFrame";
 import useMobileToggle from "@/hooks/useMobileToggle";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { fr } from "date-fns/locale";
 
 export default function WorkshopPage() {
   let { id } = useParams();
@@ -190,6 +191,7 @@ export default function WorkshopPage() {
                         <b>Durée : </b>
                         {formatDuration(
                           intervalToDuration(interval(startTime, endTime)),
+                          { locale: fr },
                         )}
                       </p>
                     </div>

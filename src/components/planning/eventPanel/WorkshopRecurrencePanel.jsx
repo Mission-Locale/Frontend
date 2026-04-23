@@ -196,7 +196,7 @@ export default function WorkshopRecurrencePanel({ event, onClose }) {
           </li>
           <li>
             <b>Durée : </b>
-            <span>{differenceInMinutes(data.endTime, startDate)}</span>
+            <span>{differenceInMinutes(data.endTime, startDate)} Minutes</span>
           </li>
         </ul>
         <hr className="border-gray-500 border -my-2" />
