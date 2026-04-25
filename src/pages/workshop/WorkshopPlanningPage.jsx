@@ -1,5 +1,5 @@
 import Box from "@/components/ui/Box";
-import WorkshopPlanning from "./WorkshopPlanning";
+import WorkshopPlanning from "../../components/planning/WorkshopPlanning";
 import useMobileToggle from "@/hooks/useMobileToggle";
 
 export default function WorkshopPlanningPage() {

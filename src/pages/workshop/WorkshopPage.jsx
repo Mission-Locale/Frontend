@@ -16,7 +16,7 @@ import RegistrationCount from "./RegistrationCount";
 import Button from "@/components/ui/Button";
 import { ADVISOR, JOB_SEEKER } from "@/utils/userRole";
 import Box from "@/components/ui/Box";
-import WorkshopPlanning from "./WorkshopPlanning";
+import WorkshopPlanning from "../../components/planning/WorkshopPlanning";
 import { useState } from "react";
 import LoadingFrame from "@/components/ui/LoadingFrame";
 import ErrorFrame from "@/components/ui/ErrorFrame";
