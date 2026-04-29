@@ -1,6 +1,6 @@
 import { ring } from "@/styles/tokensTailwind";
 
-export default function InputText({
+export default function InputTextArea({
   label = undefined,
   onChange,
   value,
@@ -9,13 +9,12 @@ export default function InputText({
   error = undefined,
   required = false,
   disabled = false,
-  type = "text",
   ...props
 }) {
   const inputId = label ? label.toLowerCase().replace(/\s+/g, "-") : undefined;
 
   return (
-    <div className="w-full mb-3">
+    <div className="size-full mb-3">
       {label && (
         <label
           htmlFor={inputId}
@@ -26,10 +25,9 @@ export default function InputText({
         </label>
       )}
 
-      <input
+      <textarea
         id={inputId}
-        type={type}
-        className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 placeholder:text-sm sm:placeholder:text-base
+        className={`border bg-lightBg rounded-md p-3 size-full focus:outline-none focus:ring-2 placeholder:text-sm sm:placeholder:text-base
           ${ring[selectTheme]}          
           ${
             error

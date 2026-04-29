@@ -13,7 +13,7 @@ import dateFormater from "@/utils/dateFormater";
 export default function InputDate({
   label,
   placeholder = "Sélectionner une date",
-  selectTheme,
+  selectTheme = "brandBlue",
   value,
   onChange,
   size = "md",
@@ -21,7 +21,7 @@ export default function InputDate({
   required = false,
   startDate,
   endDate,
-  error,
+  error = undefined,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);

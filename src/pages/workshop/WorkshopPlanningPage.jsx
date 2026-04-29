@@ -10,7 +10,7 @@ export default function WorkshopPlanningPage() {
     >
       <div id="calendar" className="h-full">
         <Box>
-          <WorkshopPlanning />
+          <WorkshopPlanning linkPrefix="/workshop/" />
         </Box>
       </div>
     </main>

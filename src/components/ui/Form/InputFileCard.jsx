@@ -27,14 +27,15 @@ import Button from "@/components/ui/Button";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5Mo
 
-export default function FileInputCard({
+export default function InputFileCard({
   id,
+  label = undefined,
   title,
-  selectTheme,
-  icon: Icon,
+  subtitle,
   file,
   onFileChange,
-  subtitle,
+  icon: Icon,
+  selectTheme = "brandBlue",
   multipleFiles = false,
 }) {
   const [error, setError] = useState(null);
@@ -43,14 +44,14 @@ export default function FileInputCard({
   const isCharged = file !== null;
 
   function handleFileChange(e) {
-    const selectedFile = e.target.files[0]
+    const selectedFile = e.target.files[0];
     setError(null);
 
     if (selectedFile) {
       // Vérifier le type de fichier
       if (selectedFile.type !== "application/pdf") {
         setError(`Format invalide. Seul le PDF est accepté`);
-        onFileChange(null)
+        onFileChange(null);
         fileInputRef.current.value = null;
         return;
       }
@@ -58,7 +59,7 @@ export default function FileInputCard({
       // Vérifier la taille du fichier
       if (selectedFile.size > MAX_FILE_SIZE) {
         setError(`Fichier trop volumineux`);
-        onFileChange(null)
+        onFileChange(null);
         fileInputRef.current.value = null;
         return;
       }
@@ -75,109 +76,116 @@ export default function FileInputCard({
   }
 
   return (
-    <div
-      className={`${
-        isCharged && !multipleFiles
-          ? " bg-bgSuccess border-success border-2"
-          : error
-          ? " bg-bgError border-error border-2"
-          : " border-lightBorder bg-zinc-50 border"
-      } flex items-center p-4 gap-4 rounded-lg sm:w-100`}
-    >
+    <div>
+      {label && <p className="text-start block mb-2 font-bold text-slate-900">{label}</p>}
       <div
-        className={`size-10 flex items-center justify-center rounded-md ${
+        className={`${
           isCharged && !multipleFiles
-            ? "bg-bgSuccessIcon"
-            : error && !multipleFiles
-            ? "bg-bgErrorIcon"
-            : lightBg[selectTheme]
-        }`}
+            ? " bg-bgSuccess border-success border-2"
+            : error
+              ? " bg-bgError border-error border-2"
+              : " border-lightBorder bg-zinc-50 border"
+        } flex items-center p-4 gap-4 rounded-lg sm:w-100`}
       >
-        {error ? (
-          <CircleAlert className="text-red-500" />
-        ) : (
-          Icon && (
-            <Icon
-              className={
-                isCharged && !multipleFiles
-                  ? "text-success"
-                  : error && !multipleFiles
-                  ? "text-red-500"
-                  : textColor[selectTheme]
-              }
-            />
-          )
-        )}
-      </div>
+        <div
+          className={`size-10 flex items-center justify-center rounded-md ${
+            isCharged && !multipleFiles
+              ? "bg-bgSuccessIcon"
+              : error && !multipleFiles
+                ? "bg-bgErrorIcon"
+                : lightBg[selectTheme]
+          }`}
+        >
+          {error ? (
+            <CircleAlert className="text-red-500" />
+          ) : (
+            Icon && (
+              <Icon
+                className={
+                  isCharged && !multipleFiles
+                    ? "text-success"
+                    : error && !multipleFiles
+                      ? "text-red-500"
+                      : textColor[selectTheme]
+                }
+              />
+            )
+          )}
+        </div>
 
-      <div className="flex flex-col gap-1 w-50">
-        <h4 className="font-medium text-black text-base">{title}</h4>
+        <div className="flex flex-col gap-1 w-50">
+          <h4 className="font-medium text-black text-base">{title}</h4>
 
           <span
             className={`${
               isCharged && !multipleFiles
                 ? "text-success"
                 : error && !multipleFiles
-                ? "text-error"
-                : "text-slate-500"
+                  ? "text-error"
+                  : "text-slate-500"
             } truncate font-bold text-sm`}
           >
             {isCharged && !multipleFiles
               ? file?.name
               : error && !multipleFiles
-              ? "Erreur de téléchargement"
-              : subtitle}
+                ? "Erreur de téléchargement"
+                : subtitle}
           </span>
 
-        <span
-          className={`${
-            isCharged && !multipleFiles ? "text-success" : error ? "text-error" : "text-slate-400"
-          } font-normal text-xs`}
-        >
-          {error 
-            ? error
-            : isCharged
-            ? multipleFiles 
-              ? "Format: PDF • Max 5 Mo"
-              : "Téléchargé avec succès"
-            : "Format: PDF • Max 5 Mo"}
-        </span>
-      </div>
+          <span
+            className={`${
+              isCharged && !multipleFiles
+                ? "text-success"
+                : error
+                  ? "text-error"
+                  : "text-slate-400"
+            } font-normal text-xs`}
+          >
+            {error
+              ? error
+              : isCharged
+                ? multipleFiles
+                  ? "Format: PDF • Max 5 Mo"
+                  : "Téléchargé avec succès"
+                : "Format: PDF • Max 5 Mo"}
+          </span>
+        </div>
 
-      <div>
-        <input
-          type="file"
-          id={id}
-          className="hidden"
-          onChange={handleFileChange}
-          ref={fileInputRef}
-        />
-        {isCharged && !multipleFiles ? (
-          <div className="flex gap-2">
-            <label
-              htmlFor={id}
-              className="cursor-pointer bg-gray-200 p-2 rounded"
-            >
-              <RotateCw className="text-gray-500" />
-            </label>
-
-            <div
-              className="cursor-pointer bg-red-200 p-2 rounded"
-              onClick={deleteFile}
-            >
-              <X className="text-red-500" />
-            </div>
-          </div>
-        ) : (
-          <Button
-            text={error ? "Réessayer" : "Parcourir"}
-            color={error ? "error" : selectTheme}
-            size="md"
-            variant="full"
-            radiusSize="md"
-            onClick={() => fileInputRef.current.click()}
+        <div>
+          <input
+            type="file"
+            id={id}
+            className="hidden"
+            onChange={handleFileChange}
+            ref={fileInputRef}
           />
-        )}
+          {isCharged && !multipleFiles ? (
+            <div className="flex gap-2">
+              <label
+                htmlFor={id}
+                className="cursor-pointer bg-gray-200 p-2 rounded"
+              >
+                <RotateCw className="text-gray-500" />
+              </label>
+
+              <div
+                className="cursor-pointer bg-red-200 p-2 rounded"
+                onClick={deleteFile}
+              >
+                <X className="text-red-500" />
+              </div>
+            </div>
+          ) : (
+            <Button
+              text={error ? "Réessayer" : "Parcourir"}
+              color={error ? "error" : selectTheme}
+              size="md"
+              variant="full"
+              radiusSize="md"
+              onClick={() => fileInputRef.current.click()}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 import { Pencil, Trash2, UserRound, X } from "lucide-react";
 import { useState } from "react";
-import Modal from "./Modal";
-import InputText from "./ui/Form/InputText";
-import InputDate from "./ui/Form/InputDate";
-import Button from "./ui/Button";
-import FileUpload from "./ui/Form/FileUpload";
+import Modal from "../Modal";
+import InputText from "../ui/Form/InputText";
+import InputDate from "../ui/Form/InputDate";
+import Button from "../ui/Button";
+import FileUpload from "../ui/Form/FileUpload";
 import dateFormater from "@/utils/dateFormater";
 
 export default function UserTable({

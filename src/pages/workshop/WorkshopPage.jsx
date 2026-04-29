@@ -283,7 +283,10 @@ export default function WorkshopPage() {
             <h2 className="pl-8 text-2xl font-bold">Tout nos ateliers</h2>
             <div className={`py-8 ${mobileMode ? "" : "h-dvh"}`}>
               <Box>
-                <WorkshopPlanning defaultDate={data.startTime} />
+                <WorkshopPlanning
+                  linkPrefix="/workshop/"
+                  defaultDate={data.startTime}
+                />
               </Box>
             </div>
           </section>

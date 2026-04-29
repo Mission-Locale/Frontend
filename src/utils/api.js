@@ -56,6 +56,32 @@ async function callAuthorizedEndpoint(endpoint, method, body = null) {
   return response;
 }
 
+async function callMultipartAuthorizedEndpoint(endpoint, method, body = null) {
+  const request = () =>
+    fetch(`${URI}:${PORT}${endpoint}`, {
+      method: method,
+      body: body,
+      headers: {
+        Authorization: "Bearer " + getToken(),
+        "Content-Type": "multipart/form-data",
+      },
+      credentials: "include",
+    });
+
+  let response = await request();
+
+  if (response.status == 401) {
+    const refreshed = await refreshUser();
+    if (refreshed) {
+      response = await request();
+    } else {
+      clearUserSession();
+      throw { status: 401, error: "Session expirée" };
+    }
+  }
+  return response;
+}
+
 async function handleError(response) {
   if (!response.ok) {
     if (response.headers.get("Content-Type").includes("application/json")) {
@@ -273,8 +299,62 @@ export async function deleteAppointment(id) {
   return await response.json();
 }
 
+export async function createWorkshop(
+  title,
+  description,
+  cardImage,
+  backgroundImage,
+  topic,
+  topicDescription,
+  startTime,
+  duration,
+  maxOccupation,
+) {
+  const formData = new FormData();
+  formData.set("title", title);
+  formData.set("description", description);
+  formData.set("cardImage", cardImage);
+  formData.set("backgroundImage", backgroundImage);
+  formData.set("topic", topic);
+  formData.set("topicDescription", topicDescription);
+  formData.set("startTime", startTime);
+  formData.set("duration", duration);
+  formData.set("maxOccupation", maxOccupation);
+
+  const response = await callMultipartAuthorizedEndpoint(
+    `/workshops`,
+    "POST",
+    formData,
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
 export async function getWorkshop(id) {
   const response = await callAuthorizedEndpoint(`/workshops/${id}`, "GET");
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function deleteWorkshop(id) {
+  const response = await callAuthorizedEndpoint(`/workshops/${id}`, "DELETE");
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getWorkshops({
+  page = 1,
+  limit = 5,
+  name = undefined,
+  order = "asc",
+} = {}) {
+  const response = await callAuthorizedEndpoint(
+    `/workshops?${new URLSearchParams({ page, limit, name, order }).toString()}`,
+    "GET",
+  );
   await handleError(response);
 
   return await response.json();
@@ -293,7 +373,7 @@ export async function getWorkshopRecurrences(
   }
 
   const response = await callAuthorizedEndpoint(
-    `/workshops?${params.toString()}`,
+    `/workshops/recurrences?${params.toString()}`,
     "GET",
   );
   await handleError(response);
@@ -306,6 +386,16 @@ export async function getWorkshopRecurrence(id) {
     `/workshops/recurrences/${id}`,
     "GET",
   );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function createExternalAnimator(lastName, firstName) {
+  const response = await callAuthorizedEndpoint("external-animators", "POST", {
+    lastName,
+    firstName,
+  });
   await handleError(response);
 
   return await response.json();
@@ -360,9 +450,29 @@ export async function addSelfAnimatorFromWorkshopRecurrence(recurrenceId) {
   await handleError(response);
 }
 
+export async function getAdvisors(nameQuery = undefined) {
+  const response = await callAuthorizedEndpoint(
+    "/advisors" + (nameQuery ? `?name=${nameQuery}` : ""),
+    "GET",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
 export async function getAssignedJobSeekers(nameQuery = undefined) {
   const response = await callAuthorizedEndpoint(
     "/advisors/job-seekers" + (nameQuery ? `?name=${nameQuery}` : ""),
+    "GET",
+  );
+  await handleError(response);
+
+  return await response.json();
+}
+
+export async function getExternalAnimators(nameQuery = undefined) {
+  const response = await callAuthorizedEndpoint(
+    "/external-animators" + (nameQuery ? `?name=${nameQuery}` : ""),
     "GET",
   );
   await handleError(response);

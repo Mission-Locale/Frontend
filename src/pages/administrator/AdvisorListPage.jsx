@@ -2,7 +2,7 @@ import Button from "@/components/ui//Button";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Plus } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
-import UserTable from "@/components/UserTable";
+import UserTable from "@/components/table/UserTable";
 import {
   getUsersFilteredByRole,
   registerUser,
@@ -22,12 +22,12 @@ const initialUserForm = {
   phone: "",
   birth_date: "",
   // TODO : Gérer le profile picture dans le back
-  profile_picture_path: null, 
+  profile_picture_path: null,
 };
 
 const ITEMS_PER_PAGE = 5;
 
-export default function AdvisorList() {
+export default function AdvisorListPage() {
   const [searchValue, setSearchValue] = useState("");
   const [activeSearch, setActiveSearch] = useState(""); // La recherche réellement appliquée
   const [users, setUsers] = useState([]);
@@ -78,7 +78,6 @@ export default function AdvisorList() {
   }, [loadAdvisors, currentPage, activeSearch]);
 
   useEffect(() => {
-
     if (searchValue === "" && activeSearch !== "") {
       setCurrentPage(1);
       setActiveSearch("");
@@ -88,7 +87,7 @@ export default function AdvisorList() {
     if (searchValue.length > 0 && searchValue.length < 3) {
       return;
     }
-    
+
     const timeoutId = setTimeout(() => {
       if (searchValue.length >= 3 && searchValue !== activeSearch) {
         setCurrentPage(1);
@@ -163,8 +162,8 @@ export default function AdvisorList() {
       email: user.email || "",
       phone: user.phone || "",
       birth_date: user.birth_date ? new Date(user.birth_date) : "",
-      // TODO : Gérer le profile picture dans le back 
-      profile_picture_path: user.profile_picture_path || null, 
+      // TODO : Gérer le profile picture dans le back
+      profile_picture_path: user.profile_picture_path || null,
     });
     setIsEditModalOpen(true);
   };
@@ -336,7 +335,7 @@ export default function AdvisorList() {
                     text="Précédent"
                     color="brandBlue"
                     size="md"
-                    variant='outline'
+                    variant="outline"
                     radiusSize="sm"
                     width="full"
                     onClick={goToPreviousPage}
@@ -347,7 +346,7 @@ export default function AdvisorList() {
                     text="Suivant"
                     color="brandBlue"
                     size="md"
-                    variant={currentPage === totalPages ? 'outline' : 'full'}
+                    variant={currentPage === totalPages ? "outline" : "full"}
                     radiusSize="sm"
                     width="full"
                     onClick={goToNextPage}

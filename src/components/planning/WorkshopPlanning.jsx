@@ -5,7 +5,11 @@ import ErrorFrame from "@/components/ui/ErrorFrame";
 import LoadingFrame from "@/components/ui/LoadingFrame";
 import { useNavigate } from "react-router";
 
-export default function WorkshopPlanning({defaultDate = undefined}) {
+export default function WorkshopPlanning({
+  customButton = undefined,
+  defaultDate = undefined,
+  linkPrefix = undefined,
+}) {
   const { status, data, error } = useQuery({
     queryKey: ["planning/workshop"],
     queryFn: getWorkshopPlanning,
@@ -31,12 +35,17 @@ export default function WorkshopPlanning({defaultDate = undefined}) {
       return (
         <Calendar
           events={data}
-          onEventClick={(e) =>
-            navigate(
-              "/workshop/" +
-                e.event.extendedProps.workshopReccurence.workshop_recurrence_id,
-            )
+          onEventClick={
+            linkPrefix
+              ? (e) =>
+                  navigate(
+                    linkPrefix +
+                      e.event.extendedProps.workshopReccurence
+                        .workshop_recurrence_id,
+                  )
+              : undefined
           }
+          customButton={customButton}
           defaultDate={defaultDate}
         />
       );
