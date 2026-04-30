@@ -1,5 +1,6 @@
 import EditableQueryTable from "@/components/table/EditableQueryTable";
-import InputDate from "@/components/ui/Form/InputDate";
+import Box from "@/components/ui/Box";
+import Button from "@/components/ui/Button";
 import InputFileCard from "@/components/ui/Form/InputFileCard";
 import InputText from "@/components/ui/Form/InputText";
 import InputTextArea from "@/components/ui/Form/InputTextarea";
@@ -9,9 +10,17 @@ import {
   getAdvisors,
   getExternalAnimators,
 } from "@/utils/api";
+import { formatInput } from "@/utils/dateFormater";
+import { parseISO } from "date-fns";
 import { Image } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+
+function getDefaultDate() {
+  const date = new Date();
+  date.setSeconds(0, 0);
+  return date;
+}
 
 export default function WorkshopAddPage() {
   const [isSending, setIsSending] = useState(false);
@@ -19,15 +28,15 @@ export default function WorkshopAddPage() {
 
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
-  const [startTime, setStartTime] = useState();
+  const [startTime, setStartTime] = useState(getDefaultDate());
   const [duration, setDuration] = useState(60);
   const [slots, setSlots] = useState(10);
 
   const [advisors, setAdvisors] = useState([]);
   const [externalAnimators, setExternalAnimators] = useState([]);
 
-  const [cardImageFile, setCardImageFile] = useState();
-  const [backgroundImageFile, setBackgroundImageFile] = useState();
+  const [cardImageFile, setCardImageFile] = useState(null);
+  const [backgroundImageFile, setBackgroundImageFile] = useState(null);
 
   const [workshopDescription, setWorkshopDescription] = useState("");
   const [subjectDescription, setSubjectDescription] = useState("");
@@ -70,9 +79,9 @@ export default function WorkshopAddPage() {
   }
 
   return (
-    <main className="col-span-full row-span-full min-h-screen p-6">
+    <main className="col-span-full row-span-full">
       <Box>
-        <div id="content" className="flex flex-col gap-3">
+        <div id="content" className="flex flex-col gap-3 size-full">
           <div className="flex flex-row gap-5">
             <InputText
               label="Titre"
@@ -80,7 +89,7 @@ export default function WorkshopAddPage() {
               disabled={isSending}
               required={true}
               error={errors.title}
-              onChange={setTitle}
+              onChange={(e) => setTitle(e.target.value)}
               value={title}
             />
             <InputText
@@ -89,18 +98,21 @@ export default function WorkshopAddPage() {
               disabled={isSending}
               required={true}
               error={errors.subject}
-              onChange={setSubject}
+              onChange={(e) => setSubject(e.target.value)}
               value={subject}
             />
           </div>
           <div className="flex flex-row gap-5">
-            <InputDate
+            <InputText
               label="Date de début"
+              type="datetime-local"
               disabled={isSending}
               required={true}
               error={errors.startTime}
-              onChange={setStartTime}
-              value={startTime}
+              value={formatInput(startTime)}
+              onChange={(e) =>
+                setStartTime(parseISO(e.currentTarget.value) || startTime)
+              }
             />
             <InputText
               label="Durée"
@@ -109,7 +121,7 @@ export default function WorkshopAddPage() {
               disabled={isSending}
               required={true}
               error={errors.duration}
-              onChange={setDuration}
+              onChange={(e) => setDuration(e.target.value)}
               value={duration}
             />
             <InputText
@@ -119,7 +131,7 @@ export default function WorkshopAddPage() {
               disabled={isSending}
               required={true}
               error={errors.maxOccupation}
-              onChange={setSlots}
+              onChange={(e) => setSlots(e.target.value)}
               value={slots}
             />
           </div>
@@ -186,21 +198,35 @@ export default function WorkshopAddPage() {
               title="Image d'arrière plan"
               subtitle="Image haute résolution pour l'entête de l'atelier"
               selectTheme="brandOrange"
+              width="w-1/2"
               icon={Image}
               file={backgroundImageFile}
               onFileChange={setBackgroundImageFile}
+              allowedTypes={[
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+              ]}
             />
             <InputFileCard
               id="cardImage"
               title="Miniature pour la vitrine"
               subtitle="Miniature pour la liste des ateliers"
               selectTheme="brandOrange"
+              width="w-1/2"
               icon={Image}
               file={cardImageFile}
               onFileChange={setCardImageFile}
+              allowedTypes={[
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+              ]}
             />
           </div>
-          <div className="flex flex-row gap-5">
+          <div className="flex flex-row gap-5 size-full">
             <InputTextArea
               label="Description de l'atelier"
               placeholder="Entrez la description de l’atelier"
@@ -208,7 +234,7 @@ export default function WorkshopAddPage() {
               required={true}
               error={errors.description}
               value={workshopDescription}
-              onChange={setWorkshopDescription}
+              onChange={(e) => setWorkshopDescription(e.target.value)}
             />
             <InputTextArea
               label="Description du sujet"
@@ -217,7 +243,7 @@ export default function WorkshopAddPage() {
               required={true}
               error={errors.topicDescription}
               value={subjectDescription}
-              onChange={setSubjectDescription}
+              onChange={(e) => setSubjectDescription(e.target.value)}
             />
           </div>
           <div className="flex flex-row gap-5">

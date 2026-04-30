@@ -7,9 +7,7 @@ export default function WorkshopPlanningPage() {
   const mobileMode = useMobileToggle(900, () => calendarRef.current.width);
   const navigate = useNavigate();
   return (
-    <main
-      className={`col-span-full row-span-full p-6 ${mobileMode ? "" : "h-screen"}`}
-    >
+    <main className={`col-span-full row-span-full`}>
       <div id="calendar" className="h-full">
         <Box>
           <WorkshopPlanning

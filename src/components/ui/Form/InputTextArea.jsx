@@ -14,7 +14,7 @@ export default function InputTextArea({
   const inputId = label ? label.toLowerCase().replace(/\s+/g, "-") : undefined;
 
   return (
-    <div className="size-full mb-3">
+    <div className="size-full mb-3 flex flex-col">
       {label && (
         <label
           htmlFor={inputId}
@@ -27,7 +27,7 @@ export default function InputTextArea({
 
       <textarea
         id={inputId}
-        className={`border bg-lightBg rounded-md p-3 size-full focus:outline-none focus:ring-2 placeholder:text-sm sm:placeholder:text-base
+        className={`border bg-lightBg rounded-md p-3 size-full focus:outline-none focus:ring-2 placeholder:text-sm sm:placeholder:text-base resize-none
           ${ring[selectTheme]}          
           ${
             error

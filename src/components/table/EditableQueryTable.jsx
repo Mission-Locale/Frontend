@@ -20,10 +20,10 @@ export default function EditableQueryTable({
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-50/80 border-b border-gray-100">
             <tr>
-              <th className="px-6 py-4 text-sm font-semibold text-gray-700">
+              <th className="px-4 py-2 text-sm font-semibold text-gray-700">
                 {label}
               </th>
-              <th className="px-6 py-4"></th>
+              <th className="px-4 py-2"></th>
             </tr>
           </thead>
 
@@ -33,13 +33,13 @@ export default function EditableQueryTable({
                 key={line}
                 className="hover:bg-gray-50/50 transition-colors group"
               >
-                <td className="px-6 py-4 font-bold text-gray-900 text-sm capitalize">
+                <td className="px-4 py-2 font-bold text-gray-900 text-sm capitalize">
                   {line}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-4 py-2">
                   <button
                     onClick={onDelete}
-                    className="p-2 bg-brandPurple hover:bg-red-800 text-white rounded-full transition-shadow shadow-sm cursor-pointer"
+                    className="bg-brandPurple hover:bg-red-800 text-white rounded-full transition-shadow shadow-sm cursor-pointer"
                     title="Supprimer"
                   >
                     <Minus size={18} />
@@ -48,11 +48,11 @@ export default function EditableQueryTable({
               </tr>
             ))}
             <tr className="hover:bg-gray-50/50 transition-colors group">
-              <td className="px-6 py-4">
+              <td className="px-4 py-2">
                 {!isAdding ? (
                   <button
                     onClick={() => setIsAdding(true)}
-                    className="p-2 bg-brandGreen hover:bg-lime-500 text-white rounded-full transition-shadow shadow-sm cursor-pointer"
+                    className="bg-brandGreen hover:bg-lime-500 text-white rounded-full transition-shadow shadow-sm cursor-pointer"
                     title="Ajouter"
                   >
                     <Plus size={18} />
@@ -74,7 +74,7 @@ export default function EditableQueryTable({
                   </div>
                 )}
               </td>
-              <td className="px-6 py-4"></td>
+              <td className="px-4 py-2"></td>
             </tr>
           </tbody>
         </table>

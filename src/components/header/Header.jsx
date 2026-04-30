@@ -35,6 +35,14 @@ export default function Header() {
             label: "Liste des conseillers",
             link: "/dashboard/admin/advisor-list",
           },
+          {
+            label: "Calendrier des ateliers",
+            link: "/dashboard/admin/workshops",
+          },
+          {
+            label: "Liste des ateliers",
+            link: "/dashboard/admin/workshops/list",
+          },
         ];
         break;
     }

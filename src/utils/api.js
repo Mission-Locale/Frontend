@@ -345,14 +345,21 @@ export async function deleteWorkshop(id) {
   return await response.json();
 }
 
-export async function getWorkshops({
-  page = 1,
-  limit = 5,
-  name = undefined,
-  order = "asc",
-} = {}) {
+export async function getWorkshops(
+  params = {
+    page: 1,
+    limit: 5,
+    name: undefined,
+    order: "asc",
+  },
+) {
+  const searchParams = new URLSearchParams();
+  for (const key in params) {
+    if (params[key]) searchParams.set(key, params[key]);
+  }
+
   const response = await callAuthorizedEndpoint(
-    `/workshops?${new URLSearchParams({ page, limit, name, order }).toString()}`,
+    `/workshops?${searchParams.toString()}`,
     "GET",
   );
   await handleError(response);

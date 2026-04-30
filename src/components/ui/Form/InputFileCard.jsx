@@ -35,6 +35,7 @@ export default function InputFileCard({
   file,
   onFileChange,
   icon: Icon,
+  allowedTypes = ["application/pdf"],
   selectTheme = "brandBlue",
   multipleFiles = false,
 }) {
@@ -43,14 +44,24 @@ export default function InputFileCard({
 
   const isCharged = file !== null;
 
+  let requiredFormat;
+  if (allowedTypes.length == 1 && allowedTypes[0] == "application/pdf") {
+    requiredFormat = "PDF";
+  } else if (allowedTypes.every((format) => format.startsWith("image/"))) {
+    requiredFormat = "Image";
+  }
+
+  const requirement =
+    (requiredFormat ? `Format: ${requiredFormat} • ` : "") + "Max 5 Mo";
+
   function handleFileChange(e) {
     const selectedFile = e.target.files[0];
     setError(null);
 
     if (selectedFile) {
       // Vérifier le type de fichier
-      if (selectedFile.type !== "application/pdf") {
-        setError(`Format invalide. Seul le PDF est accepté`);
+      if (!allowedTypes.includes(selectedFile.type)) {
+        setError("Format invalide");
         onFileChange(null);
         fileInputRef.current.value = null;
         return;
@@ -76,8 +87,12 @@ export default function InputFileCard({
   }
 
   return (
-    <div>
-      {label && <p className="text-start block mb-2 font-bold text-slate-900">{label}</p>}
+    <div className="w-full flex flex-col">
+      {label && (
+        <p className="text-start block mb-2 font-bold text-slate-900">
+          {label}
+        </p>
+      )}
       <div
         className={`${
           isCharged && !multipleFiles
@@ -85,10 +100,10 @@ export default function InputFileCard({
             : error
               ? " bg-bgError border-error border-2"
               : " border-lightBorder bg-zinc-50 border"
-        } flex items-center p-4 gap-4 rounded-lg sm:w-100`}
+        } flex items-center p-4 gap-4 rounded-lg w-full`}
       >
         <div
-          className={`size-10 flex items-center justify-center rounded-md ${
+          className={`min-w-10 min-h-10 flex items-center justify-center rounded-md ${
             isCharged && !multipleFiles
               ? "bg-bgSuccessIcon"
               : error && !multipleFiles
@@ -113,7 +128,7 @@ export default function InputFileCard({
           )}
         </div>
 
-        <div className="flex flex-col gap-1 w-50">
+        <div className="flex flex-col gap-1 w-full">
           <h4 className="font-medium text-black text-base">{title}</h4>
 
           <span
@@ -123,7 +138,7 @@ export default function InputFileCard({
                 : error && !multipleFiles
                   ? "text-error"
                   : "text-slate-500"
-            } truncate font-bold text-sm`}
+            } font-bold text-sm`}
           >
             {isCharged && !multipleFiles
               ? file?.name
@@ -145,9 +160,9 @@ export default function InputFileCard({
               ? error
               : isCharged
                 ? multipleFiles
-                  ? "Format: PDF • Max 5 Mo"
+                  ? requirement
                   : "Téléchargé avec succès"
-                : "Format: PDF • Max 5 Mo"}
+                : requirement}
           </span>
         </div>
 

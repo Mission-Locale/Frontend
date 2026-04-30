@@ -1,5 +1,6 @@
 import dateFormater, { formatEvent } from "@/utils/dateFormater";
 import { isBefore } from "date-fns";
+import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -31,14 +32,14 @@ export default function WorkshopLine({ workshop, onDelete }) {
       {/* Last Occurence Col */}
       {(lastRecurrence && (
         <td className="px-6 py-4 text-sm text-gray-700">
-          {formatEvent(lastRecurrence.startTime)}
+          {formatEvent(new Date(lastRecurrence.startTime))}
         </td>
       )) || <td className="px-6 py-4 text-sm text-gray-700/50">Aucun</td>}
 
       {/* Next Occurence Col */}
       {(nextRecurrence && (
         <td className="px-6 py-4 text-sm text-gray-700">
-          {formatEvent(nextRecurrence.startTime)}
+          {formatEvent(new Date(nextRecurrence.startTime))}
         </td>
       )) || <td className="px-6 py-4 text-sm text-gray-700/50">Aucun</td>}
 

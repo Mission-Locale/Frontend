@@ -30,6 +30,7 @@ export default function WorkshopListPage() {
           limit: ITEMS_PER_PAGE,
           name: search != "" ? search : undefined,
         });
+
         setWorkshops(data.workshops || []);
         setTotalWorkshops(data.total || 0);
       } catch (error) {
@@ -42,10 +43,9 @@ export default function WorkshopListPage() {
     [currentPage, activeSearch],
   );
 
-  useEffect(
-    () => loadWorkshops(currentPage, activeSearch),
-    [loadWorkshops, currentPage, activeSearch],
-  );
+  useEffect(() => {
+    loadWorkshops(currentPage, activeSearch);
+  }, [loadWorkshops, currentPage, activeSearch]);
 
   useEffect(() => {
     if (searchValue === "" && activeSearch !== "") {

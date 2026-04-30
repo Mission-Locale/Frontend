@@ -7,10 +7,11 @@ import Connexion from "@/pages/Connexion";
 import ResetPassword from "@/pages/ResetPassword";
 import { JOB_SEEKER, ADVISOR, ADMINISTRATOR } from "../utils/userRole";
 import Dashboard from "@/layouts/Dashboard";
-import AdvisorList from "@/pages/administrator/AdvisorListPage";
+import WorkshopPlanningPage from "@/pages/workshop/WorkshopPlanningPage";
 import AdvisorPlanningPage from "@/pages/advisor/PlanningPage";
 import JobSeekerPlanningPage from "@/pages/jobSeeker/PlanningPage";
-import WorkshopPlanningPage from "@/pages/administrator/workshops/WorkshopPlanningPage";
+import AdminWorkshopPlanningPage from "@/pages/administrator/workshops/WorkshopPlanningPage";
+import AdvisorList from "@/pages/administrator/AdvisorListPage";
 import WorkshopList from "@/pages/administrator/workshops/WorkshopListPage";
 import WorkshopPage from "@/pages/workshop/WorkshopPage";
 import HomePage from "@/pages/HomePage";
@@ -70,7 +71,7 @@ export default function Router() {
                 />
                 <Route path="advisor-list" element={<AdvisorList />} />
                 <Route path="workshops">
-                  <Route index element={<WorkshopPlanningPage />} />
+                  <Route index element={<AdminWorkshopPlanningPage />} />
                   <Route path="list" element={<WorkshopList />} />
                   <Route path="add" element={<WorkshopAddPage />} />
                   <Route path="edit" />

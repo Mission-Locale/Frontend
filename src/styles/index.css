@@ -82,6 +82,22 @@
   --shadow-md: 0 0 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
 }
 
+/* 100 - Thin */
+@font-face {
+    font-family: 'Marianne';
+    src: url('/assets/fonts/Marianne-Thin.woff2') format('woff2');
+    font-weight: 100; 
+    font-style: normal;
+  font-display: swap;
+}
+@font-face {
+    font-family: 'Marianne';
+    src: url('/assets/fonts/Marianne-Thin_Italic.woff2') format('woff2');
+    font-weight: 100;
+    font-style: italic;
+  font-display: swap;
+}
+
 /* 300 – Light */
 @font-face {
   font-family: "Marianne";
@@ -126,23 +142,6 @@
   font-family: "Marianne";
   src: url("/assets/fonts/Marianne/Marianne-Medium_Italic.woff2") format("woff2");
   font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
-
-/* 600 – SemiBold */
-@font-face {
-  font-family: "Marianne";
-  src: url("/assets/fonts/Marianne/Marianne-SemiBold.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Marianne";
-  src: url("/assets/fonts/Marianne/Marianne-SemiBold_Italic.woff2")
-    format("woff2");
-  font-weight: 600;
   font-style: italic;
   font-display: swap;
 }
